@@ -1,10 +1,28 @@
 #include <windows.h>    
 #include <windowsx.h>
+#include <d3d11.h>
+#include <d3dcompiler.h>
+#include <DirectXMath.h>
+#pragma comment (lib, "d3d11.lib")
+#pragma comment (lib, "d3dcompiler.lib")
+using namespace DirectX;
 
+HWND InitWindow(HINSTANCE hInstance);
 LRESULT CALLBACK WindowProc(HWND hWnd,
 	UINT message,
 	WPARAM wParam,
 	LPARAM lParam);
+HRESULT CreateDirect3DContext(HWND wndHandle);
+
+IDXGISwapChain* gSwapChain = nullptr;
+ID3D11Device* gDevice = nullptr;
+ID3D11DeviceContext* gDeviceContext = nullptr;
+ID3D11RenderTargetView* gBackbufferRTV = nullptr;
+
+ID3D11InputLayout* gVertexLayout = nullptr;
+ID3D11VertexShader* gVertexShader = nullptr;
+ID3D11PixelShader* gPixelShader = nullptr;
+ID3D11GeometryShader* gGeometryShader = nullptr;
 
 int WINAPI WinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
@@ -82,6 +100,36 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	// return this part of the WM_QUIT message to Windows
 	return msg.wParam;
+}
+
+HWND InitWindow(HINSTANCE hInstance)
+{
+	WNDCLASSEX wcex = { 0 };
+	wcex.cbSize = sizeof(WNDCLASSEX);
+	wcex.style = CS_HREDRAW | CS_VREDRAW; //Redraws the entire window if size changes.
+	wcex.lpfnWndProc = WindowProc;
+	wcex.hInstance = hInstance;
+	wcex.lpszClassName = L"BTH_D3D_DEMO";
+	if (!RegisterClassEx(&wcex))
+		return false;
+
+	RECT rc = { 0, 0, 640, 480 };
+	AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
+
+	HWND handle = CreateWindow(
+		L"BTH_D3D_DEMO",
+		L"BTH Direct3D Demo",
+		WS_OVERLAPPEDWINDOW,
+		CW_USEDEFAULT,
+		CW_USEDEFAULT,
+		rc.right - rc.left,
+		rc.bottom - rc.top,
+		nullptr,
+		nullptr,
+		hInstance,
+		nullptr);
+
+	return handle;
 }
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
