@@ -1,0 +1,8 @@
+﻿  compilation object save succeeded; see J:\Git\DV1542-Projekt\x64\Debug\GeometryShader.cso
+  compilation object save succeeded; see J:\Git\DV1542-Projekt\x64\Debug\PixelShader.cso
+  compilation object save succeeded; see J:\Git\DV1542-Projekt\x64\Debug\VertexShader.cso
+  Source.cpp
+j:\git\dv1542-projekt\source.cpp(74): warning C4305: '+=': truncation from 'double' to 'float'
+j:\git\dv1542-projekt\source.cpp(72): warning C4101: 'dataPtr': unreferenced local variable
+j:\git\dv1542-projekt\source.cpp(170): warning C4244: 'return': conversion from 'WPARAM' to 'int', possible loss of data
+  DV1542-Projekt.vcxproj -> J:\Git\DV1542-Projekt\x64\Debug\DV1542-Projekt.exe
