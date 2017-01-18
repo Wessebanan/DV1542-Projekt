@@ -24,6 +24,16 @@ ID3D11VertexShader* gVertexShader = nullptr;
 ID3D11PixelShader* gPixelShader = nullptr;
 ID3D11GeometryShader* gGeometryShader = nullptr;
 
+struct matrixData {
+	XMMATRIX WorldMatrix;						// NEW
+	XMMATRIX ViewMatrix;						// NEW
+	XMMATRIX ProjMatrix;					// NEW
+};
+
+matrixData WVP;
+
+float rotationAngle = 0.0f;
+
 void SetViewport()
 {
 	D3D11_VIEWPORT vp;
@@ -61,8 +71,9 @@ void Render()
 	// Map constant buffer so that we can write to it.
 	D3D11_MAPPED_SUBRESOURCE dataPtr;
 	//gDeviceContext->Map(gTransformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
-	//rotationAngle += 0.01; //Increasing the rotation angle with every frame.
-	//XMStoreFloat4x4(&WVP.World, XMMatrixRotationAxis(XMVectorSet(0, 1, 0, 0), rotationAngle)); //Creating the new world matrix.
+	rotationAngle += 0.01; //Increasing the rotation angle with every frame.
+	XMMATRIX rotMatrix = XMMatrixRotationRollPitchYaw(0, rotationAngle, 0);
+	WVP.WorldMatrix = rotMatrix;
 
 	//memcpy(dataPtr.pData, &WVP, sizeof(TransformData));
 
