@@ -37,6 +37,50 @@ void SetViewport()
 	gDeviceContext->RSSetViewports(1, &vp);
 }
 
+void Render()
+{
+	// clear the back buffer to a deep blue
+	float clearColor[] = { 0, 0, 0, 1 };
+	gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
+	//gDeviceContext->ClearDepthStencilView(gDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+
+	gDeviceContext->VSSetShader(gVertexShader, nullptr, 0);
+	gDeviceContext->HSSetShader(nullptr, nullptr, 0);
+	gDeviceContext->DSSetShader(nullptr, nullptr, 0);
+	gDeviceContext->GSSetShader(gGeometryShader, nullptr, 0);
+	gDeviceContext->PSSetShader(gPixelShader, nullptr, 0);
+
+	//Set the sampler state and shader resource view to the fragment shader.
+	//gDeviceContext->PSSetSamplers(0, 1, &gSamplerState);
+	//gDeviceContext->PSSetShaderResources(0, 1, &gShaderResourceView);
+
+	UINT32 vertexSize = sizeof(float) * 8;
+	UINT32 offset = 0;
+	//gDeviceContext->IASetVertexBuffers(0, 1, &gVertexBuffer, &vertexSize, &offset);
+
+	// Map constant buffer so that we can write to it.
+	D3D11_MAPPED_SUBRESOURCE dataPtr;
+	//gDeviceContext->Map(gTransformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+	//rotationAngle += 0.01; //Increasing the rotation angle with every frame.
+	//XMStoreFloat4x4(&WVP.World, XMMatrixRotationAxis(XMVectorSet(0, 1, 0, 0), rotationAngle)); //Creating the new world matrix.
+
+	//memcpy(dataPtr.pData, &WVP, sizeof(TransformData));
+
+	// UnMap constant buffer so that we can use it again in the GPU
+	//gDeviceContext->Unmap(gTransformBuffer, 0);
+	//set resource to Vertex Shader
+	//gDeviceContext->GSSetConstantBuffers(0, 1, &gTransformBuffer);
+
+	//Set the light position buffer to the fragment shader.
+	//gDeviceContext->PSSetConstantBuffers(1, 1, &gLightBuffer);
+
+	gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	gDeviceContext->IASetInputLayout(gVertexLayout);
+
+	gDeviceContext->Draw(4, 0); //Number of vertices drawn, 4 because it's a trianglestrip.
+}
+
+
 int WINAPI WinMain(HINSTANCE hInstance,
 	HINSTANCE hPrevInstance,
 	LPSTR lpCmdLine,
