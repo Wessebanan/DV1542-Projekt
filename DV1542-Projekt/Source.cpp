@@ -24,6 +24,9 @@ ID3D11VertexShader* gVertexShader = nullptr;
 ID3D11PixelShader* gPixelShader = nullptr;
 ID3D11GeometryShader* gGeometryShader = nullptr;
 
+ID3D11Buffer* gTriangleBuffer = nullptr;
+ID3D11Buffer* gTransformBuffer = nullptr;
+
 struct matrixData {
 	XMMATRIX WorldMatrix;						// NEW
 	XMMATRIX ViewMatrix;						// NEW
@@ -33,6 +36,126 @@ struct matrixData {
 matrixData WVP;
 
 float rotationAngle = 0.0f;
+
+void CreateTriangle()
+{
+	struct Vertex
+	{
+		float x, y, z;
+		float r, g, b;
+	};
+	Vertex vertices[] =
+	{
+		1.0f, 0.0f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+
+		0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+
+		0.5f, 0.5f, 0.5f,
+		0.0f, 0.0f, 1.0f
+	};
+	D3D11_BUFFER_DESC triangleBufferDesc = {};
+	triangleBufferDesc.ByteWidth = sizeof(vertices);
+	triangleBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	triangleBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+
+	D3D11_SUBRESOURCE_DATA triangleData = {};
+	triangleData.pSysMem = vertices;
+
+	if (FAILED(gDevice->CreateBuffer(&triangleBufferDesc, &triangleData, &gTriangleBuffer)))
+	{
+		MessageBoxA(NULL, "Error creating triangle buffer.", NULL, MB_OK);
+		exit(-1);
+	}
+}
+
+void CreateWVP()
+{
+	WVP.WorldMatrix = XMMatrixIdentity();
+	WVP.ViewMatrix = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
+	WVP.ProjMatrix = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 20.0f);
+
+	D3D11_BUFFER_DESC WVPdesc = {};
+	WVPdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	WVPdesc.ByteWidth = sizeof(WVP);
+	WVPdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	WVPdesc.Usage = D3D11_USAGE_DYNAMIC;
+
+	if (FAILED(gDevice->CreateBuffer(&WVPdesc, nullptr, &gTransformBuffer)))
+	{
+		MessageBoxA(NULL, "Error creating transform buffer.", NULL, MB_OK);
+		exit(-1);
+	}
+}
+
+void CreateShaders()
+{
+	//create vertex shader
+	ID3DBlob* pVS = nullptr;
+	D3DCompileFromFile(
+		L"VertexShader.hlsl", // filename
+		nullptr,		// optional macros
+		nullptr,		// optional include files
+		"VS_main",		// entry point
+		"vs_5_0",		// shader model (target)
+		0,				// shader compile options			// here DEBUGGING OPTIONS
+		0,				// effect compile options
+		&pVS,			// double pointer to ID3DBlob		
+		nullptr			// pointer for Error Blob messages.
+						// how to use the Error blob, see here
+						// https://msdn.microsoft.com/en-us/library/windows/desktop/hh968107(v=vs.85).aspx
+		);
+
+	gDevice->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &gVertexShader);
+
+	//create input layout (verified using vertex shader)
+	D3D11_INPUT_ELEMENT_DESC inputDesc[] = {
+		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+	}; 
+
+	gDevice->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &gVertexLayout);
+	// we do not need anymore this COM object, so we release it.
+	pVS->Release();
+
+	//create pixel shader
+	ID3DBlob* pPS = nullptr;
+	D3DCompileFromFile(
+		L"PixelShader.hlsl", // filename
+		nullptr,		// optional macros
+		nullptr,		// optional include files
+		"PS_main",		// entry point
+		"ps_5_0",		// shader model (target)
+		0,				// shader compile options
+		0,				// effect compile options
+		&pPS,			// double pointer to ID3DBlob		
+		nullptr			// pointer for Error Blob messages.
+						// how to use the Error blob, see here
+						// https://msdn.microsoft.com/en-us/library/windows/desktop/hh968107(v=vs.85).aspx
+		);
+
+	gDevice->CreatePixelShader(pPS->GetBufferPointer(), pPS->GetBufferSize(), nullptr, &gPixelShader);
+	// we do not need anymore this COM object, so we release it.
+	pPS->Release();
+
+	//create geomety shader (same way as the other shaders).
+	ID3DBlob* pGS = nullptr;
+	D3DCompileFromFile(
+		L"GeometryShader.hlsl",
+		nullptr,
+		nullptr,
+		"GS_main",
+		"gs_5_0",
+		0,
+		0,
+		&pGS,
+		nullptr
+		);
+
+	gDevice->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &gGeometryShader);
+	pGS->Release();
+}
 
 void SetViewport()
 {
@@ -64,23 +187,23 @@ void Render()
 	//gDeviceContext->PSSetSamplers(0, 1, &gSamplerState);
 	//gDeviceContext->PSSetShaderResources(0, 1, &gShaderResourceView);
 
-	UINT32 vertexSize = sizeof(float) * 8;
+	UINT32 vertexSize = sizeof(float) * 6;
 	UINT32 offset = 0;
-	//gDeviceContext->IASetVertexBuffers(0, 1, &gVertexBuffer, &vertexSize, &offset);
+	gDeviceContext->IASetVertexBuffers(0, 1, &gTriangleBuffer, &vertexSize, &offset);
 
 	// Map constant buffer so that we can write to it.
 	D3D11_MAPPED_SUBRESOURCE dataPtr;
-	//gDeviceContext->Map(gTransformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+	gDeviceContext->Map(gTransformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
 	rotationAngle += 0.01; //Increasing the rotation angle with every frame.
 	XMMATRIX rotMatrix = XMMatrixRotationRollPitchYaw(0, rotationAngle, 0);
 	WVP.WorldMatrix = rotMatrix;
 
-	//memcpy(dataPtr.pData, &WVP, sizeof(TransformData));
+	memcpy(dataPtr.pData, &WVP, sizeof(matrixData));
 
 	// UnMap constant buffer so that we can use it again in the GPU
-	//gDeviceContext->Unmap(gTransformBuffer, 0);
+	gDeviceContext->Unmap(gTransformBuffer, 0);
 	//set resource to Vertex Shader
-	//gDeviceContext->GSSetConstantBuffers(0, 1, &gTransformBuffer);
+	gDeviceContext->GSSetConstantBuffers(0, 1, &gTransformBuffer);
 
 	//Set the light position buffer to the fragment shader.
 	//gDeviceContext->PSSetConstantBuffers(1, 1, &gLightBuffer);
@@ -88,7 +211,7 @@ void Render()
 	gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	gDeviceContext->IASetInputLayout(gVertexLayout);
 
-	gDeviceContext->Draw(4, 0); //Number of vertices drawn, 4 because it's a trianglestrip.
+	gDeviceContext->Draw(3, 0); //Number of vertices drawn, 4 because it's a trianglestrip.
 }
 
 
@@ -120,7 +243,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	// AdjustWindowRect uses the desired client size (RECT wr) to specify the required window size
 
 
-	RECT wr = { 0, 0, 500, 400 };    // set the size, but not the position
+	RECT wr = { 0, 0, 640, 480 };    // set the size, but not the position
 	AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
 
 
@@ -139,6 +262,14 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		NULL);    // used with multiple windows, NULL
 
 				  // display the window on the screen
+	CreateDirect3DContext(hWnd);
+
+	SetViewport();
+
+	CreateShaders();
+
+	CreateTriangle();
+
 	ShowWindow(hWnd, nCmdShow);
 
 	// enter the main loop:
@@ -162,9 +293,24 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				break;
 		}
 		else {
+			Render();
+
+			gSwapChain->Present(1, 0);
 			// WEEEEW GAME CODE HERE LET'S GO
 		}
 	}
+
+	gTransformBuffer->Release();
+	gTriangleBuffer->Release();
+	gBackbufferRTV->Release();
+	gVertexLayout->Release();
+	gVertexShader->Release();
+	gPixelShader->Release();
+	gGeometryShader->Release();
+	gSwapChain->Release();
+	gDevice->Release();
+	gDeviceContext->Release();
+	DestroyWindow(hWnd);
 
 	// return this part of the WM_QUIT message to Windows
 	return msg.wParam;
