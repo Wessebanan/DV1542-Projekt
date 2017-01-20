@@ -97,7 +97,7 @@ void CreateShaders()
 		L"VertexShader.hlsl", // filename
 		nullptr,		// optional macros
 		nullptr,		// optional include files
-		"VS_main",		// entry point
+		"main",		// entry point
 		"vs_5_0",		// shader model (target)
 		0,				// shader compile options			// here DEBUGGING OPTIONS
 		0,				// effect compile options
@@ -125,7 +125,7 @@ void CreateShaders()
 		L"PixelShader.hlsl", // filename
 		nullptr,		// optional macros
 		nullptr,		// optional include files
-		"PS_main",		// entry point
+		"main",		// entry point
 		"ps_5_0",		// shader model (target)
 		0,				// shader compile options
 		0,				// effect compile options
@@ -145,7 +145,7 @@ void CreateShaders()
 		L"GeometryShader.hlsl",
 		nullptr,
 		nullptr,
-		"GS_main",
+		"main",
 		"gs_5_0",
 		0,
 		0,
@@ -262,55 +262,60 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		NULL);    // used with multiple windows, NULL
 
 				  // display the window on the screen
-	CreateDirect3DContext(hWnd);
-
-	SetViewport();
-
-	CreateShaders();
-
-	CreateTriangle();
-
-	ShowWindow(hWnd, nCmdShow);
-
-	// enter the main loop:
-
-	// this struct holds Windows event messages
 	MSG msg;
 
-	while (TRUE)
-	{
-		// Check to see if any messages are waiting in the queue
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+
+	if (hWnd) {
+		CreateDirect3DContext(hWnd);
+
+		SetViewport();
+
+		CreateShaders();
+
+		CreateTriangle();
+
+		ShowWindow(hWnd, nCmdShow);
+
+		// enter the main loop:
+
+		// this struct holds Windows event messages
+
+
+		while (TRUE)
 		{
-			// translate keystroke messages into the right format
-			TranslateMessage(&msg);
+			// Check to see if any messages are waiting in the queue
+			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+			{
+				// translate keystroke messages into the right format
+				TranslateMessage(&msg);
 
-			// send the message to the WindowProc function
-			DispatchMessage(&msg);
+				// send the message to the WindowProc function
+				DispatchMessage(&msg);
 
-			// check to see if it's time to quit
-			if (msg.message == WM_QUIT)
-				break;
+				// check to see if it's time to quit
+				if (msg.message == WM_QUIT)
+					break;
+			}
+			else {
+				Render();
+
+				gSwapChain->Present(1, 0);
+				// WEEEEW GAME CODE HERE LET'S GO
+			}
 		}
-		else {
-			Render();
 
-			gSwapChain->Present(1, 0);
-			// WEEEEW GAME CODE HERE LET'S GO
-		}
+		gTransformBuffer->Release();
+		gTriangleBuffer->Release();
+		gBackbufferRTV->Release();
+		gVertexLayout->Release();
+		gVertexShader->Release();
+		gPixelShader->Release();
+		gGeometryShader->Release();
+		gSwapChain->Release();
+		gDevice->Release();
+		gDeviceContext->Release();
+		DestroyWindow(hWnd);
 	}
-
-	gTransformBuffer->Release();
-	gTriangleBuffer->Release();
-	gBackbufferRTV->Release();
-	gVertexLayout->Release();
-	gVertexShader->Release();
-	gPixelShader->Release();
-	gGeometryShader->Release();
-	gSwapChain->Release();
-	gDevice->Release();
-	gDeviceContext->Release();
-	DestroyWindow(hWnd);
 
 	// return this part of the WM_QUIT message to Windows
 	return msg.wParam;

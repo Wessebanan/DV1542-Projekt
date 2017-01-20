@@ -1,22 +1,5 @@
-﻿Build started 2017-01-19 14:30:50.
-     1>Project "C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\DV1542-Projekt.vcxproj" on node 2 (Build target(s)).
-     1>FxCompile:
-         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"main" /T gs_5_0 /Fo "C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\x64\Debug\GeometryShader.cso" /Od /Zi GeometryShader.hlsl 
-         compilation object save succeeded; see C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\x64\Debug\GeometryShader.cso
-         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"main" /T ps_5_0 /Fo "C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\x64\Debug\PixelShader.cso" /Od /Zi PixelShader.hlsl 
-         compilation object save succeeded; see C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\x64\Debug\PixelShader.cso
-         C:\Program Files (x86)\Windows Kits\8.1\bin\x86\fxc.exe /nologo /E"main" /T vs_5_0 /Fo "C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\x64\Debug\VertexShader.cso" /Od /Zi VertexShader.hlsl 
-         compilation object save succeeded; see C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\x64\Debug\VertexShader.cso
-       ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\CL.exe /c /ZI /nologo /W3 /WX- /sdl /Od /D _DEBUG /D _WINDOWS /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"x64\Debug\\" /Fd"x64\Debug\vc140.pdb" /Gd /TP /errorReport:prompt Source.cpp
-         Source.cpp
-     1>c:\users\robin\documents\github\dv1542-projekt\dv1542-projekt\source.cpp(197): warning C4305: '+=': truncation from 'double' to 'float'
-     1>c:\users\robin\documents\github\dv1542-projekt\dv1542-projekt\source.cpp(316): warning C4244: 'return': conversion from 'WPARAM' to 'int', possible loss of data
-       Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\x86_amd64\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\x64\Debug\DV1542-Projekt.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\x64\Debug\DV1542-Projekt.pdb" /SUBSYSTEM:WINDOWS /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\x64\Debug\DV1542-Projekt.lib" /MACHINE:X64 x64\Debug\Source.obj
-         DV1542-Projekt.vcxproj -> C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\x64\Debug\DV1542-Projekt.exe
-     1>Done Building Project "C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\DV1542-Projekt.vcxproj" (Build target(s)).
-
-Build succeeded.
-
-Time Elapsed 00:00:01.45
+﻿  Source.cpp
+d:\github\dv1542-projekt\source.cpp(197): warning C4305: '+=': truncation from 'double' to 'float'
+d:\github\dv1542-projekt\source.cpp(321): warning C4244: 'return': conversion from 'WPARAM' to 'int', possible loss of data
+  DV1542-Projekt.vcxproj -> D:\GitHub\DV1542-Projekt\x64\Debug\DV1542-Projekt.exe
+  DV1542-Projekt.vcxproj -> D:\GitHub\DV1542-Projekt\x64\Debug\DV1542-Projekt.pdb (Full PDB)
