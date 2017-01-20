@@ -1,5 +1,5 @@
 ﻿  Source.cpp
 d:\github\dv1542-projekt\source.cpp(197): warning C4305: '+=': truncation from 'double' to 'float'
-d:\github\dv1542-projekt\source.cpp(321): warning C4244: 'return': conversion from 'WPARAM' to 'int', possible loss of data
+d:\github\dv1542-projekt\source.cpp(323): warning C4244: 'return': conversion from 'WPARAM' to 'int', possible loss of data
   DV1542-Projekt.vcxproj -> D:\GitHub\DV1542-Projekt\x64\Debug\DV1542-Projekt.exe
   DV1542-Projekt.vcxproj -> D:\GitHub\DV1542-Projekt\x64\Debug\DV1542-Projekt.pdb (Full PDB)

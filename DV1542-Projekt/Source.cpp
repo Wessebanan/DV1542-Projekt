@@ -270,6 +270,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		SetViewport();
 
+		CreateWVP();
+
 		CreateShaders();
 
 		CreateTriangle();
