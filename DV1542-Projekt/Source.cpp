@@ -46,13 +46,13 @@ void CreateTriangle()
 	};
 	Vertex vertices[] =
 	{
-		1.0f, 0.0f, 0.0f,
+		-1.0f, 0.0f, 0.0f,
 		1.0f, 0.0f, 0.0f,
 
-		0.0f, 0.0f, 0.0f,
+		0.0f, 1.0f, 0.0f,
 		0.0f, 1.0f, 0.0f,
 
-		0.5f, 0.5f, 0.5f,
+		1.0f, 0.0f, 0.0f,
 		0.0f, 0.0f, 1.0f
 	};
 	D3D11_BUFFER_DESC triangleBufferDesc = {};
@@ -78,7 +78,7 @@ void CreateWVP()
 
 	D3D11_BUFFER_DESC WVPdesc = {};
 	WVPdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	WVPdesc.ByteWidth = sizeof(WVP);
+	WVPdesc.ByteWidth = sizeof(matrixData);
 	WVPdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	WVPdesc.Usage = D3D11_USAGE_DYNAMIC;
 
@@ -87,6 +87,7 @@ void CreateWVP()
 		MessageBoxA(NULL, "Error creating transform buffer.", NULL, MB_OK);
 		exit(-1);
 	}
+
 }
 
 void CreateShaders()
@@ -202,7 +203,7 @@ void Render()
 
 	// UnMap constant buffer so that we can use it again in the GPU
 	gDeviceContext->Unmap(gTransformBuffer, 0);
-	//set resource to Vertex Shader
+	//set resource to Geometry Shader
 	gDeviceContext->GSSetConstantBuffers(0, 1, &gTransformBuffer);
 
 	//Set the light position buffer to the fragment shader.

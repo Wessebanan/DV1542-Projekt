@@ -1,3 +1,11 @@
+cbuffer TRANSFORM_BUFFER : register(b0)
+{
+	matrix world;
+	matrix view;
+	matrix proj;
+}
+
+
 struct GS_IN
 {
 	float3 Pos : POSITION;
@@ -13,10 +21,11 @@ struct GS_OUT
 [maxvertexcount(3)]
 void main( triangle GS_IN input[3],  inout TriangleStream< GS_OUT > output)
 {
+	matrix wvp = mul(proj, mul(view, world));
 	for (uint i = 0; i < 3; i++)
 	{
 		GS_OUT element;
-		element.Pos = float4(input[i].Pos, 1.0f);
+		element.Pos = mul(wvp, float4(input[i].Pos, 1.0f));
 		element.Color = input[i].Color;
 		output.Append(element);
 	}
