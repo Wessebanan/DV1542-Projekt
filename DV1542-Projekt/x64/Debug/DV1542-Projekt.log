@@ -1,3 +1,9 @@
-﻿  compilation object save succeeded; see D:\GitHub\DV1542-Projekt\x64\Debug\GeometryShader.cso
-  DV1542-Projekt.vcxproj -> D:\GitHub\DV1542-Projekt\x64\Debug\DV1542-Projekt.exe
-  DV1542-Projekt.vcxproj -> D:\GitHub\DV1542-Projekt\x64\Debug\DV1542-Projekt.pdb (Full PDB)
+﻿Build started 2017-01-25 09:32:07.
+     1>Project "C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\DV1542-Projekt.vcxproj" on node 2 (Build target(s)).
+     1>Link:
+         DV1542-Projekt.vcxproj -> C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\x64\Debug\DV1542-Projekt.exe
+     1>Done Building Project "C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\DV1542-Projekt.vcxproj" (Build target(s)).
+
+Build succeeded.
+
+Time Elapsed 00:00:00.05
