@@ -1,9 +1,4 @@
-﻿Build started 2017-01-25 09:32:07.
-     1>Project "C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\DV1542-Projekt.vcxproj" on node 2 (Build target(s)).
-     1>Link:
-         DV1542-Projekt.vcxproj -> C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\x64\Debug\DV1542-Projekt.exe
-     1>Done Building Project "C:\Users\robin\Documents\GitHub\DV1542-Projekt\DV1542-Projekt\DV1542-Projekt.vcxproj" (Build target(s)).
-
-Build succeeded.
-
-Time Elapsed 00:00:00.05
+﻿  Source.cpp
+j:\git\dv1542-projekt\source.cpp(203): warning C4305: '+=': truncation from 'double' to 'float'
+j:\git\dv1542-projekt\source.cpp(329): warning C4244: 'return': conversion from 'WPARAM' to 'int', possible loss of data
+  DV1542-Projekt.vcxproj -> J:\Git\DV1542-Projekt\x64\Debug\DV1542-Projekt.exe
