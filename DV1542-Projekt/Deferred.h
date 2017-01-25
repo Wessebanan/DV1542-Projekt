@@ -15,6 +15,6 @@ public:
 	ID3D11Texture2D* RTdiffuse;
 
 private:
-	void initialize(ID3D11Device &device);
+	bool initialize(ID3D11Device &device);
 
 };
