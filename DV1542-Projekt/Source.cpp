@@ -58,7 +58,6 @@ void CreateTriangle()
 		0.5f, -0.5f, 0.0f,
 		0.0f, 0.0f, 1.0f,
 
-
 		0.5f, 0.5f, 0.0f,
 		0.5f, 0.0f, 0.5f,
 
@@ -188,7 +187,7 @@ void SetViewport()
 void Render()
 {
 	// clear the back buffer to a deep blue
-	float clearColor[] = { 0, 0, 0, 1 };
+	float clearColor[] = { 0.23f, 0, 0.12f, 1 };
 	gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
 	//gDeviceContext->ClearDepthStencilView(gDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
