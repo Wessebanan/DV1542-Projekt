@@ -46,17 +46,23 @@ void CreateTriangle()
 	};
 	Vertex vertices[] =
 	{
-		-1.0f, -1.0f, 0.0f,
+		-0.5f, -0.5f, 0.0f,
 		1.0f, 0.0f, 0.0f,
 
-		-1.0f, 1.0f, 0.0f,
+		-0.5f, 0.5f, 0.0f,
 		0.0f, 1.0f, 0.0f,
 
-		1.0f, -1.0f, 0.0f,
+		0.5f, -0.5f, 0.0f,
 		0.0f, 0.0f, 1.0f,
 
 
-		1.0f, 1.0f, 0.0f,
+		0.5f, 0.5f, 0.0f,
+		0.5f, 0.0f, 0.5f,
+
+		0.5f, -0.5f, 1.0f,
+		0.0f, 0.0f, 1.0f,
+
+		0.5f, 0.5f, 1.0f,
 		0.5f, 0.0f, 0.5f
 
 	};
@@ -217,7 +223,7 @@ void Render()
 	gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	gDeviceContext->IASetInputLayout(gVertexLayout);
 
-	gDeviceContext->Draw(4, 0); //Number of vertices drawn, 4 because it's a trianglestrip.
+	gDeviceContext->Draw(6, 0); //Number of vertices drawn, 4 because it's a trianglestrip.
 }
 
 
