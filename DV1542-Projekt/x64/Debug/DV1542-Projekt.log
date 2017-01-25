@@ -1,12 +1,8 @@
-<<<<<<< HEAD
-﻿  compilation object save succeeded; see C:\Users\proti\Documents\GitHub\Ny mapp\3D-Projekt-BTH\DV1542-Projekt\DV1542-Projekt\x64\Debug\GeometryShader.cso
-  compilation object save succeeded; see C:\Users\proti\Documents\GitHub\Ny mapp\3D-Projekt-BTH\DV1542-Projekt\DV1542-Projekt\x64\Debug\PixelShader.cso
-  compilation object save succeeded; see C:\Users\proti\Documents\GitHub\Ny mapp\3D-Projekt-BTH\DV1542-Projekt\DV1542-Projekt\x64\Debug\VertexShader.cso
+﻿  compilation object save succeeded; see C:\Users\proti\Documents\GitHub\Ny mapp\DV1542-Projekt\DV1542-Projekt\x64\Debug\GeometryShader.cso
+  compilation object save succeeded; see C:\Users\proti\Documents\GitHub\Ny mapp\DV1542-Projekt\DV1542-Projekt\x64\Debug\PixelShader.cso
+  compilation object save succeeded; see C:\Users\proti\Documents\GitHub\Ny mapp\DV1542-Projekt\DV1542-Projekt\x64\Debug\VertexShader.cso
   Source.cpp
-c:\users\proti\documents\github\ny mapp\3d-projekt-bth\dv1542-projekt\dv1542-projekt\source.cpp(203): warning C4305: '+=': truncation from 'double' to 'float'
-c:\users\proti\documents\github\ny mapp\3d-projekt-bth\dv1542-projekt\dv1542-projekt\source.cpp(329): warning C4244: 'return': conversion from 'WPARAM' to 'int', possible loss of data
-  LINK : C:\Users\proti\Documents\GitHub\Ny mapp\3D-Projekt-BTH\DV1542-Projekt\DV1542-Projekt\x64\Debug\DV1542-Projekt.exe not found or not built by the last incremental link; performing full link
-  DV1542-Projekt.vcxproj -> C:\Users\proti\Documents\GitHub\Ny mapp\3D-Projekt-BTH\DV1542-Projekt\DV1542-Projekt\x64\Debug\DV1542-Projekt.exe
-=======
-﻿  DV1542-Projekt.vcxproj -> J:\Git\DV1542-Projekt\x64\Debug\DV1542-Projekt.exe
->>>>>>> origin/master
+c:\users\proti\documents\github\ny mapp\dv1542-projekt\dv1542-projekt\source.cpp(212): warning C4305: '+=': truncation from 'double' to 'float'
+c:\users\proti\documents\github\ny mapp\dv1542-projekt\dv1542-projekt\source.cpp(338): warning C4244: 'return': conversion from 'WPARAM' to 'int', possible loss of data
+  LINK : C:\Users\proti\Documents\GitHub\Ny mapp\DV1542-Projekt\DV1542-Projekt\x64\Debug\DV1542-Projekt.exe not found or not built by the last incremental link; performing full link
+  DV1542-Projekt.vcxproj -> C:\Users\proti\Documents\GitHub\Ny mapp\DV1542-Projekt\DV1542-Projekt\x64\Debug\DV1542-Projekt.exe
