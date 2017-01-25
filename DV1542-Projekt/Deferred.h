@@ -6,7 +6,7 @@
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 using namespace DirectX;
-
+//testchange
 class Deferred {
 public:
 	ID3D11Texture2D* RTnormal;
@@ -15,6 +15,6 @@ public:
 	ID3D11Texture2D* RTdiffuse;
 
 private:
-	void initialize(ID3D11Device device, );
+	void initialize(ID3D11Device &device);
 
 };
