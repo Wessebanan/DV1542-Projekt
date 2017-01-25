@@ -7,6 +7,7 @@
 #pragma comment (lib, "d3dcompiler.lib")
 using namespace DirectX;
 
+
 HWND InitWindow(HINSTANCE hInstance);
 LRESULT CALLBACK WindowProc(HWND hWnd,
 	UINT message,
