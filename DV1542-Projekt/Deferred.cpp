@@ -2,7 +2,8 @@
 
 Deferred::Deferred()
 {	
-	for (int i = 0; i < BUFFER_COUNT; i++) {
+	for (int i = 0; i < BUFFER_COUNT; i++) 
+	{
 		this->textures[i] = nullptr;
 		this->renderTargetViews[i] = nullptr;
 		this->shaderResourceViews[i] = nullptr;
@@ -11,7 +12,8 @@ Deferred::Deferred()
 
 Deferred::~Deferred()
 {
-	for (int i = 0; i < BUFFER_COUNT; i++) {
+	for (int i = 0; i < BUFFER_COUNT; i++) 
+	{
 		this->textures[i]->Release();
 		this->renderTargetViews[i]->Release();
 		this->shaderResourceViews[i]->Release();
@@ -53,7 +55,8 @@ bool Deferred::Initialize(ID3D11Device * device, ID3D11DeviceContext * devcon)
 	texDesc.CPUAccessFlags = 0;
 	texDesc.MiscFlags = 0;
 
-	for (int i = 0; i < BUFFER_COUNT; i++) {
+	for (int i = 0; i < BUFFER_COUNT; i++) 
+	{
 		if (FAILED(device->CreateTexture2D(&texDesc, NULL, &this->textures[i]))) 
 		{
 			result = false;
@@ -65,7 +68,8 @@ bool Deferred::Initialize(ID3D11Device * device, ID3D11DeviceContext * devcon)
 	RTviewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	RTviewDesc.Texture2D.MipSlice = 0;
 
-	for (int i = 0; i < BUFFER_COUNT; i++) {
+	for (int i = 0; i < BUFFER_COUNT; i++) 
+	{
 		if (FAILED(device->CreateRenderTargetView(this->textures[i], &RTviewDesc, &this->renderTargetViews[i]))) 
 		{
 			result = false;
@@ -78,7 +82,8 @@ bool Deferred::Initialize(ID3D11Device * device, ID3D11DeviceContext * devcon)
 	SRviewDesc.Texture2D.MostDetailedMip = 0;
 	SRviewDesc.Texture2D.MipLevels = 1;
 
-	for (int i = 0; i < BUFFER_COUNT; i++) {
+	for (int i = 0; i < BUFFER_COUNT; i++) 
+	{
 		if (FAILED(device->CreateShaderResourceView(this->textures[i], &SRviewDesc, &this->shaderResourceViews[i]))) 
 		{
 			result = false;
