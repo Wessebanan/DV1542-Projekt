@@ -2,10 +2,20 @@
 
 Deferred::Deferred()
 {	
+	for (int i = 0; i < BUFFER_COUNT; i++) {
+		this->textures[i] = nullptr;
+		this->renderTargetViews[i] = nullptr;
+		this->shaderResourceViews[i] = nullptr;
+	}
 }
 
 Deferred::~Deferred()
 {
+	for (int i = 0; i < BUFFER_COUNT; i++) {
+		this->textures[i]->Release();
+		this->renderTargetViews[i]->Release();
+		this->shaderResourceViews[i]->Release();
+	}
 }
 
 ID3D11Texture2D * Deferred::GetTexture(int index)
