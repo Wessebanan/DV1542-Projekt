@@ -183,6 +183,7 @@ void SetViewport()
 	vp.TopLeftY = 0;
 
 	gDeviceContext->RSSetViewports(1, &vp);
+	
 }
 
 void Render()
