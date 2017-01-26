@@ -3,6 +3,8 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
+#include "InputHandler.h"
+#include "Timer.h"
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 using namespace DirectX;
@@ -27,6 +29,8 @@ ID3D11GeometryShader* gGeometryShader = nullptr;
 
 ID3D11Buffer* gTriangleBuffer = nullptr;
 ID3D11Buffer* gTransformBuffer = nullptr;
+
+
 
 struct matrixData {
 	XMMATRIX WorldMatrix;						// NEW
@@ -213,7 +217,27 @@ void Render()
 	rotationAngle += 0.01; //Increasing the rotation angle with every frame.
 	XMMATRIX rotMatrix = XMMatrixRotationRollPitchYaw(0, rotationAngle, 0);
 	WVP.WorldMatrix = rotMatrix;
+	// -------------------------------------------------------------------------------------
+	// Testing input stuff here
+	// -------------------------------------------------------------------------------------
+	XMVECTOR rotzaxis = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	XMVECTOR rotxaxis = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	Rotationx = XMMatrixRotationAxis(rotxaxis, rotx);
+	Rotationz = XMMatrixRotationAxis(rotzaxis, rotz);
+	WVP.WorldMatrix = Rotationx * Rotationz;
 
+
+
+
+
+
+
+
+
+
+	// -------------------------------------------------------------------------------------
+	// Testing input stuff here /end
+	// -------------------------------------------------------------------------------------
 	memcpy(dataPtr.pData, &WVP, sizeof(matrixData));
 
 	// UnMap constant buffer so that we can use it again in the GPU
@@ -280,6 +304,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				  // display the window on the screen
 	MSG msg;
 
+	if (!InitDirectInput(hInstance, hWnd)) {
+		MessageBox(0, L"Failed to initialize Direct Input.", L"Error", MB_OK);
+	}
+
 
 	if (hWnd) {
 		CreateDirect3DContext(hWnd);
@@ -291,6 +319,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		CreateShaders();
 
 		CreateTriangle();
+
+		StartTimer(); // Starts global timer
 
 		ShowWindow(hWnd, nCmdShow);
 
@@ -315,12 +345,16 @@ int WINAPI WinMain(HINSTANCE hInstance,
 					break;
 			}
 			else {
+				DetectInput(GetFrameTime());
 				Render();
 
 				gSwapChain->Present(1, 0);
 				// WEEEEW GAME CODE HERE LET'S GO
 			}
 		}
+
+
+
 
 		gTransformBuffer->Release();
 		gTriangleBuffer->Release();
@@ -332,6 +366,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		gSwapChain->Release();
 		gDevice->Release();
 		gDeviceContext->Release();
+		DIKeyboard->Unacquire();
+		DIMouse->Unacquire();
+		DirectInput->Release();
 		DestroyWindow(hWnd);
 	}
 

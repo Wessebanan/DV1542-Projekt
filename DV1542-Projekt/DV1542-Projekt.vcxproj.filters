@@ -31,5 +31,11 @@
     <ClInclude Include="Deferred.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="InputHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Timer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
