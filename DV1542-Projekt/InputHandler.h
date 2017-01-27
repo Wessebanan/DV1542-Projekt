@@ -23,6 +23,7 @@ float rotx = 0;
 float rotz = 0;
 float scaleX = 1.0f;
 float scaleY = 1.0f;
+bool destroyWindow = false;
 
 XMMATRIX Rotationx;
 XMMATRIX Rotationz;
@@ -50,6 +51,8 @@ void DetectInput(double time) {
 	DIMouse->GetDeviceState(sizeof(DIMOUSESTATE), &mouseCurrState); // Check whether mouse has moved since last check
 	DIKeyboard->GetDeviceState(sizeof(keyboardState), (LPVOID)&keyboardState); // Same as above, but keyboard
 
+	if (keyboardState[DIK_ESCAPE] & 0x80)
+		destroyWindow = true;
 	if (keyboardState[DIK_LEFT] & 0x80 || keyboardState[DIK_A] & 0x80)
 	{
 		rotz -= 1.0f * time;

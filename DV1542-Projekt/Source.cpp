@@ -341,7 +341,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				DispatchMessage(&msg);
 
 				// check to see if it's time to quit
-				if (msg.message == WM_QUIT)
+				if (msg.message == WM_QUIT||destroyWindow==true)
 					break;
 			}
 			else {
