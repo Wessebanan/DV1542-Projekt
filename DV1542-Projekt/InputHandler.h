@@ -3,6 +3,7 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
+#include "Camera.h"
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 
@@ -24,7 +25,11 @@ float rotz = 0;
 float scaleX = 1.0f;
 float scaleY = 1.0f;
 bool destroyWindow = false;
+float moveLeftRight = 0.0f;
+float moveBackForward = 0.0f;
 
+float camYaw = 0.0f;
+float camPitch = 0.0f;
 XMMATRIX Rotationx;
 XMMATRIX Rotationz;
 
@@ -51,32 +56,43 @@ void DetectInput(double time) {
 	DIMouse->GetDeviceState(sizeof(DIMOUSESTATE), &mouseCurrState); // Check whether mouse has moved since last check
 	DIKeyboard->GetDeviceState(sizeof(keyboardState), (LPVOID)&keyboardState); // Same as above, but keyboard
 
+	float speed = 10.0f * time;
+
 	if (keyboardState[DIK_ESCAPE] & 0x80)
 		destroyWindow = true;
 	if (keyboardState[DIK_LEFT] & 0x80 || keyboardState[DIK_A] & 0x80)
 	{
-		rotz -= 1.0f * time;
+		//rotz -= 1.0f * time;
+		moveLeftRight -= speed;
 	}
 	if (keyboardState[DIK_RIGHT] & 0x80 || keyboardState[DIK_D] & 0x80)
 	{
-		rotz += 1.0f * time;
+		//rotz += 1.0f * time;
+		moveLeftRight += speed;
 	}
 	if (keyboardState[DIK_UP] & 0x80 || keyboardState[DIK_W] & 0x80)
 	{
-		rotx += 1.0f * time;
+		//rotx += 1.0f * time;
+		moveBackForward += speed;
 	}
 	if (keyboardState[DIK_DOWN] & 0x80 || keyboardState[DIK_S] & 0x80)
 	{
-		rotx -= 1.0f * time;
+		//rotx -= 1.0f * time;
+		moveBackForward -= speed;
 	}
 	if (mouseCurrState.lX != mouseLastState.lX)
 	{
-		scaleX -= (mouseCurrState.lX * 0.001f);
+		camYaw += mouseCurrState.lX * 0.001f;
 	}
 	if (mouseCurrState.lY != mouseLastState.lY)
 	{
-		scaleY -= (mouseCurrState.lY * 0.001f);
+		camPitch += mouseCurrState.lY * 0.001f;
 	}
+
+	updateCamera(moveLeftRight, moveBackForward, camPitch, camYaw);
+	moveLeftRight = 0.0f;
+	moveBackForward = 0.0f;
+
 
 	if (rotx > 6.28)
 		rotx -= 6.28;

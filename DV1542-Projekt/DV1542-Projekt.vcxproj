@@ -178,6 +178,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Camera.h" />
     <ClInclude Include="Deferred.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="Timer.h" />

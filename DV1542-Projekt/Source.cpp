@@ -215,16 +215,17 @@ void Render()
 	D3D11_MAPPED_SUBRESOURCE dataPtr;
 	gDeviceContext->Map(gTransformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
 	rotationAngle += 0.01; //Increasing the rotation angle with every frame.
-	XMMATRIX rotMatrix = XMMatrixRotationRollPitchYaw(0, rotationAngle, 0);
-	WVP.WorldMatrix = rotMatrix;
+	//XMMATRIX rotMatrix = XMMatrixRotationRollPitchYaw(0, rotationAngle, 0);
+	//WVP.WorldMatrix = rotMatrix;
 	// -------------------------------------------------------------------------------------
 	// Testing input stuff here
 	// -------------------------------------------------------------------------------------
-	XMVECTOR rotzaxis = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	XMVECTOR rotxaxis = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-	Rotationx = XMMatrixRotationAxis(rotxaxis, rotx);
-	Rotationz = XMMatrixRotationAxis(rotzaxis, rotz);
-	WVP.WorldMatrix = Rotationx * Rotationz;
+	//XMVECTOR rotzaxis = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	//XMVECTOR rotxaxis = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+//	Rotationx = XMMatrixRotationAxis(rotxaxis, rotx);
+	//Rotationz = XMMatrixRotationAxis(rotzaxis, rotz);
+	//WVP.WorldMatrix = Rotationx * Rotationz;
+	WVP.ViewMatrix = viewMatrix;
 
 
 
