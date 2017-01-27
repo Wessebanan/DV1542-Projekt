@@ -7,7 +7,7 @@ using namespace DirectX;
 
 XMVECTOR DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 XMVECTOR DefaultRight = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-XMVECTOR camPosition = XMVectorSet(0.0f, 0.0f, -0.0f, 0.0f);
+XMVECTOR camPosition = XMVectorSet(0.0f, 0.0f, -2.0f, 0.0f);
 XMVECTOR camUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 XMVECTOR camForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 XMVECTOR camRight = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);

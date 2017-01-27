@@ -30,6 +30,9 @@ ID3D11GeometryShader* gGeometryShader = nullptr;
 ID3D11Buffer* gTriangleBuffer = nullptr;
 ID3D11Buffer* gTransformBuffer = nullptr;
 
+ID3D11Buffer* gIndexBuffer=nullptr;
+
+
 
 
 struct matrixData {
@@ -66,13 +69,14 @@ void CreateTriangle()
 		0.5f, 0.5f, 0.0f,
 		0.5f, 0.0f, 0.5f,
 
-		0.5f, -0.5f, 1.0f,
+	/*	0.5f, -0.5f, 1.0f,
 		0.0f, 0.0f, 1.0f,
 
 		0.5f, 0.5f, 1.0f,
-		0.5f, 0.0f, 0.5f
+		0.5f, 0.0f, 0.5f*/
 
 	};
+	
 	D3D11_BUFFER_DESC triangleBufferDesc = {};
 	triangleBufferDesc.ByteWidth = sizeof(vertices);
 	triangleBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -86,7 +90,30 @@ void CreateTriangle()
 		MessageBoxA(NULL, "Error creating triangle buffer.", NULL, MB_OK);
 		exit(-1);
 	}
+
+	DWORD indices[] = {
+		0, 1, 2,
+		2, 3, 1,
+		
+	};
+	D3D11_BUFFER_DESC indexBufferDesc = {};
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * 2 * 3;
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA indexData;
+	indexData.pSysMem = indices;
+
+	if (FAILED(gDevice->CreateBuffer(&indexBufferDesc, &indexData, &gIndexBuffer)))
+	{
+		MessageBoxA(NULL, "Error creating index buffer.", NULL, MB_OK);
+		exit(-1);
+	}
 }
+
+
 
 void CreateWVP()
 {
@@ -210,7 +237,7 @@ void Render()
 	UINT32 vertexSize = sizeof(float) * 6;
 	UINT32 offset = 0;
 	gDeviceContext->IASetVertexBuffers(0, 1, &gTriangleBuffer, &vertexSize, &offset);
-
+	gDeviceContext->IASetIndexBuffer(gIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 	// Map constant buffer so that we can write to it.
 	D3D11_MAPPED_SUBRESOURCE dataPtr;
 	gDeviceContext->Map(gTransformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
@@ -252,7 +279,7 @@ void Render()
 	gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	gDeviceContext->IASetInputLayout(gVertexLayout);
 
-	gDeviceContext->Draw(6, 0); //Number of vertices drawn, 4 because it's a trianglestrip.
+	gDeviceContext->DrawIndexed(6, 0, 0); //Number of vertices drawn, 4 because it's a trianglestrip.
 }
 
 
@@ -371,6 +398,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		DIMouse->Unacquire();
 		DirectInput->Release();
 		DestroyWindow(hWnd);
+		gIndexBuffer->Release();
 	}
 
 	// return this part of the WM_QUIT message to Windows
