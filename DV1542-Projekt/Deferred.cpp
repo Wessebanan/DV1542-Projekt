@@ -90,5 +90,27 @@ bool Deferred::Initialize(ID3D11Device * device, ID3D11DeviceContext * devcon)
 		}
 	}		
 	
+	ID3D11Texture2D* depthStencilTex = nullptr;
+	D3D11_TEXTURE2D_DESC depthStencilBufferDesc{};
+	depthStencilBufferDesc.Width = 640;
+	depthStencilBufferDesc.Height = 480;
+	depthStencilBufferDesc.MipLevels = 1;
+	depthStencilBufferDesc.ArraySize = 1;
+	depthStencilBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilBufferDesc.SampleDesc.Count = 1;
+	depthStencilBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthStencilBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+
+	if (FAILED(device->CreateTexture2D(&depthStencilBufferDesc, NULL, &depthStencilTex))) 
+	{
+		result = false;
+	}
+	
+
 	return result;
+}
+
+void Deferred::BindGeometryPass()
+{
+
 }

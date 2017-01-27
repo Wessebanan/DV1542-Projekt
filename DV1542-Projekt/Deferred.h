@@ -20,6 +20,7 @@ public:
 	ID3D11RenderTargetView* GetRenderTargetView(int index);
 	ID3D11ShaderResourceView* GetShaderResourceView(int index);
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* devcon);
+	void BindGeometryPass();
 
 };
 #endif
