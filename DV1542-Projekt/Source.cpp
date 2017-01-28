@@ -5,6 +5,7 @@
 #include <DirectXMath.h>
 #include "InputHandler.h"
 #include "Timer.h"
+#include "Deferred.h"
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 using namespace DirectX;

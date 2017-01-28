@@ -17,6 +17,13 @@ private:
 	ID3D11DepthStencilView* depthStencilView;
 	ID3D11Texture2D* depthStencilBuffer;
 
+	ID3D11VertexShader* vertexShader;
+	ID3D11GeometryShader* geometryShader;
+	ID3D11PixelShader* pixelShaderG;
+	ID3D11PixelShader* pixelShaderL;
+
+
+
 public:
 	Deferred();
 	~Deferred();
@@ -24,10 +31,11 @@ public:
 	ID3D11RenderTargetView* GetRenderTargetView(int index);
 	ID3D11ShaderResourceView* GetShaderResourceView(int index);
 	bool Initialize(ID3D11Device* device, ID3D11DeviceContext* devcon, int texWidth, int texHeight);
-	void BindGeometryPass();
+	void GeometryPass();
 	void SetRenderTargets(ID3D11DeviceContext* devcon);
 	void ClearRenderTargets(ID3D11DeviceContext* devcon);
 
+	void Render();
 	
 };
 #endif

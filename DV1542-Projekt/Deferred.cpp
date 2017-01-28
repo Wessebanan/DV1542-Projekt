@@ -92,7 +92,7 @@ bool Deferred::Initialize(ID3D11Device * device, ID3D11DeviceContext * devcon, i
 		}
 	}		
 	
-	// Creating the depth stencil view
+	// Creating the depth stencil view and the depth stencil buffer.
 	
 	D3D11_TEXTURE2D_DESC depthBufferDesc{};
 	depthBufferDesc.Width = this->texWidth;
@@ -119,6 +119,7 @@ bool Deferred::Initialize(ID3D11Device * device, ID3D11DeviceContext * devcon, i
 		result = false;
 	}	
 	
+	// Creating the viewport.
 	this->viewPort.Width = this->texWidth;
 	this->viewPort.Height = this->texHeight;
 	this->viewPort.MinDepth = 0.0f;
@@ -129,7 +130,7 @@ bool Deferred::Initialize(ID3D11Device * device, ID3D11DeviceContext * devcon, i
 	return result;
 }
 
-void Deferred::BindGeometryPass()
+void Deferred::GeometryPass()
 {
 
 }
