@@ -32,6 +32,8 @@ ID3D11Buffer* gTransformBuffer = nullptr;
 
 ID3D11Buffer* gIndexBuffer=nullptr;
 
+ID3D11DepthStencilView* gDepthStencilView=nullptr;
+ID3D11Texture2D* gDepthStencilBuffer=nullptr;
 
 
 
@@ -44,7 +46,34 @@ struct matrixData {
 matrixData WVP;
 
 float rotationAngle = 0.0f;
+void CreateDepthBuffer()
+{
+	D3D11_TEXTURE2D_DESC depthStencilDesc;
 
+	depthStencilDesc.Width = (float)640;
+	depthStencilDesc.Height = (float)480;
+	depthStencilDesc.MipLevels = 1;
+	depthStencilDesc.ArraySize = 1;
+	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilDesc.SampleDesc.Count = 1;
+	depthStencilDesc.SampleDesc.Quality = 0;
+	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthStencilDesc.CPUAccessFlags = 0;
+	depthStencilDesc.MiscFlags = 0;
+
+	if (FAILED(gDevice->CreateTexture2D(&depthStencilDesc, NULL, &gDepthStencilBuffer)))
+	{
+		MessageBoxA(NULL, "Error creating depth buffer.", NULL, MB_OK);
+		exit(-1);
+	}
+	if (FAILED(gDevice->CreateDepthStencilView(gDepthStencilBuffer, NULL, &gDepthStencilView)))
+	{
+		MessageBoxA(NULL, "Error creating ds view.", NULL, MB_OK);
+		exit(-1);
+	}
+
+}
 void CreateTriangle()
 {
 	struct Vertex
@@ -69,11 +98,17 @@ void CreateTriangle()
 		0.5f, 0.5f, 0.0f,
 		0.5f, 0.0f, 0.5f,
 
-	/*	0.5f, -0.5f, 1.0f,
+		-0.5f, -0.5f, 1.0f,
+		1.0f, 0.0f, 0.0f,
+
+		-0.5f, 0.5f, 1.0f,
+		0.0f, 1.0f, 0.0f,
+
+		0.5f, -0.5f, 1.0f,
 		0.0f, 0.0f, 1.0f,
 
 		0.5f, 0.5f, 1.0f,
-		0.5f, 0.0f, 0.5f*/
+		0.5f, 0.0f, 0.5f,
 
 	};
 	
@@ -94,11 +129,22 @@ void CreateTriangle()
 	DWORD indices[] = {
 		0, 1, 2,
 		2, 3, 1,
+		2,3,6,
+		6,7,3,
+		6,7,4,
+		4,5,7,
+		4,5,0,
+		0,1,5,
+		1,5,3,
+		3,7,5,
+		0,2,4,
+		4,6,2,
+
 		
 	};
 	D3D11_BUFFER_DESC indexBufferDesc = {};
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * 2 * 3;
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * 12 * 3;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
@@ -222,7 +268,7 @@ void Render()
 	// clear the back buffer to a deep blue
 	float clearColor[] = { 0.23f, 0, 0.12f, 1 };
 	gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
-	//gDeviceContext->ClearDepthStencilView(gDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	gDeviceContext->ClearDepthStencilView(gDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	gDeviceContext->VSSetShader(gVertexShader, nullptr, 0);
 	gDeviceContext->HSSetShader(nullptr, nullptr, 0);
@@ -264,7 +310,7 @@ void Render()
 	gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	gDeviceContext->IASetInputLayout(gVertexLayout);
 
-	gDeviceContext->DrawIndexed(6, 0, 0); //Number of vertices drawn, 4 because it's a trianglestrip.
+	gDeviceContext->DrawIndexed(36, 0, 0); //Number of vertices drawn, 4 because it's a trianglestrip.
 }
 
 
@@ -323,6 +369,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 
 	if (hWnd) {
+
+		
+
 		CreateDirect3DContext(hWnd);
 
 		SetViewport();
@@ -336,6 +385,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		StartTimer(); // Starts global timer
 
 		ShowWindow(hWnd, nCmdShow);
+		
 
 		// enter the main loop:
 
@@ -384,6 +434,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		DirectInput->Release();
 		DestroyWindow(hWnd);
 		gIndexBuffer->Release();
+		gDepthStencilBuffer->Release();
+		gDepthStencilView->Release();
 	}
 
 	// return this part of the WM_QUIT message to Windows
@@ -475,12 +527,13 @@ HRESULT CreateDirect3DContext(HWND wndHandle)
 		ID3D11Texture2D* pBackBuffer = nullptr;
 		gSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 
+		CreateDepthBuffer();
 		// use the back buffer address to create the render target
 		gDevice->CreateRenderTargetView(pBackBuffer, NULL, &gBackbufferRTV);
 		pBackBuffer->Release();
 
 		// set the render target as the back buffer
-		gDeviceContext->OMSetRenderTargets(1, &gBackbufferRTV, nullptr);
+		gDeviceContext->OMSetRenderTargets(1, &gBackbufferRTV, gDepthStencilView);
 	}
 	return hr;
 }
