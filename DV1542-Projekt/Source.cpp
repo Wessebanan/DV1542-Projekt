@@ -47,6 +47,7 @@ struct matrixData {
 matrixData WVP;
 
 float rotationAngle = 0.0f;
+
 void CreateDepthBuffer()
 {
 	D3D11_TEXTURE2D_DESC depthStencilDesc;
@@ -75,6 +76,7 @@ void CreateDepthBuffer()
 	}
 
 }
+
 void CreateTriangle()
 {
 	struct Vertex
@@ -159,8 +161,6 @@ void CreateTriangle()
 		exit(-1);
 	}
 }
-
-
 
 void CreateWVP()
 {

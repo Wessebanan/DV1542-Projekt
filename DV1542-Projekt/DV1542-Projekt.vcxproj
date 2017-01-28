@@ -146,6 +146,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="D3D.cpp" />
     <ClCompile Include="Deferred.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -180,6 +181,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
+    <ClInclude Include="D3D.h" />
     <ClInclude Include="Deferred.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="Timer.h" />
