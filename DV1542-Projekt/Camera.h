@@ -5,7 +5,7 @@
 #include <DirectXMath.h>
 using namespace DirectX;
 
-
+// Camera bör nog göras till en klass eventuellt
 
 XMVECTOR DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 XMVECTOR DefaultRight = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);

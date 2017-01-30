@@ -148,6 +148,7 @@
   <ItemGroup>
     <ClCompile Include="D3D.cpp" />
     <ClCompile Include="Deferred.cpp" />
+    <ClCompile Include="NoiseGenerator.cpp" />
     <ClCompile Include="Source.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
