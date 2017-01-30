@@ -84,36 +84,45 @@ void CreateTriangle()
 		float x, y, z;
 		float r, g, b;
 	};
-	Vertex vertices[] =
-	{
+	//Vertex vertices[] =
+	//{
 
 
-		// Kuuube ish
-		-0.5f, -0.5f, 0.0f,
-		1.0f, 0.0f, 0.0f,
+	//	// Kuuube ish
+	//	-0.5f, -0.5f, 0.0f,
+	//	1.0f, 0.0f, 0.0f,
 
-		-0.5f, 0.5f, 0.0f,
-		0.0f, 1.0f, 0.0f,
+	//	-0.5f, 0.5f, 0.0f,
+	//	0.0f, 1.0f, 0.0f,
 
-		0.5f, -0.5f, 0.0f,
-		0.0f, 0.0f, 1.0f,
+	//	0.5f, -0.5f, 0.0f,
+	//	0.0f, 0.0f, 1.0f,
 
-		0.5f, 0.5f, 0.0f,
-		0.5f, 0.0f, 0.5f,
+	//	0.5f, 0.5f, 0.0f,
+	//	0.5f, 0.0f, 0.5f,
 
-		-0.5f, -0.5f, 1.0f,
-		1.0f, 0.0f, 0.0f,
+	//	-0.5f, -0.5f, 1.0f,
+	//	1.0f, 0.0f, 0.0f,
 
-		-0.5f, 0.5f, 1.0f,
-		0.0f, 1.0f, 0.0f,
+	//	-0.5f, 0.5f, 1.0f,
+	//	0.0f, 1.0f, 0.0f,
 
-		0.5f, -0.5f, 1.0f,
-		0.0f, 0.0f, 1.0f,
+	//	0.5f, -0.5f, 1.0f,
+	//	0.0f, 0.0f, 1.0f,
 
-		0.5f, 0.5f, 1.0f,
-		0.5f, 0.0f, 0.5f,
+	//	0.5f, 0.5f, 1.0f,
+	//	0.5f, 0.0f, 0.5f,
 
-	};
+	//};
+
+	Vertex vertices[100];
+	int vertexIncrementer = 0;
+	for (int i = 0; i < 10; i++) {
+		for (int j = 0; j < 10; j++) {
+			vertices[vertexIncrementer] = { (float)j, -4.0f, (float)i, 0.0f, 1.0f, 0.0f };
+			vertexIncrementer++;
+		}
+	}
 	
 	D3D11_BUFFER_DESC triangleBufferDesc = {};
 	triangleBufferDesc.ByteWidth = sizeof(vertices);
@@ -129,25 +138,41 @@ void CreateTriangle()
 		exit(-1);
 	}
 
-	DWORD indices[] = {
-		0, 1, 2,
-		2, 3, 1,
-		2,3,6,
-		6,7,3,
-		6,7,4,
-		4,5,7,
-		4,5,0,
-		0,1,5,
-		1,5,3,
-		3,7,5,
-		0,2,4,
-		4,6,2,
+	//DWORD indices[] = {
+	//	0, 1, 2,
+	//	2, 3, 1,
+	//	2,3,6,
+	//	6,7,3,
+	//	6,7,4,
+	//	4,5,7,
+	//	4,5,0,
+	//	0,1,5,
+	//	1,5,3,
+	//	3,7,5,
+	//	0,2,4,
+	//	4,6,2,
 
-		
-	};
+	//	
+	//};
+
+	DWORD indices[486]; // 6 per quad, 81 quads total
+	int indexIncrementer = 0;
+	for (int i = 0; i < 9; i++) {
+		for (int j = 0; j < 9; j++) {
+			unsigned long curr = i * 10 + j;
+			indices[indexIncrementer] = { curr };
+			indices[indexIncrementer + 1] = { curr + 10 };
+			indices[indexIncrementer + 2] = { curr + 1 };
+			indices[indexIncrementer + 3] = { curr + 1 };
+			indices[indexIncrementer + 4] = { curr + 10 };
+			indices[indexIncrementer + 5] = { curr + 11 };
+			indexIncrementer = indexIncrementer + 6;
+
+		}
+	}
 	D3D11_BUFFER_DESC indexBufferDesc = {};
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * 12 * 3;
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * 486;
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
@@ -308,10 +333,10 @@ void Render()
 	//Set the light position buffer to the fragment shader.
 	//gDeviceContext->PSSetConstantBuffers(1, 1, &gLightBuffer);
 
-	gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	gDeviceContext->IASetInputLayout(gVertexLayout);
 
-	gDeviceContext->DrawIndexed(36, 0, 0); //Number of vertices drawn, 4 because it's a trianglestrip.
+	gDeviceContext->DrawIndexed(486, 0, 0); 
 }
 
 
