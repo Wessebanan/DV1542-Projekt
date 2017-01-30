@@ -1,3 +1,5 @@
+#ifndef CAMERA_H
+#define CAMERA_H
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
@@ -32,3 +34,4 @@ void updateCamera(float leftRight, float backForward, float pitch, float yaw) {
 	
 	viewMatrix = XMMatrixLookAtLH(camPosition, camLookAt, camUp);
 }
+#endif

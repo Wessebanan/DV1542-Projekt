@@ -184,6 +184,7 @@
     <ClInclude Include="D3D.h" />
     <ClInclude Include="Deferred.h" />
     <ClInclude Include="InputHandler.h" />
+    <ClInclude Include="NoiseGenerator.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
