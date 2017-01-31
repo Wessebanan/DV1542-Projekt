@@ -4,6 +4,7 @@
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include "InputHandler.h"
+#include "NoiseGenerator.h"
 #include "Timer.h"
 #include "Deferred.h"
 #pragma comment (lib, "d3d11.lib")
@@ -35,6 +36,8 @@ ID3D11Buffer* gIndexBuffer=nullptr;
 
 ID3D11DepthStencilView* gDepthStencilView=nullptr;
 ID3D11Texture2D* gDepthStencilBuffer=nullptr;
+
+
 
 
 
@@ -191,7 +194,7 @@ void CreateWVP()
 {
 	WVP.WorldMatrix = XMMatrixIdentity();
 	WVP.ViewMatrix = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
-	WVP.ProjMatrix = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 20.0f);
+	WVP.ProjMatrix = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 50.0f);
 
 	D3D11_BUFFER_DESC WVPdesc = {};
 	WVPdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -289,6 +292,43 @@ void SetViewport()
 	
 }
 
+void setHeightMapTexture() {
+	NoiseGenerator noise1(gDevice, 10, 10);
+
+	
+	ID3D11ShaderResourceView* gTextureView = nullptr;
+	ID3D11SamplerState* gSamplerState = nullptr;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC resourceViewDesc;
+	ZeroMemory(&resourceViewDesc, sizeof(resourceViewDesc));
+
+	resourceViewDesc.Format = noise1.getTextureDesc().Format;
+	resourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	resourceViewDesc.Texture2D.MipLevels = noise1.getTextureDesc().MipLevels;
+	resourceViewDesc.Texture2D.MostDetailedMip = 0;
+	HRESULT hr = gDevice->CreateShaderResourceView(noise1.getTexture(), &resourceViewDesc, &gTextureView);
+	if (!SUCCEEDED(hr)) {
+		MessageBox(NULL, L"Something went wrong trying to create the Shader Resource View.", NULL, MB_ICONEXCLAMATION);
+	}
+
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	hr = gDevice->CreateSamplerState(&samplerDesc, &gSamplerState);
+	if (!SUCCEEDED(hr)) {
+		MessageBox(NULL, L"Something went wrong trying to create the Sampler State", NULL, MB_ICONEXCLAMATION);
+	}
+
+	gDeviceContext->PSSetShaderResources(0, 1, &gTextureView);
+	gDeviceContext->PSSetSamplers(0, 1, &gSamplerState);
+}
+
 void Render()
 {
 	// clear the back buffer to a deep blue
@@ -301,6 +341,8 @@ void Render()
 	gDeviceContext->DSSetShader(nullptr, nullptr, 0);
 	gDeviceContext->GSSetShader(gGeometryShader, nullptr, 0);
 	gDeviceContext->PSSetShader(gPixelShader, nullptr, 0);
+
+
 
 	//Set the sampler state and shader resource view to the fragment shader.
 	//gDeviceContext->PSSetSamplers(0, 1, &gSamplerState);
@@ -403,6 +445,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		SetViewport();
 
 		CreateWVP();
+
+		setHeightMapTexture();
 
 		CreateShaders();
 

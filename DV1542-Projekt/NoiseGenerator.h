@@ -22,6 +22,8 @@ public:
 	NoiseGenerator(ID3D11Device* device, int width, int height);
 	~NoiseGenerator();
 	void generateNoise();
+	ID3D11Texture2D* getTexture();
+	D3D11_TEXTURE2D_DESC getTextureDesc();
 
 
 

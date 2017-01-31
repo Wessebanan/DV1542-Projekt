@@ -8,7 +8,7 @@ cbuffer TRANSFORM_BUFFER : register(b0)
 
 struct GS_IN
 {
-	float3 Pos : POSITION;
+	float4 Pos : POSITION;
 	float3 Color : COLOR;
 };
 
@@ -25,7 +25,7 @@ void main( triangle GS_IN input[3],  inout TriangleStream< GS_OUT > output)
 	for (uint i = 0; i < 3; i++)
 	{
 		GS_OUT element;
-		element.Pos = mul(wvp, float4(input[i].Pos, 1.0f));
+		element.Pos = mul(wvp, input[i].Pos);
 		element.Color = input[i].Color;
 		output.Append(element);
 	}
