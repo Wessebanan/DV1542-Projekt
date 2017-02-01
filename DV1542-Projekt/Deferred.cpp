@@ -48,6 +48,7 @@ void Deferred::CreateShaders()
 	};
 
 	this->direct3D.getDevice()->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &this->vertexLayout);
+	
 	// we do not need anymore this COM object, so we release it.
 	pVS->Release();
 
@@ -200,10 +201,10 @@ bool Deferred::Initialize()
 
 void Deferred::GeometryPass()
 {
-	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
-	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);
-
+	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
+	this->SetRenderTargets();
 	this->ClearRenderTargets();
+
 
 
 
