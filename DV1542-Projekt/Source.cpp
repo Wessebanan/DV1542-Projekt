@@ -325,8 +325,8 @@ void setHeightMapTexture() {
 		MessageBox(NULL, L"Something went wrong trying to create the Sampler State", NULL, MB_ICONEXCLAMATION);
 	}
 
-	gDeviceContext->PSSetShaderResources(0, 1, &gTextureView);
-	gDeviceContext->PSSetSamplers(0, 1, &gSamplerState);
+	gDeviceContext->VSSetShaderResources(0, 1, &gTextureView);
+	gDeviceContext->VSSetSamplers(0, 1, &gSamplerState);
 }
 
 void Render()
