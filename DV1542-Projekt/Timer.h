@@ -1,3 +1,5 @@
+#ifndef TIMER_H
+#define TIMER_H
 #include <Windows.h>
 
 double countsPerSecond = 0.0;
@@ -41,3 +43,5 @@ double GetFrameTime()
 
 	return float(tickCount) / countsPerSecond;
 }
+
+#endif

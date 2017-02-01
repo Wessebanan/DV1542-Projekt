@@ -1,3 +1,5 @@
+#ifndef INPUTHANDLER_H
+#define INPUTHANDLER_H
 #include <windows.h>    
 #include <windowsx.h>
 #include <d3d11.h>
@@ -89,6 +91,12 @@ void DetectInput(double time) {
 		camPitch += mouseCurrState.lY * 0.001f;
 	}
 
+	if (camPitch > 1.57f) {
+		camPitch = 1.57f;
+	}
+	else if (camPitch < -1.57f) {
+		camPitch = -1.57f;
+	}
 	updateCamera(moveLeftRight, moveBackForward, camPitch, camYaw);
 	moveLeftRight = 0.0f;
 	moveBackForward = 0.0f;
@@ -109,3 +117,4 @@ void DetectInput(double time) {
 	return;
 
 }
+#endif

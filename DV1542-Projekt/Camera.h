@@ -1,9 +1,11 @@
+#ifndef CAMERA_H
+#define CAMERA_H
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 using namespace DirectX;
 
-
+// Camera bör nog göras till en klass eventuellt
 
 XMVECTOR DefaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 XMVECTOR DefaultRight = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
@@ -32,3 +34,4 @@ void updateCamera(float leftRight, float backForward, float pitch, float yaw) {
 	
 	viewMatrix = XMMatrixLookAtLH(camPosition, camLookAt, camUp);
 }
+#endif
