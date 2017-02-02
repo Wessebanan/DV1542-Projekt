@@ -9,7 +9,7 @@ struct PS_IN {
 
 float4 main(PS_IN input) : SV_TARGET
 {
-	float3 lightPos = {0.0f, 4.0f, -10.0f};
+	float3 lightPos = {50.0f, 20.0f, 50.0f};
 	float3 lightVec = lightPos - input.WPos;
 	float brightness = saturate(dot(normalize(lightVec), input.Nor));
 	return float4(input.Color * brightness, 1.0f);
