@@ -9,6 +9,17 @@ Deferred::Deferred(HINSTANCE hInstance) :
 		this->renderTargetViews[i] = nullptr;
 		this->shaderResourceViews[i] = nullptr;
 	}
+	this->depthStencilBuffer = nullptr;
+	this->depthStencilView = nullptr;
+	this->vertexLayout = nullptr;
+	this->vertexShader = nullptr;
+	this->geometryShader = nullptr;
+	this->pixelShaderG = nullptr;
+	this->pixelShaderL = nullptr;
+	this->samplerState = nullptr;
+
+	this->Initialize();
+	this->CreateShaders();
 }
 
 Deferred::~Deferred()
@@ -19,6 +30,14 @@ Deferred::~Deferred()
 		this->renderTargetViews[i]->Release();
 		this->shaderResourceViews[i]->Release();
 	}
+	this->depthStencilBuffer->Release();
+	this->depthStencilView->Release();
+	this->vertexLayout->Release();
+	this->vertexShader->Release();
+	this->geometryShader->Release();
+	this->pixelShaderG->Release();
+	this->pixelShaderL->Release();
+	this->samplerState->Release();
 }
 
 void Deferred::CreateShaders()
@@ -55,7 +74,7 @@ void Deferred::CreateShaders()
 	//create pixel shader
 	ID3DBlob* pPS = nullptr;
 	D3DCompileFromFile(
-		L"PixelShader.hlsl", // filename
+		L"PixelShaderGeometry.hlsl", // filename
 		nullptr,		// optional macros
 		nullptr,		// optional include files
 		"main",		// entry point
@@ -88,6 +107,22 @@ void Deferred::CreateShaders()
 
 	this->direct3D.getDevice()->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &this->geometryShader);
 	pGS->Release();
+
+	ID3DBlob* pPSL = nullptr;
+
+	D3DCompileFromFile(
+		L"PixelShaderLight.hlsl",
+		nullptr,
+		nullptr,
+		"main",
+		"ps_5_0",
+		0,
+		0,
+		&pPSL,
+		nullptr
+	);
+
+	this->direct3D.getDevice()->CreatePixelShader(pPSL->GetBufferPointer(), pPSL->GetBufferSize(), nullptr, &this->pixelShaderL);
 }
 
 ID3D11Texture2D * Deferred::GetTexture(int index)
@@ -112,6 +147,21 @@ bool Deferred::Initialize()
 	D3D11_RENDER_TARGET_VIEW_DESC RTviewDesc{};
 	D3D11_SHADER_RESOURCE_VIEW_DESC SRviewDesc{};
 
+	D3D11_SAMPLER_DESC sDesc{};
+	sDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT; //Point sampling for min, mag and mip.
+
+	sDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP; //Doesn't really matter because
+	sDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP; //the range of the texcoords is
+	sDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP; //[0;1] anyway.
+
+	sDesc.MaxAnisotropy = 1;
+	sDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	sDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	if (!this->direct3D.getDevice()->CreateSamplerState(&sDesc, &this->samplerState))
+	{
+		result = false;
+	}
 	// Creating the textures.
 	texDesc.Width = this->window.GetWidth();
 	texDesc.Height = this->window.GetHeight();
@@ -196,6 +246,8 @@ bool Deferred::Initialize()
 
 	this->CreateShaders();
 
+
+
 	return result;
 }
 
@@ -207,7 +259,7 @@ void Deferred::GeometryPass()
 	this->direct3D.getDevCon()->VSSetShader(this->vertexShader, nullptr, 0);
 	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderG, nullptr, 0);
 	this->direct3D.getDevCon()->GSSetShader(this->geometryShader, nullptr, 0);
-	
+	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);
 
 }
 
@@ -216,11 +268,12 @@ void Deferred::LightPass()
 	float clearColor[] = { 0,0,0,0 };
 	this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), this->depthStencilView);
 	this->direct3D.getDevCon()->ClearRenderTargetView(*this->direct3D.getBackBufferRTV(), clearColor);
-
+	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);
 	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderL, nullptr, 0);
 	this->direct3D.getDevCon()->GSGetShader(&this->geometryShader, nullptr, 0);
 	this->direct3D.getDevCon()->VSSetShader(this->vertexShader, nullptr, 0);
+	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);
 }
 
 void Deferred::SetRenderTargets()
