@@ -4,6 +4,7 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
+#include <string>
 
 using namespace DirectX;
 
@@ -22,6 +23,7 @@ public:
 	NoiseGenerator(ID3D11Device* device, int width, int height);
 	~NoiseGenerator();
 	void generateNoise();
+	void loadHeightmap(std::wstring fileName, int heightmapWidth, int heightmapHeight);
 	ID3D11Texture2D* getTexture();
 	D3D11_TEXTURE2D_DESC getTextureDesc();
 

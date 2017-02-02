@@ -19,10 +19,10 @@ VS_OUT main(VS_IN input)
 {
 	VS_OUT output = (VS_OUT)0;
 
-	float3 s = heightMap.SampleLevel(sampAni, input.Pos.xz / 10.0f,0);
+	float3 s = heightMap.SampleLevel(sampAni, input.Pos.xz / 100.0f,0);
 
 	
-	output.Pos = float4(input.Pos.x, input.Pos.y + 2.0f * s.r, input.Pos.z, 1.0f);
+	output.Pos = float4(input.Pos.x, input.Pos.y + 10.0f * s.r, input.Pos.z, 1.0f);
 	output.Color = input.Color;
 
 	return output;
