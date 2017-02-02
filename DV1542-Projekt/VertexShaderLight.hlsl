@@ -1,5 +1,9 @@
-
-
+cbuffer TRANSFORM_BUFFER : register(b0)
+{
+	matrix world;
+	matrix view;
+	matrix proj;
+}
 struct VS_IN
 {
 	float3 Pos : POSITION;
@@ -8,6 +12,7 @@ struct VS_IN
 
 float4 main(VS_IN input) : SV_POSITION
 {
-	float4 output = (input.Pos, 1);
+	matrix wvp = mul(proj, mul(view, world));
+	float4 output = mul(wvp, float4(input.Pos, 1));
 	return output;
 }

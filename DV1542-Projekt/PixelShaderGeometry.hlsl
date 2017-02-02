@@ -17,9 +17,9 @@ struct PS_OUT
 PS_OUT main(PS_IN input)
 {
 	PS_OUT output = (PS_OUT)0;
-	output.normal = (input.Nor, 0);
-	output.diffuse = (input.Color, 1);
-	output.specular = (1.0f, 1.0f, 1.0f, 1.0f);
-	output.position = (input.WPos, 1);
+	output.normal = float4(input.Nor, 0);
+	output.diffuse = float4(input.Color, 1);
+	output.specular = float4(1.0f, 1.0f, 1.0f, 1.0f);
+	output.position = float4(input.WPos, 1);
 	return output;
 }

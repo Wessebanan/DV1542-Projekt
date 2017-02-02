@@ -1,4 +1,5 @@
 #include "Deferred.h"
+//#include "InputHandler.h"
 
 Deferred::Deferred(HINSTANCE hInstance) :
 	window(hInstance)
@@ -20,6 +21,10 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->transformBuffer = nullptr;
 
 	this->Initialize();
+
+	this->WVP.world = XMMatrixScaling(1.5f, 1.0f, 1.5f);
+	this->WVP.view = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
+	this->WVP.proj = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 200.0f);
 }
 
 Deferred::~Deferred()
@@ -39,6 +44,7 @@ Deferred::~Deferred()
 	this->pixelShaderG->Release();
 	this->pixelShaderL->Release();
 	this->samplerState->Release();
+	this->transformBuffer->Release();
 }
 
 void Deferred::CreateShaders()
@@ -271,42 +277,71 @@ bool Deferred::Initialize()
 	return result;
 }
 
-void Deferred::GeometryPass()
+void Deferred::GeometryPass(XMMATRIX viewMatrix)
 {
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
-	this->SetRenderTargets();
-	this->ClearRenderTargets();
+	this->SetRenderTargets(); //Setting the g-buffer textures as render targets to write to them.
+	this->ClearRenderTargets(); //Clearing the render targets as you should.
+
+	//Setting the correct shaders for the geometry pass.
 	this->direct3D.getDevCon()->VSSetShader(this->vertexShader, nullptr, 0);
 	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderG, nullptr, 0);
 	this->direct3D.getDevCon()->GSSetShader(this->geometryShader, nullptr, 0);
+
+	//Setting a generic sampler for sampling whatever needs to be sampled.
 	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);
 
+	//Setting the matrices to the transformBuffer with the relevant changes.
+	D3D11_MAPPED_SUBRESOURCE dataPtr;
+	this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+
+	//this->WVP.view = viewMatrix; 								 
+								 
+	memcpy(dataPtr.pData, &WVP, sizeof(matrixData));
+
+	this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);
+
+	this->direct3D.getDevCon()->GSSetConstantBuffers(0, 1, &this->transformBuffer);
 }
 
 void Deferred::LightPass()
 {
 	float clearColor[] = { 0,0,0,0 };
+	//Setting the back buffer as the sole render target.
 	this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), this->depthStencilView);
 	this->direct3D.getDevCon()->ClearRenderTargetView(*this->direct3D.getBackBufferRTV(), clearColor);
-	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
+	
+	//Setting the g-buffer textures as shader resources so they can be sampled in the PS.
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);
+	//Setting the shaders for the light pas, no GS necessary.
 	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderL, nullptr, 0);
 	this->direct3D.getDevCon()->GSGetShader(nullptr, nullptr, 0);
 	this->direct3D.getDevCon()->VSSetShader(this->vertexShaderLight, nullptr, 0);
-	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);
+
+
+	/*D3D11_MAPPED_SUBRESOURCE dataPtr;
+	this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+
+	memcpy(dataPtr.pData, &WVP, sizeof(matrixData));
+
+	this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);*/
+
+	//Setting the transformBuffer to the vertex shader as it will be used there.
+	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);
+	
 }
 
 void Deferred::SetRenderTargets()
 {
-	// Bind the geometry render target views and depth stencil buffer to the output render pipeline.
+	//Sets the g-buffer textures as the render targets so they can be written to.
 	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);
-
+	
 	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
 }
 
 void Deferred::ClearRenderTargets()
 {
-	float clearColor[] = { 0,0,0,0 }; //Clear color is black.
+	float clearColor[] = { 0,0,0,0 }; 
 
 	for (int i = 0; i < BUFFER_COUNT; i++)
 	{
@@ -319,7 +354,7 @@ void Deferred::ClearRenderTargets()
 void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int numIndices)
 {
 	if (!(vertexBuffer == nullptr))
-	{
+	{ 
 		UINT32 vertexSize = sizeof(float) * 6;
 		UINT32 offset = 0;
 		this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
@@ -328,7 +363,7 @@ void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int
 	}
 }
 
-void Deferred::createTransformBuffer(XMMATRIX world, XMMATRIX view, XMMATRIX proj)
+void Deferred::createTransformBuffer()
 {
 	D3D11_BUFFER_DESC WVPdesc = {};
 	WVPdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;

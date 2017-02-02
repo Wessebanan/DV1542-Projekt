@@ -1,5 +1,4 @@
-#ifndef DEFERRED_H
-#define DEFERRED_H
+#pragma once
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
@@ -8,7 +7,8 @@
 using namespace DirectX;
 const int BUFFER_COUNT = 4;
 
-class Deferred {
+class Deferred 
+{
 private:
 	Window window;
 	D3D direct3D;
@@ -31,22 +31,29 @@ private:
 
 	ID3D11SamplerState* samplerState;
 	ID3D11Buffer* transformBuffer;
+	struct matrixData
+	{
+		XMMATRIX world;
+		XMMATRIX view;
+		XMMATRIX proj;
+	};
+	matrixData WVP;
 
 public:
 	Deferred(HINSTANCE hInstance);
 	~Deferred();
+
 	void CreateShaders();
 	ID3D11Texture2D* GetTexture(int index);
 	ID3D11RenderTargetView* GetRenderTargetView(int index);
 	ID3D11ShaderResourceView* GetShaderResourceView(int index);
 	bool Initialize();
-	void GeometryPass();
+	void GeometryPass(XMMATRIX viewMatrix);
 	void LightPass();
 	void SetRenderTargets();
 	void ClearRenderTargets();
 
 	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices);
 
-	void createTransformBuffer(XMMATRIX world, XMMATRIX view, XMMATRIX proj);
+	void createTransformBuffer();
 };
-#endif

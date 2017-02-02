@@ -438,7 +438,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 
 	if (hWnd) {
-
 		
 
 		CreateDirect3DContext(hWnd);
@@ -456,7 +455,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		StartTimer(); // Starts global timer
 
 		ShowWindow(hWnd, nCmdShow);
-		
+
+		Deferred def(hInstance);
 
 		// enter the main loop:
 
