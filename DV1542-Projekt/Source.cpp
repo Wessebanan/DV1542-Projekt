@@ -122,7 +122,7 @@ void CreateTriangle()
 	int vertexIncrementer = 0;
 	for (int i = 0; i < 100; i++) {
 		for (int j = 0; j < 100; j++) {
-			vertices[vertexIncrementer] = { (float)j, -10.0f, (float)i, 0.0f, 1.0f, 0.0f };
+			vertices[vertexIncrementer] = { (float)j, -20.0f, (float)i, 0.0f, 1.0f, 0.0f };
 			vertexIncrementer++;
 		}
 	}
@@ -192,9 +192,9 @@ void CreateTriangle()
 
 void CreateWVP()
 {
-	WVP.WorldMatrix = XMMatrixIdentity();
+	WVP.WorldMatrix = XMMatrixScaling(1.5f, 1.0f, 1.5f);
 	WVP.ViewMatrix = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
-	WVP.ProjMatrix = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 50.0f);
+	WVP.ProjMatrix = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 200.0f);
 
 	D3D11_BUFFER_DESC WVPdesc = {};
 	WVPdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -294,7 +294,7 @@ void SetViewport()
 
 void setHeightMapTexture() {
 	NoiseGenerator noise1(gDevice, 255, 255);
-	noise1.loadHeightmap(L"TestMap1.RAW", 255, 255);
+	noise1.loadHeightmap(L"TestMap2.RAW", 255, 255);
 	
 	
 	ID3D11ShaderResourceView* gTextureView = nullptr;
@@ -333,7 +333,7 @@ void setHeightMapTexture() {
 void Render()
 {
 	// clear the back buffer to a deep blue
-	float clearColor[] = { 0.23f, 0, 0.12f, 1 };
+	float clearColor[] = { 0.0f, 0.749f, 1.0f, 1 };
 	gDeviceContext->ClearRenderTargetView(gBackbufferRTV, clearColor);
 	gDeviceContext->ClearDepthStencilView(gDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
