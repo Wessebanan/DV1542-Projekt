@@ -29,6 +29,7 @@ float scaleY = 1.0f;
 bool destroyWindow = false;
 float moveLeftRight = 0.0f;
 float moveBackForward = 0.0f;
+float moveUpDown = 0.0f;
 
 float camYaw = 0.0f;
 float camPitch = 0.0f;
@@ -82,6 +83,12 @@ void DetectInput(double time) {
 		//rotx -= 1.0f * time;
 		moveBackForward -= speed;
 	}
+	if (keyboardState[DIK_SPACE] & 0x80) {
+		moveUpDown += speed;
+	}
+	if (keyboardState[DIK_X] & 0x80) {
+		moveUpDown -= speed;
+	}
 	if (mouseCurrState.lX != mouseLastState.lX)
 	{
 		camYaw += mouseCurrState.lX * 0.001f;
@@ -97,9 +104,10 @@ void DetectInput(double time) {
 	else if (camPitch < -1.57f) {
 		camPitch = -1.57f;
 	}
-	updateCamera(moveLeftRight, moveBackForward, camPitch, camYaw);
+	updateCamera(moveLeftRight, moveBackForward, moveUpDown, camPitch, camYaw);
 	moveLeftRight = 0.0f;
 	moveBackForward = 0.0f;
+	moveUpDown = 0.0f;
 
 
 	if (rotx > 6.28)

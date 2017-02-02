@@ -122,7 +122,7 @@ void CreateTriangle()
 	int vertexIncrementer = 0;
 	for (int i = 0; i < 100; i++) {
 		for (int j = 0; j < 100; j++) {
-			vertices[vertexIncrementer] = { (float)j, -20.0f, (float)i, 0.0f, 1.0f, 0.0f };
+			vertices[vertexIncrementer] = { (float)j, -20.0f, (float)i, 0.121f, 0.5411f, 0.0745f };
 			vertexIncrementer++;
 		}
 	}
