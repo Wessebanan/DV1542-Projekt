@@ -204,10 +204,23 @@ void Deferred::GeometryPass()
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
 	this->SetRenderTargets();
 	this->ClearRenderTargets();
+	this->direct3D.getDevCon()->VSSetShader(this->vertexShader, nullptr, 0);
+	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderG, nullptr, 0);
+	this->direct3D.getDevCon()->GSSetShader(this->geometryShader, nullptr, 0);
+	
 
+}
 
+void Deferred::LightPass()
+{
+	float clearColor[] = { 0,0,0,0 };
+	this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), this->depthStencilView);
+	this->direct3D.getDevCon()->ClearRenderTargetView(*this->direct3D.getBackBufferRTV(), clearColor);
 
-
+	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);
+	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderL, nullptr, 0);
+	this->direct3D.getDevCon()->GSGetShader(&this->geometryShader, nullptr, 0);
+	this->direct3D.getDevCon()->VSSetShader(this->vertexShader, nullptr, 0);
 }
 
 void Deferred::SetRenderTargets()
@@ -227,5 +240,17 @@ void Deferred::ClearRenderTargets()
 		this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[i], clearColor);
 	}
 
-	this->direct3D.getDevCon()->ClearDepthStencilView(this->depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	this->direct3D.getDevCon()->ClearDepthStencilView(this->depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+}
+
+void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int numIndices)
+{
+	if (!(vertexBuffer == nullptr))
+	{
+		UINT32 vertexSize = sizeof(float) * 6;
+		UINT32 offset = 0;
+		this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
+		this->direct3D.getDevCon()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
+		this->direct3D.getDevCon()->DrawIndexed(numIndices, 0, 0);
+	}
 }

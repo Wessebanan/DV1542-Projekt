@@ -40,6 +40,6 @@ public:
 	void SetRenderTargets();
 	void ClearRenderTargets();
 
-	
+	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices);
 };
 #endif

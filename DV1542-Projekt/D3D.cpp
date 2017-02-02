@@ -8,7 +8,7 @@ D3D::D3D()
 D3D::~D3D()
 {
 	this->swapChain->Release();
-	this->renderTargetView->Release();
+	this->backBufferRTV->Release();
 
 	if (this->devCon)
 	{
@@ -34,9 +34,9 @@ IDXGISwapChain * D3D::getSwapChain() const
 	return this->swapChain;
 }
 
-ID3D11RenderTargetView * D3D::getRenderTarget() const
+ID3D11RenderTargetView ** D3D::getBackBufferRTV()
 {
-	return this->renderTargetView;
+	return &this->backBufferRTV;
 }
 
 bool D3D::Initialize(int width, int height, HWND window)
@@ -77,10 +77,10 @@ bool D3D::Initialize(int width, int height, HWND window)
 		this->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer);
 
 		// use the back buffer address to create the render target
-		this->device->CreateRenderTargetView(pBackBuffer, NULL, &this->renderTargetView);
+		this->device->CreateRenderTargetView(pBackBuffer, NULL, &this->backBufferRTV);
 		pBackBuffer->Release();
 		
 	}
-	return hr;
+	return SUCCEEDED(hr);
 }
 

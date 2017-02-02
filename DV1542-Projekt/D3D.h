@@ -10,7 +10,7 @@ private:
 	ID3D11Device* device;
 	ID3D11DeviceContext* devCon;
 	IDXGISwapChain* swapChain;
-	ID3D11RenderTargetView* renderTargetView;
+	ID3D11RenderTargetView* backBufferRTV;
 public:
 	D3D();
 	~D3D();
@@ -18,7 +18,7 @@ public:
 	ID3D11Device* getDevice()const;
 	ID3D11DeviceContext* getDevCon()const;
 	IDXGISwapChain* getSwapChain()const;
-	ID3D11RenderTargetView* getRenderTarget()const;
+	ID3D11RenderTargetView** getBackBufferRTV();
 
 	bool Initialize(int width, int height, HWND window);
 };
