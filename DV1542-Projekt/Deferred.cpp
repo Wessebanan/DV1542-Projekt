@@ -17,9 +17,9 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->pixelShaderG = nullptr;
 	this->pixelShaderL = nullptr;
 	this->samplerState = nullptr;
+	this->transformBuffer = nullptr;
 
 	this->Initialize();
-	this->CreateShaders();
 }
 
 Deferred::~Deferred()
@@ -34,6 +34,7 @@ Deferred::~Deferred()
 	this->depthStencilView->Release();
 	this->vertexLayout->Release();
 	this->vertexShader->Release();
+	this->vertexShaderLight->Release();
 	this->geometryShader->Release();
 	this->pixelShaderG->Release();
 	this->pixelShaderL->Release();
@@ -123,6 +124,25 @@ void Deferred::CreateShaders()
 	);
 
 	this->direct3D.getDevice()->CreatePixelShader(pPSL->GetBufferPointer(), pPSL->GetBufferSize(), nullptr, &this->pixelShaderL);
+	pPSL->Release();
+
+	ID3DBlob* pVSL = nullptr;
+
+	D3DCompileFromFile(
+		L"VertexShaderLight.hlsl",
+		nullptr,
+		nullptr,
+		"main",
+		"ps_5_0",
+		0,
+		0,
+		&pVSL,
+		nullptr
+	);
+
+	this->direct3D.getDevice()->CreateVertexShader(pVSL->GetBufferPointer(), pVSL->GetBufferSize(), nullptr, &this->vertexShaderLight);
+	pVSL->Release();
+	
 }
 
 ID3D11Texture2D * Deferred::GetTexture(int index)
@@ -158,7 +178,7 @@ bool Deferred::Initialize()
 	sDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 	sDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	if (!this->direct3D.getDevice()->CreateSamplerState(&sDesc, &this->samplerState))
+	if (FAILED(this->direct3D.getDevice()->CreateSamplerState(&sDesc, &this->samplerState)))
 	{
 		result = false;
 	}
@@ -271,8 +291,8 @@ void Deferred::LightPass()
 	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);
 	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderL, nullptr, 0);
-	this->direct3D.getDevCon()->GSGetShader(&this->geometryShader, nullptr, 0);
-	this->direct3D.getDevCon()->VSSetShader(this->vertexShader, nullptr, 0);
+	this->direct3D.getDevCon()->GSGetShader(nullptr, nullptr, 0);
+	this->direct3D.getDevCon()->VSSetShader(this->vertexShaderLight, nullptr, 0);
 	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);
 }
 
@@ -305,5 +325,20 @@ void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int
 		this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
 		this->direct3D.getDevCon()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		this->direct3D.getDevCon()->DrawIndexed(numIndices, 0, 0);
+	}
+}
+
+void Deferred::createTransformBuffer(XMMATRIX world, XMMATRIX view, XMMATRIX proj)
+{
+	D3D11_BUFFER_DESC WVPdesc = {};
+	WVPdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	WVPdesc.ByteWidth = sizeof(XMMATRIX) * 3;
+	WVPdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	WVPdesc.Usage = D3D11_USAGE_DYNAMIC;
+
+	if (FAILED(this->direct3D.getDevice()->CreateBuffer(&WVPdesc, nullptr, &this->transformBuffer)))
+	{
+		MessageBoxA(NULL, "Error creating transform buffer.", NULL, MB_OK);
+		exit(-1);
 	}
 }

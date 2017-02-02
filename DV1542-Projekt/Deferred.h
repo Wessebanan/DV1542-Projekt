@@ -2,9 +2,10 @@
 #define DEFERRED_H
 #include <d3d11.h>
 #include <d3dcompiler.h>
+#include <DirectXMath.h>
 #include "Window.h"
 #include "D3D.h"
-
+using namespace DirectX;
 const int BUFFER_COUNT = 4;
 
 class Deferred {
@@ -23,11 +24,13 @@ private:
 
 	ID3D11InputLayout* vertexLayout;
 	ID3D11VertexShader* vertexShader;
+	ID3D11VertexShader* vertexShaderLight;
 	ID3D11GeometryShader* geometryShader;
 	ID3D11PixelShader* pixelShaderG;
 	ID3D11PixelShader* pixelShaderL;
 
 	ID3D11SamplerState* samplerState;
+	ID3D11Buffer* transformBuffer;
 
 public:
 	Deferred(HINSTANCE hInstance);
@@ -43,5 +46,7 @@ public:
 	void ClearRenderTargets();
 
 	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices);
+
+	void createTransformBuffer(XMMATRIX world, XMMATRIX view, XMMATRIX proj);
 };
 #endif
