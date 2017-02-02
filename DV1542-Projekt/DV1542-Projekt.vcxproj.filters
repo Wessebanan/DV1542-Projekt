@@ -35,6 +35,8 @@
     <FxCompile Include="PixelShader.hlsl" />
     <FxCompile Include="GeometryShader.hlsl" />
     <FxCompile Include="VertexShader.hlsl" />
+    <FxCompile Include="PixelShaderGeometry.hlsl" />
+    <FxCompile Include="PixelShaderLight.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Deferred.h">

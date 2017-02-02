@@ -27,6 +27,8 @@ private:
 	ID3D11PixelShader* pixelShaderG;
 	ID3D11PixelShader* pixelShaderL;
 
+	ID3D11SamplerState* samplerState;
+
 public:
 	Deferred(HINSTANCE hInstance);
 	~Deferred();
