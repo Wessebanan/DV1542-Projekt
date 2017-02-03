@@ -7,6 +7,8 @@
 #include "NoiseGenerator.h"
 #include "Timer.h"
 #include "Deferred.h"
+#include<string>
+#include<fstream>
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 using namespace DirectX;
@@ -47,6 +49,11 @@ struct matrixData {
 matrixData WVP;
 
 float rotationAngle = 0.0f;
+
+void ParseObj(std::string filePath)
+{
+
+}
 
 void RenderDeferred(Deferred def) 
 {
@@ -485,10 +492,10 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			else {
 				DetectInput(GetFrameTime());
 				
-				//RenderDeferred(def); <-- Funkar inte pga problem med någonting i lightpass.
+				RenderDeferred(def); //<-- Funkar inte pga problem med någonting i lightpass.
 
-				Render();
-				gSwapChain->Present(1, 0);
+				/*Render();
+				gSwapChain->Present(1, 0);*/
 				// WEEEEW GAME CODE HERE LET'S GO
 			}
 		}

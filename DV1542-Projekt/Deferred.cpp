@@ -22,8 +22,7 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->samplerState = nullptr;
 	this->transformBuffer = nullptr;
 
-	this->Initialize();
-	
+	this->Initialize();	
 
 	this->WVP.world = XMMatrixScaling(1.5f, 1.0f, 1.5f);
 	this->WVP.view = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
@@ -334,10 +333,10 @@ void Deferred::LightPass()
 
 	//Setting the same sampler as the geometry pass, binding the g-buffer textures as shader resources. VS gets transformbuffer.
 	
-	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);	// Någon av dessa tre throwar exception för
-	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);		// access violation reading location 0x00000... (beroende på ordningen i vilken de exekveras)
-	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);				// Betyder att något försöker skriva på en nullptr men jag kan inte lista ut vad :/
-	
+	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);				// Någon av dessa tre throwar exception för
+	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);	// access violation reading location 0x00000... (beroende på ordningen i vilken de exekveras)
+	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);		// Betyder att något försöker skriva på en nullptr men jag kan inte lista ut vad :/
+					
 
 	this->direct3D.getDevCon()->Draw(0, 0);
 	this->direct3D.getSwapChain()->Present(1, 0);

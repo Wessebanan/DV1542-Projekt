@@ -36,31 +36,7 @@ LRESULT	CALLBACK Window::WindowProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM l
 bool Window::Initialize()
 {
 	bool result = true;
-	//WNDCLASSEX wcex{};
-	//wcex.cbSize = sizeof(WNDCLASSEX);
-	//wcex.style = CS_HREDRAW | CS_VREDRAW; //Redraws the entire window if size changes.
-	//wcex.lpfnWndProc = WindowProc;
-	//wcex.hInstance = hInstance;
-	//wcex.lpszClassName = L"BTH_D3D_DEMO";
-	//if (!RegisterClassEx(&wcex))
-	//	result = false;
-
-	//RECT rc = { 0, 0, 640, 480 };
-	//AdjustWindowRect(&rc, WS_OVERLAPPEDWINDOW, FALSE);
-
-	//this->window = CreateWindow(
-	//	L"BTH_D3D_DEMO",
-	//	L"BTH Direct3D Demo",
-	//	WS_OVERLAPPEDWINDOW,
-	//	CW_USEDEFAULT,
-	//	CW_USEDEFAULT,
-	//	rc.right - rc.left,
-	//	rc.bottom - rc.top,
-	//	nullptr,
-	//	nullptr,
-	//	this->hInstance,
-	//	nullptr);
-
+	
 	WNDCLASSEX wc;
 
 	// clear out the window class for use
