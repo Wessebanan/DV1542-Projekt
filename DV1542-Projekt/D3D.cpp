@@ -1,8 +1,8 @@
 #include "D3D.h"
-
+#include <dxgi1_2.h>
 D3D::D3D()
 {
-
+	
 }
 
 D3D::~D3D()
@@ -69,6 +69,12 @@ bool D3D::Initialize(int width, int height, HWND window)
 		&this->device,
 		NULL,
 		&this->devCon);
+
+	if (FAILED(hr))
+	{
+		MessageBoxA(NULL, "Error creating device.", nullptr, MB_OK);
+		exit(-1);
+	}
 
 	if (SUCCEEDED(hr))
 	{

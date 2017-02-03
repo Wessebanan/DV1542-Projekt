@@ -4,6 +4,8 @@
 Deferred::Deferred(HINSTANCE hInstance) :
 	window(hInstance)
 {	
+	this->window.Initialize();
+	this->direct3D.Initialize(640, 480, this->window.GetWindow());
 	for (int i = 0; i < BUFFER_COUNT; i++) 
 	{
 		this->textures[i] = nullptr;
@@ -21,6 +23,7 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->transformBuffer = nullptr;
 
 	this->Initialize();
+	
 
 	this->WVP.world = XMMatrixScaling(1.5f, 1.0f, 1.5f);
 	this->WVP.view = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
@@ -44,7 +47,10 @@ Deferred::~Deferred()
 	this->pixelShaderG->Release();
 	this->pixelShaderL->Release();
 	this->samplerState->Release();
-	this->transformBuffer->Release();
+	if (this->transformBuffer != nullptr)
+	{
+		this->transformBuffer->Release();
+	}
 }
 
 void Deferred::CreateShaders()
@@ -133,18 +139,18 @@ void Deferred::CreateShaders()
 	pPSL->Release();
 
 	ID3DBlob* pVSL = nullptr;
-
+	
 	D3DCompileFromFile(
 		L"VertexShaderLight.hlsl",
 		nullptr,
 		nullptr,
 		"main",
-		"ps_5_0",
+		"vs_5_0",
 		0,
 		0,
 		&pVSL,
 		nullptr
-	);
+	);	
 
 	this->direct3D.getDevice()->CreateVertexShader(pVSL->GetBufferPointer(), pVSL->GetBufferSize(), nullptr, &this->vertexShaderLight);
 	pVSL->Release();
@@ -272,7 +278,7 @@ bool Deferred::Initialize()
 
 	this->CreateShaders();
 
-
+	this->CreateTransformBuffer();
 
 	return result;
 }
@@ -280,8 +286,18 @@ bool Deferred::Initialize()
 void Deferred::GeometryPass(XMMATRIX viewMatrix)
 {
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
-	this->SetRenderTargets(); //Setting the g-buffer textures as render targets to write to them.
-	this->ClearRenderTargets(); //Clearing the render targets as you should.
+	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);
+	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
+
+	float clearColor[] = { 0,0,0,0 };
+
+	for (int i = 0; i < BUFFER_COUNT; i++)
+	{
+		this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[i], clearColor);
+	}
+
+	this->direct3D.getDevCon()->ClearDepthStencilView(this->depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	//Setting the correct shaders for the geometry pass.
 	this->direct3D.getDevCon()->VSSetShader(this->vertexShader, nullptr, 0);
@@ -295,7 +311,7 @@ void Deferred::GeometryPass(XMMATRIX viewMatrix)
 	D3D11_MAPPED_SUBRESOURCE dataPtr;
 	this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
 
-	//this->WVP.view = viewMatrix; 								 
+	this->WVP.view = viewMatrix; 								 
 								 
 	memcpy(dataPtr.pData, &WVP, sizeof(matrixData));
 
@@ -311,44 +327,20 @@ void Deferred::LightPass()
 	this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), this->depthStencilView);
 	this->direct3D.getDevCon()->ClearRenderTargetView(*this->direct3D.getBackBufferRTV(), clearColor);
 	
-	//Setting the g-buffer textures as shader resources so they can be sampled in the PS.
-	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);
-	//Setting the shaders for the light pas, no GS necessary.
+	//Setting the shaders for the light pass, no GS necessary.
+	this->direct3D.getDevCon()->VSSetShader(this->vertexShaderLight, nullptr, 0);
 	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderL, nullptr, 0);
 	this->direct3D.getDevCon()->GSGetShader(nullptr, nullptr, 0);
-	this->direct3D.getDevCon()->VSSetShader(this->vertexShaderLight, nullptr, 0);
 
-
-	/*D3D11_MAPPED_SUBRESOURCE dataPtr;
-	this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
-
-	memcpy(dataPtr.pData, &WVP, sizeof(matrixData));
-
-	this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);*/
-
-	//Setting the transformBuffer to the vertex shader as it will be used there.
-	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);
+	//Setting the same sampler as the geometry pass, binding the g-buffer textures as shader resources. VS gets transformbuffer.
 	
-}
-
-void Deferred::SetRenderTargets()
-{
-	//Sets the g-buffer textures as the render targets so they can be written to.
-	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);
+	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);	// Någon av dessa tre throwar exception för
+	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);		// access violation reading location 0x00000... (beroende på ordningen i vilken de exekveras)
+	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);				// Betyder att något försöker skriva på en nullptr men jag kan inte lista ut vad :/
 	
-	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
-}
 
-void Deferred::ClearRenderTargets()
-{
-	float clearColor[] = { 0,0,0,0 }; 
-
-	for (int i = 0; i < BUFFER_COUNT; i++)
-	{
-		this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[i], clearColor);
-	}
-
-	this->direct3D.getDevCon()->ClearDepthStencilView(this->depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+	this->direct3D.getDevCon()->Draw(0, 0);
+	this->direct3D.getSwapChain()->Present(1, 0);
 }
 
 void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int numIndices)
@@ -363,11 +355,11 @@ void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int
 	}
 }
 
-void Deferred::createTransformBuffer()
+void Deferred::CreateTransformBuffer()
 {
 	D3D11_BUFFER_DESC WVPdesc = {};
 	WVPdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	WVPdesc.ByteWidth = sizeof(XMMATRIX) * 3;
+	WVPdesc.ByteWidth = sizeof(matrixData);
 	WVPdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	WVPdesc.Usage = D3D11_USAGE_DYNAMIC;
 
