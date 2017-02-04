@@ -17,7 +17,7 @@ XMVECTOR camRight = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 
 XMMATRIX viewMatrix = XMMatrixIdentity();
 
-void updateCamera(float leftRight, float backForward, float pitch, float yaw) {
+void updateCamera(float leftRight, float backForward, float upDown, float pitch, float yaw) {
 	XMMATRIX camRotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, 0);
 	XMVECTOR camLookAt = XMVector3TransformCoord(DefaultForward, camRotationMatrix);
 	camLookAt = XMVector3Normalize(camLookAt);
@@ -28,9 +28,10 @@ void updateCamera(float leftRight, float backForward, float pitch, float yaw) {
 	camUp = XMVector3TransformCoord(camUp, rotateYTempMatrix);
 	camForward = XMVector3TransformCoord(DefaultForward, rotateYTempMatrix);
 
+
 	camPosition += leftRight * camRight;
 	camPosition += backForward * camForward;
-
+	camPosition += upDown * camUp;
 	camLookAt = camPosition + camLookAt;
 	
 	viewMatrix = XMMatrixLookAtLH(camPosition, camLookAt, camUp);

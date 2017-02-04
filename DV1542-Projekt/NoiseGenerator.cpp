@@ -58,6 +58,8 @@ void NoiseGenerator::generateNoise() {
 void NoiseGenerator::loadHeightmap(std::wstring fileName, int heightmapWidth, int heightmapHeight) {
 	this->height = heightmapHeight;
 	this->width = heightmapWidth;
+	this->noiseTextureDesc.Width = this->width;
+	this->noiseTextureDesc.Height = this->height;
 	std::vector<unsigned char> in(this->height * this->width);
 
 	std::ifstream inFile;

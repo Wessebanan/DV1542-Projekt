@@ -117,18 +117,19 @@ void CreateTriangle()
 	//	0.5f, 0.0f, 0.5f,
 
 	//};
-
-	Vertex vertices[10000];
-	int vertexIncrementer = 0;
-	for (int i = 0; i < 100; i++) {
-		for (int j = 0; j < 100; j++) {
+	int rows = 1000;
+	int columns = 1000;
+	Vertex* vertices = new Vertex[rows*columns];
+	unsigned long vertexIncrementer = 0;
+	for (int i = 0; i < rows; i++) {
+		for (int j = 0; j < columns; j++) {
 			vertices[vertexIncrementer] = { (float)j, -20.0f, (float)i, 0.0f, 1.0f, 0.0f };
 			vertexIncrementer++;
 		}
 	}
 	
 	D3D11_BUFFER_DESC triangleBufferDesc = {};
-	triangleBufferDesc.ByteWidth = sizeof(vertices);
+	triangleBufferDesc.ByteWidth = sizeof(Vertex) * rows * columns;
 	triangleBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	triangleBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 
@@ -158,24 +159,24 @@ void CreateTriangle()
 	//	
 	//};
 
-	DWORD indices[58806]; // 6 per quad, 81 quads total
-	int indexIncrementer = 0;
-	for (int i = 0; i < 99; i++) {
-		for (int j = 0; j < 99; j++) {
-			unsigned long curr = i * 100 + j;
+	DWORD* indices = new DWORD[6 * (rows-1) * (columns-1)]; // 6 per quad, 81 quads total
+	unsigned long indexIncrementer = 0;
+	for (int i = 0; i < rows - 1; i++) {
+		for (int j = 0; j < columns - 1; j++) {
+			unsigned long curr = i * rows + j;
 			indices[indexIncrementer] = { curr };
-			indices[indexIncrementer + 1] = { curr + 100 };
+			indices[indexIncrementer + 1] = { curr + columns };
 			indices[indexIncrementer + 2] = { curr + 1 };
 			indices[indexIncrementer + 3] = { curr + 1 };
-			indices[indexIncrementer + 4] = { curr + 100 };
-			indices[indexIncrementer + 5] = { curr + 101 };
+			indices[indexIncrementer + 4] = { curr + columns };
+			indices[indexIncrementer + 5] = { curr + columns + 1 };
 			indexIncrementer = indexIncrementer + 6;
 
 		}
 	}
 	D3D11_BUFFER_DESC indexBufferDesc = {};
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * 58806;
+	indexBufferDesc.ByteWidth = sizeof(DWORD) * (6 * (rows - 1) * (columns - 1));
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
@@ -192,9 +193,9 @@ void CreateTriangle()
 
 void CreateWVP()
 {
-	WVP.WorldMatrix = XMMatrixScaling(1.5f, 1.0f, 1.5f);
+	WVP.WorldMatrix = XMMatrixScaling(1.0f, 1.0f, 1.0f);
 	WVP.ViewMatrix = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
-	WVP.ProjMatrix = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 200.0f);
+	WVP.ProjMatrix = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 2000.0f);
 
 	D3D11_BUFFER_DESC WVPdesc = {};
 	WVPdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
@@ -379,7 +380,7 @@ void Render()
 	gDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	gDeviceContext->IASetInputLayout(gVertexLayout);
 
-	gDeviceContext->DrawIndexed(58806, 0, 0);
+	gDeviceContext->DrawIndexed(6 * 999 * 999, 0, 0);
 }
 
 
@@ -456,7 +457,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		ShowWindow(hWnd, nCmdShow);
 
-		Deferred def(hInstance);
+	//	Deferred def(hInstance);
 
 		// enter the main loop:
 
