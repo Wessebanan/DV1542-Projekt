@@ -7,6 +7,8 @@
 #include "NoiseGenerator.h"
 #include "Timer.h"
 #include "Deferred.h"
+#include<string>
+#include<fstream>
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 using namespace DirectX;
@@ -38,9 +40,6 @@ ID3D11DepthStencilView* gDepthStencilView=nullptr;
 ID3D11Texture2D* gDepthStencilBuffer=nullptr;
 
 
-
-
-
 struct matrixData {
 	XMMATRIX WorldMatrix;						// NEW
 	XMMATRIX ViewMatrix;						// NEW
@@ -50,6 +49,18 @@ struct matrixData {
 matrixData WVP;
 
 float rotationAngle = 0.0f;
+
+void ParseObj(std::string filePath)
+{
+
+}
+
+void RenderDeferred(Deferred def) 
+{
+	def.GeometryPass(viewMatrix);
+	def.Draw(gTriangleBuffer, gIndexBuffer, 58806);
+	def.LightPass();
+}
 
 void CreateDepthBuffer()
 {
@@ -481,9 +492,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			}
 			else {
 				DetectInput(GetFrameTime());
-				Render();
+				
+				RenderDeferred(def); //<-- Funkar inte pga problem med någonting i lightpass.
 
-				gSwapChain->Present(1, 0);
+				/*Render();
+				gSwapChain->Present(1, 0);*/
 				// WEEEEW GAME CODE HERE LET'S GO
 			}
 		}

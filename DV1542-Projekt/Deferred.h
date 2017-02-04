@@ -50,10 +50,8 @@ public:
 	bool Initialize();
 	void GeometryPass(XMMATRIX viewMatrix);
 	void LightPass();
-	void SetRenderTargets();
-	void ClearRenderTargets();
 
 	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices);
 
-	void createTransformBuffer();
+	void CreateTransformBuffer();
 };
