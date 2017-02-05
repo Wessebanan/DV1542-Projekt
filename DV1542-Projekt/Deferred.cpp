@@ -58,7 +58,7 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	D3D11_SUBRESOURCE_DATA fullscreenQuadData = {};
 	fullscreenQuadData.pSysMem = fullScreenQuad;
 
-	if (FAILED(this->direct3D.getDevice()->CreateBuffer(&fullscreenQuadDesc, &fullscreenQuadData, &this->fullscreenQuadBuffer)))
+	if (FAILED(this->CreateBuffer(&fullscreenQuadDesc, &fullscreenQuadData, &this->fullscreenQuadBuffer)))
 	{
 		MessageBoxA(NULL, "Error creating full screen quad buffer.", NULL, MB_OK);
 		exit(-1);
@@ -86,6 +86,8 @@ Deferred::~Deferred()
 	this->pixelShaderG->Release();
 	this->pixelShaderL->Release();
 	this->samplerState->Release();
+	this->fullscreenQuadBuffer->Release();
+	
 	if (this->transformBuffer != nullptr)
 	{
 		this->transformBuffer->Release();
@@ -324,14 +326,10 @@ bool Deferred::Initialize()
 
 void Deferred::GeometryPass(XMMATRIX viewMatrix)
 {
-	//-----------------------TEST-------------------------
-	ID3D11ShaderResourceView* const srv[4] = { NULL };
-	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, srv);
-	//----------------------------------------------------
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
 	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);
-	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
+	
 
 	float clearColor[] = { 0,0,0,0 };
 
@@ -369,7 +367,7 @@ void Deferred::LightPass()
 	//Setting the back buffer as the sole render target.
 	this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), this->depthStencilView);
 	this->direct3D.getDevCon()->ClearRenderTargetView(*this->direct3D.getBackBufferRTV(), clearColor);
-	
+
 	//Setting the shaders for the light pass, no GS necessary.
 	this->direct3D.getDevCon()->VSSetShader(this->vertexShaderLight, nullptr, 0);
 	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderL, nullptr, 0);
@@ -379,12 +377,18 @@ void Deferred::LightPass()
 	
 	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);				
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);	
-	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);		
+	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);	
+
 	UINT32 vertexSize = sizeof(float) * 6;
 	UINT32 offset = 0;
+
 	this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &this->fullscreenQuadBuffer, &vertexSize, &offset);
 
 	this->direct3D.getDevCon()->Draw(4, 0);
+	//-----------------------TEST-------------------------
+	ID3D11ShaderResourceView* const srv[4] = { NULL };
+	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, srv);
+	//----------------------------------------------------
 	this->direct3D.getSwapChain()->Present(1, 0);
 }
 
