@@ -284,6 +284,7 @@ bool Deferred::Initialize()
 
 void Deferred::GeometryPass(XMMATRIX viewMatrix)
 {
+	ID3D11DeviceContext* test = this->direct3D.getDevCon();
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
 	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);

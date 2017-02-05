@@ -47,6 +47,8 @@ bool InitDirectInput(HINSTANCE hInstance, HWND hwnd) {
 	hr = DIMouse->SetDataFormat(&c_dfDIMouse); // Standard 3 axes (x, y, scrollwheel) / 4 button mouse
 	hr = DIMouse->SetCooperativeLevel(hwnd, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
 
+
+
 	return SUCCEEDED(hr);
 }
 void DetectInput(double time) {
