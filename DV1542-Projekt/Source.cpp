@@ -55,11 +55,11 @@ void ParseObj(std::string filePath)
 
 }
 
-void RenderDeferred(Deferred def) 
+void RenderDeferred(Deferred* def) 
 {
-	def.GeometryPass(viewMatrix);
-	def.Draw(gTriangleBuffer, gIndexBuffer, 58806);
-	def.LightPass();
+	def->GeometryPass(viewMatrix);
+	def->Draw(gTriangleBuffer, gIndexBuffer, 58806);
+	def->LightPass();
 }
 
 void CreateDepthBuffer()
@@ -493,7 +493,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			else {
 				DetectInput(GetFrameTime());
 				
-				RenderDeferred(def); //<-- Funkar inte pga problem med någonting i lightpass.
+				RenderDeferred(&def); //<-- Funkar inte pga problem med någonting i lightpass.
 
 				/*Render();
 				gSwapChain->Present(1, 0);*/

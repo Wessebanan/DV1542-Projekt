@@ -323,8 +323,11 @@ bool Deferred::Initialize()
 }
 
 void Deferred::GeometryPass(XMMATRIX viewMatrix)
-{	
-	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);	
+{
+	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
+	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);
+	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
 
 	float clearColor[] = { 0,0,0,0 };
 
