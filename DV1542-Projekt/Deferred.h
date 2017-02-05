@@ -39,6 +39,8 @@ private:
 	};
 	matrixData WVP;
 
+	ID3D11Buffer* fullscreenQuadBuffer;
+
 public:
 	Deferred(HINSTANCE hInstance);
 	~Deferred();

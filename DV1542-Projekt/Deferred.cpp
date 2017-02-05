@@ -21,12 +21,52 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->pixelShaderL = nullptr;
 	this->samplerState = nullptr;
 	this->transformBuffer = nullptr;
-
+	this->fullscreenQuadBuffer = nullptr;
 	this->Initialize();	
 
 	this->WVP.world = XMMatrixScaling(1.5f, 1.0f, 1.5f);
 	this->WVP.view = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
 	this->WVP.proj = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 200.0f);
+
+	//Creating the full screen quad vertex buffer etc.
+	struct Vertex
+	{
+		float x, y, z;
+		float r, g, b;
+	};
+
+	Vertex fullScreenQuad[] =
+	{
+		-1.f, -1.f, 0.0f,
+		1.0f, 0.0f, 0.0f,
+
+		-1.f, 1.f, 0.0f,
+		0.0f, 1.0f, 0.0f,
+
+		1.f, -1.f, 0.0f,
+		0.0f, 0.0f, 1.0f,
+
+		1.f, 1.f, 0.0f,
+		0.5f, 0.0f, 0.5f,
+	};
+
+	D3D11_BUFFER_DESC fullscreenQuadDesc = {};
+	fullscreenQuadDesc.ByteWidth = sizeof(Vertex) * 4;
+	fullscreenQuadDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	fullscreenQuadDesc.Usage = D3D11_USAGE_DEFAULT;
+
+	D3D11_SUBRESOURCE_DATA fullscreenQuadData = {};
+	fullscreenQuadData.pSysMem = fullScreenQuad;
+
+	if (FAILED(this->direct3D.getDevice()->CreateBuffer(&fullscreenQuadDesc, &fullscreenQuadData, &this->fullscreenQuadBuffer)))
+	{
+		MessageBoxA(NULL, "Error creating full screen quad buffer.", NULL, MB_OK);
+		exit(-1);
+	}
+
+	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
+	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
 }
 
 Deferred::~Deferred()
@@ -283,11 +323,8 @@ bool Deferred::Initialize()
 }
 
 void Deferred::GeometryPass(XMMATRIX viewMatrix)
-{
-	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
-	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);
-	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
+{	
+	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);	
 
 	float clearColor[] = { 0,0,0,0 };
 
@@ -336,9 +373,11 @@ void Deferred::LightPass()
 	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);				// Någon av dessa tre throwar exception för
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);	// access violation reading location 0x00000... (beroende på ordningen i vilken de exekveras)
 	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);		// Betyder att något försöker skriva på en nullptr men jag kan inte lista ut vad :/
-					
+	UINT32 vertexSize = sizeof(float) * 6;
+	UINT32 offset = 0;
+	this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &this->fullscreenQuadBuffer, &vertexSize, &offset);
 
-	this->direct3D.getDevCon()->Draw(0, 0);
+	this->direct3D.getDevCon()->Draw(4, 0);
 	this->direct3D.getSwapChain()->Present(1, 0);
 }
 

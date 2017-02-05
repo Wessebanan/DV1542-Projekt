@@ -41,9 +41,9 @@ ID3D11Texture2D* gDepthStencilBuffer=nullptr;
 
 
 struct matrixData {
-	XMMATRIX WorldMatrix;						// NEW
-	XMMATRIX ViewMatrix;						// NEW
-	XMMATRIX ProjMatrix;					// NEW
+	XMMATRIX WorldMatrix;					
+	XMMATRIX ViewMatrix;					
+	XMMATRIX ProjMatrix;					
 };
 
 matrixData WVP;
@@ -500,9 +500,6 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				// WEEEEW GAME CODE HERE LET'S GO
 			}
 		}
-
-
-
 
 		gTransformBuffer->Release();
 		gTriangleBuffer->Release();

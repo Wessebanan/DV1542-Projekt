@@ -1,5 +1,5 @@
 #include "D3D.h"
-#include <dxgi1_2.h>
+
 D3D::D3D()
 {
 	
