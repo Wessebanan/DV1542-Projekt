@@ -97,17 +97,17 @@ void Deferred::CreateShaders()
 	//create vertex shader
 	ID3DBlob* pVS = nullptr;
 	D3DCompileFromFile(
-		L"VertexShader.hlsl", // filename
-		nullptr,		// optional macros
-		nullptr,		// optional include files
-		"main",		// entry point
-		"vs_5_0",		// shader model (target)
-		0,				// shader compile options			// here DEBUGGING OPTIONS
-		0,				// effect compile options
-		&pVS,			// double pointer to ID3DBlob		
-		nullptr			// pointer for Error Blob messages.
-						// how to use the Error blob, see here
-						// https://msdn.microsoft.com/en-us/library/windows/desktop/hh968107(v=vs.85).aspx
+		L"VertexShader.hlsl",	// filename
+		nullptr,				// optional macros
+		nullptr,				// optional include files
+		"main",					// entry point
+		"vs_5_0",				// shader model (target)
+		0,						// shader compile options			// here DEBUGGING OPTIONS
+		0,						// effect compile options
+		&pVS,					// double pointer to ID3DBlob		
+		nullptr					// pointer for Error Blob messages.
+								// how to use the Error blob, see here
+								// https://msdn.microsoft.com/en-us/library/windows/desktop/hh968107(v=vs.85).aspx
 	);
 
 	this->direct3D.getDevice()->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &this->vertexShader);
@@ -324,6 +324,10 @@ bool Deferred::Initialize()
 
 void Deferred::GeometryPass(XMMATRIX viewMatrix)
 {
+	//-----------------------TEST-------------------------
+	ID3D11ShaderResourceView* const srv[4] = { NULL };
+	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, srv);
+	//----------------------------------------------------
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
 	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);
@@ -373,9 +377,9 @@ void Deferred::LightPass()
 
 	//Setting the same sampler as the geometry pass, binding the g-buffer textures as shader resources. VS gets transformbuffer.
 	
-	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);				// Någon av dessa tre throwar exception för
-	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);	// access violation reading location 0x00000... (beroende på ordningen i vilken de exekveras)
-	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);		// Betyder att något försöker skriva på en nullptr men jag kan inte lista ut vad :/
+	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);				
+	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);	
+	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);		
 	UINT32 vertexSize = sizeof(float) * 6;
 	UINT32 offset = 0;
 	this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &this->fullscreenQuadBuffer, &vertexSize, &offset);
@@ -390,6 +394,7 @@ void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int
 	{ 
 		UINT32 vertexSize = sizeof(float) * 6;
 		UINT32 offset = 0;
+		this->direct3D.getDevCon()->VSSetSamplers(0, 1, &this->samplerState);
 		this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
 		this->direct3D.getDevCon()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		this->direct3D.getDevCon()->DrawIndexed(numIndices, 0, 0);
@@ -409,4 +414,9 @@ void Deferred::CreateTransformBuffer()
 		MessageBoxA(NULL, "Error creating transform buffer.", NULL, MB_OK);
 		exit(-1);
 	}
+}
+
+HRESULT Deferred::CreateBuffer(D3D11_BUFFER_DESC * bufferDesc, D3D11_SUBRESOURCE_DATA * subResData, ID3D11Buffer ** buffer)
+{
+	return SUCCEEDED(this->direct3D.getDevice()->CreateBuffer(bufferDesc, subResData, buffer));
 }

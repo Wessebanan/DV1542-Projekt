@@ -58,7 +58,7 @@ void ParseObj(std::string filePath)
 void RenderDeferred(Deferred* def) 
 {
 	def->GeometryPass(viewMatrix);
-	def->Draw(gTriangleBuffer, gIndexBuffer, 58806);
+	def->Draw(gTriangleBuffer, gIndexBuffer, 6 * 999 * 999);
 	def->LightPass();
 }
 
@@ -91,7 +91,7 @@ void CreateDepthBuffer()
 
 }
 
-void CreateTriangle()
+void CreateTriangle(Deferred* def)
 {
 	struct Vertex
 	{
@@ -147,9 +147,15 @@ void CreateTriangle()
 	D3D11_SUBRESOURCE_DATA triangleData = {};
 	triangleData.pSysMem = vertices;
 
-	if (FAILED(gDevice->CreateBuffer(&triangleBufferDesc, &triangleData, &gTriangleBuffer)))
+	/*if (FAILED(gDevice->CreateBuffer(&triangleBufferDesc, &triangleData, &gTriangleBuffer)))
 	{
 		MessageBoxA(NULL, "Error creating triangle buffer.", NULL, MB_OK);
+		exit(-1);
+	}*/
+
+	if (FAILED(def->CreateBuffer(&triangleBufferDesc, &triangleData, &gTriangleBuffer)))
+	{
+		MessageBoxA(NULL, "crapped the fuck out.", NULL, MB_OK);
 		exit(-1);
 	}
 
@@ -195,7 +201,9 @@ void CreateTriangle()
 	D3D11_SUBRESOURCE_DATA indexData;
 	indexData.pSysMem = indices;
 
-	if (FAILED(gDevice->CreateBuffer(&indexBufferDesc, &indexData, &gIndexBuffer)))
+
+	//NEDAN ÄNDRAT TILL DEF ISTÄLLET FÖR gDevice FÖR ATT TESTA.
+	if (FAILED(def->CreateBuffer(&indexBufferDesc, &indexData, &gIndexBuffer)))
 	{
 		MessageBoxA(NULL, "Error creating index buffer.", NULL, MB_OK);
 		exit(-1);
@@ -462,13 +470,15 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		CreateShaders();
 
-		CreateTriangle();
+		//CreateTriangle();
 
 		StartTimer(); // Starts global timer
 
 		ShowWindow(hWnd, nCmdShow);
 
 		Deferred def(hInstance);
+
+		CreateTriangle(&def);
 
 		// enter the main loop:
 

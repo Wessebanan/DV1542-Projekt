@@ -19,7 +19,7 @@ public:
 	~D3D();
 
 	ID3D11Device* getDevice()const;
-	ID3D11DeviceContext* getDevCon()const;
+	ID3D11DeviceContext* getDevCon();
 	IDXGISwapChain* getSwapChain()const;
 	ID3D11RenderTargetView** getBackBufferRTV();
 

@@ -24,7 +24,7 @@ ID3D11Device * D3D::getDevice() const
 	return this->device;
 }
 
-ID3D11DeviceContext * D3D::getDevCon() const
+ID3D11DeviceContext * D3D::getDevCon()
 {
 	return this->devCon;
 }
@@ -60,7 +60,7 @@ bool D3D::Initialize(int width, int height, HWND window)
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
-		NULL,
+		D3D11_CREATE_DEVICE_DEBUG,
 		NULL,
 		NULL,
 		D3D11_SDK_VERSION,
