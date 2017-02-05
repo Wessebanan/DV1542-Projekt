@@ -468,7 +468,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		ShowWindow(hWnd, nCmdShow);
 
-	//	Deferred def(hInstance);
+		Deferred def(hInstance);
 
 		// enter the main loop:
 

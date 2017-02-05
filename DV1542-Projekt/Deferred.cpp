@@ -329,7 +329,7 @@ void Deferred::LightPass()
 	//Setting the shaders for the light pass, no GS necessary.
 	this->direct3D.getDevCon()->VSSetShader(this->vertexShaderLight, nullptr, 0);
 	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderL, nullptr, 0);
-	this->direct3D.getDevCon()->GSGetShader(nullptr, nullptr, 0);
+	this->direct3D.getDevCon()->GSSetShader(nullptr, nullptr, 0);
 
 	//Setting the same sampler as the geometry pass, binding the g-buffer textures as shader resources. VS gets transformbuffer.
 	

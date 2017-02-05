@@ -104,7 +104,7 @@ void DetectInput(double time) {
 	else if (camPitch < -1.57f) {
 		camPitch = -1.57f;
 	}
-	updateCamera(moveLeftRight, moveBackForward, /*moveUpDown,*/ camPitch, camYaw);
+	updateCamera(moveLeftRight, moveBackForward, moveUpDown, camPitch, camYaw);
 	moveLeftRight = 0.0f;
 	moveBackForward = 0.0f;
 	moveUpDown = 0.0f;
