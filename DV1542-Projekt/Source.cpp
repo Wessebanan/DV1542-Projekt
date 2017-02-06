@@ -60,6 +60,8 @@ void RenderDeferred(Deferred* def)
 	def->GeometryPass(viewMatrix);
 	def->Draw(gTriangleBuffer, gIndexBuffer, 6 * 999 * 999);
 	def->LightPass();
+	def->Draw(gTriangleBuffer, gIndexBuffer, 6 * 999 * 999);
+	def->GetSwapChain()->Present(0, 0);
 }
 
 void CreateDepthBuffer()

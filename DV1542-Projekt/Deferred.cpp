@@ -38,21 +38,27 @@ Deferred::Deferred(HINSTANCE hInstance) :
 
 	Vertex fullScreenQuad[] =
 	{
-		-1.f, -1.f, 0.0f,
+		-2.f, -2.f, 0.0f,
 		1.0f, 0.0f, 0.0f,
 
-		-1.f, 1.f, 0.0f,
+		-2.f, 2.f, 0.0f,
 		0.0f, 1.0f, 0.0f,
 
-		1.f, -1.f, 0.0f,
+		2.f, -2.f, 0.0f,
 		0.0f, 0.0f, 1.0f,
 
-		1.f, 1.f, 0.0f,
+		2.f, -2.f, 0.0f,
+		0.0f, 0.0f, 1.0f,
+
+		-2.f, 2.f, 0.0f,
+		0.0f, 1.0f, 0.0f,		
+
+		2.f, 2.f, 0.0f,
 		0.5f, 0.0f, 0.5f,
 	};
 
 	D3D11_BUFFER_DESC fullscreenQuadDesc = {};
-	fullscreenQuadDesc.ByteWidth = sizeof(Vertex) * 4;
+	fullscreenQuadDesc.ByteWidth = sizeof(fullScreenQuad);
 	fullscreenQuadDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	fullscreenQuadDesc.Usage = D3D11_USAGE_DEFAULT;
 
@@ -328,6 +334,12 @@ bool Deferred::Initialize()
 
 void Deferred::GeometryPass(XMMATRIX viewMatrix)
 {
+
+	//-----------------------TEST-------------------------
+	ID3D11ShaderResourceView* const srv[4] = { NULL };
+	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, srv);
+	//----------------------------------------------------
+
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
 	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);	
@@ -367,7 +379,7 @@ void Deferred::LightPass()
 	float clearColor[] = { 0,0,0,0 };
 	//Setting the back buffer as the sole render target.
 	//this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), this->depthStencilView);
-	this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), nullptr);
+	this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), this->depthStencilView);
 	this->direct3D.getDevCon()->ClearRenderTargetView(*this->direct3D.getBackBufferRTV(), clearColor);
 
 	//Setting the shaders for the light pass, no GS necessary.
@@ -384,14 +396,9 @@ void Deferred::LightPass()
 	UINT32 vertexSize = sizeof(float) * 6;
 	UINT32 offset = 0;
 
-	this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &this->fullscreenQuadBuffer, &vertexSize, &offset);
+	//this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &this->fullscreenQuadBuffer, &vertexSize, &offset);
 
-	this->direct3D.getDevCon()->Draw(4, 0);
-	//-----------------------TEST-------------------------
-	ID3D11ShaderResourceView* const srv[4] = { NULL };
-	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, srv);
-	//----------------------------------------------------
-	this->direct3D.getSwapChain()->Present(1, 0);
+	//this->direct3D.getDevCon()->Draw(0, 0);
 }
 
 void Deferred::setHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height) {
@@ -468,4 +475,9 @@ HRESULT Deferred::CreateBuffer(D3D11_BUFFER_DESC * bufferDesc, D3D11_SUBRESOURCE
 HWND Deferred::GetWindowHandle()
 {
 	return this->window.GetWindow();
+}
+
+IDXGISwapChain * Deferred::GetSwapChain()
+{
+	return this->direct3D.getSwapChain();
 }
