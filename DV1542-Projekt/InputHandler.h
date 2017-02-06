@@ -61,7 +61,7 @@ void DetectInput(double time) {
 	DIMouse->GetDeviceState(sizeof(DIMOUSESTATE), &mouseCurrState); // Check whether mouse has moved since last check
 	DIKeyboard->GetDeviceState(sizeof(keyboardState), (LPVOID)&keyboardState); // Same as above, but keyboard
 
-	float speed = 100.0f * time;
+	float speed = 10.0f * time;
 
 	if (keyboardState[DIK_ESCAPE] & 0x80)
 		destroyWindow = true;

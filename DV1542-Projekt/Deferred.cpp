@@ -1,4 +1,5 @@
 #include "Deferred.h"
+#include "NoiseGenerator.h"
 //#include "InputHandler.h"
 
 Deferred::Deferred(HINSTANCE hInstance) :
@@ -391,6 +392,44 @@ void Deferred::LightPass()
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, srv);
 	//----------------------------------------------------
 	this->direct3D.getSwapChain()->Present(1, 0);
+}
+
+void Deferred::setHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height) {
+	NoiseGenerator noise1(this->direct3D.getDevice(), width, height);
+	noise1.loadHeightmap(filepath, width, height);
+
+
+	ID3D11ShaderResourceView* gTextureView = nullptr;
+	ID3D11SamplerState* gSamplerState = nullptr;
+
+	D3D11_SHADER_RESOURCE_VIEW_DESC resourceViewDesc;
+	ZeroMemory(&resourceViewDesc, sizeof(resourceViewDesc));
+
+	resourceViewDesc.Format = noise1.getTextureDesc().Format;
+	resourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	resourceViewDesc.Texture2D.MipLevels = noise1.getTextureDesc().MipLevels;
+	resourceViewDesc.Texture2D.MostDetailedMip = 0;
+	HRESULT hr = this->direct3D.getDevice()->CreateShaderResourceView(noise1.getTexture(), &resourceViewDesc, &gTextureView);
+	if (!SUCCEEDED(hr)) {
+		MessageBox(NULL, L"Something went wrong trying to create the Shader Resource View.", NULL, MB_ICONEXCLAMATION);
+	}
+
+	D3D11_SAMPLER_DESC samplerDesc = {};
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	samplerDesc.MaxAnisotropy = 1;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+
+	hr = this->direct3D.getDevice()->CreateSamplerState(&samplerDesc, &gSamplerState);
+	if (!SUCCEEDED(hr)) {
+		MessageBox(NULL, L"Something went wrong trying to create the Sampler State", NULL, MB_ICONEXCLAMATION);
+	}
+
+	this->direct3D.getDevCon()->VSSetShaderResources(0, 1, &gTextureView);
+	this->direct3D.getDevCon()->VSSetSamplers(0, 1, &gSamplerState);
 }
 
 void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int numIndices)

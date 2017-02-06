@@ -201,13 +201,15 @@ void CreateTriangle(Deferred* def)
 	D3D11_SUBRESOURCE_DATA indexData;
 	indexData.pSysMem = indices;
 
-
+	delete[] vertices;
+	
 	//NEDAN ÄNDRAT TILL DEF ISTÄLLET FÖR gDevice FÖR ATT TESTA.
 	if (FAILED(def->CreateBuffer(&indexBufferDesc, &indexData, &gIndexBuffer)))
 	{
 		MessageBoxA(NULL, "Error creating index buffer.", NULL, MB_OK);
 		exit(-1);
 	}
+	delete[] indices;
 }
 
 void CreateWVP()
@@ -312,7 +314,7 @@ void SetViewport()
 	
 }
 
-void setHeightMapTexture() {
+void setHeightMapTexture(Deferred* def) {
 	NoiseGenerator noise1(gDevice, 255, 255);
 	noise1.loadHeightmap(L"TestMap2.RAW", 255, 255);
 	
@@ -467,7 +469,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		CreateWVP();
 
-		setHeightMapTexture();
+		def.setHeightMapTexture(L"TestMap2.RAW", 255, 255);
 
 		CreateShaders();
 

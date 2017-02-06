@@ -53,6 +53,8 @@ public:
 	void GeometryPass(XMMATRIX viewMatrix);
 	void LightPass();
 
+	void setHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height);
+
 	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices);
 
 	void CreateTransformBuffer();
