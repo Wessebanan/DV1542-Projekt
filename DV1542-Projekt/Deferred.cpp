@@ -235,6 +235,7 @@ bool Deferred::Initialize()
 	{
 		result = false;
 	}
+
 	// Creating the textures.
 	texDesc.Width = this->window.GetWidth();
 	texDesc.Height = this->window.GetHeight();
@@ -328,8 +329,7 @@ void Deferred::GeometryPass(XMMATRIX viewMatrix)
 {
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
 	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);
-	
+	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);	
 
 	float clearColor[] = { 0,0,0,0 };
 
@@ -365,7 +365,8 @@ void Deferred::LightPass()
 {
 	float clearColor[] = { 0,0,0,0 };
 	//Setting the back buffer as the sole render target.
-	this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), this->depthStencilView);
+	//this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), this->depthStencilView);
+	this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), nullptr);
 	this->direct3D.getDevCon()->ClearRenderTargetView(*this->direct3D.getBackBufferRTV(), clearColor);
 
 	//Setting the shaders for the light pass, no GS necessary.
@@ -376,7 +377,7 @@ void Deferred::LightPass()
 	//Setting the same sampler as the geometry pass, binding the g-buffer textures as shader resources. VS gets transformbuffer.
 	
 	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);				
-	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);	
+	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);
 	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);	
 
 	UINT32 vertexSize = sizeof(float) * 6;
@@ -423,4 +424,9 @@ void Deferred::CreateTransformBuffer()
 HRESULT Deferred::CreateBuffer(D3D11_BUFFER_DESC * bufferDesc, D3D11_SUBRESOURCE_DATA * subResData, ID3D11Buffer ** buffer)
 {
 	return SUCCEEDED(this->direct3D.getDevice()->CreateBuffer(bufferDesc, subResData, buffer));
+}
+
+HWND Deferred::GetWindowHandle()
+{
+	return this->window.GetWindow();
 }

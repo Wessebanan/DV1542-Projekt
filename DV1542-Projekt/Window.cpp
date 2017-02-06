@@ -64,7 +64,7 @@ bool Window::Initialize()
 														  // create the window and use the result as the handle
 	this->window = CreateWindowEx(NULL,
 		L"WindowClass1",    // name of the window class
-		L"Window",   // title of the window
+		L"wtf",   // title of the window
 		WS_OVERLAPPEDWINDOW,    // window style
 		300,    // x-position of the window
 		300,    // y-position of the window

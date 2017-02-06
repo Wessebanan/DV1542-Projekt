@@ -58,4 +58,6 @@ public:
 	void CreateTransformBuffer();
 
 	HRESULT CreateBuffer(D3D11_BUFFER_DESC* bufferDesc, D3D11_SUBRESOURCE_DATA* subResData, ID3D11Buffer** buffer);
+
+	HWND GetWindowHandle();
 };

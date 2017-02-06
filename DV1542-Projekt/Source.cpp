@@ -413,6 +413,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	// this struct holds information for the window class
 	WNDCLASSEX wc;
 
+	Deferred def(hInstance);
 	// clear out the window class for use
 	ZeroMemory(&wc, sizeof(WNDCLASSEX));
 
@@ -452,7 +453,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				  // display the window on the screen
 	MSG msg;
 
-	if (!InitDirectInput(hInstance, hWnd)) {
+	if (!InitDirectInput(hInstance, def.GetWindowHandle())) {
 		MessageBox(0, L"Failed to initialize Direct Input.", L"Error", MB_OK);
 	}
 
@@ -460,7 +461,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	if (hWnd) {
 		
 
-		CreateDirect3DContext(hWnd);
+		CreateDirect3DContext(def.GetWindowHandle());
 
 		SetViewport();
 
@@ -474,9 +475,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		StartTimer(); // Starts global timer
 
-		ShowWindow(hWnd, nCmdShow);
-
-		Deferred def(hInstance);
+		ShowWindow(def.GetWindowHandle(), nCmdShow);
 
 		CreateTriangle(&def);
 
