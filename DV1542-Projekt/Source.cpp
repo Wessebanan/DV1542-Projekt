@@ -475,7 +475,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		CreateWVP();
 
-		def.setHeightMapTexture(L"TestMap2.RAW", 255, 255);
+		def.setHeightMapTexture(L"TestMap1.RAW", 1024, 1024);
 
 		CreateShaders();
 
