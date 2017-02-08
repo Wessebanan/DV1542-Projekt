@@ -27,7 +27,7 @@ Deferred::Deferred(HINSTANCE hInstance) :
 
 	this->WVP.world = XMMatrixScaling(1.5f, 1.0f, 1.5f);
 	this->WVP.view = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
-	this->WVP.proj = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 200.0f);
+	this->WVP.proj = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 20000.0f);
 
 	//Creating the full screen quad vertex buffer etc.
 	struct Vertex
@@ -344,7 +344,7 @@ void Deferred::GeometryPass(XMMATRIX viewMatrix)
 	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);	
 
-	float clearColor[] = { 0,0,0,0 };
+	float clearColor[] = { 1,0,0,0 };
 
 	for (int i = 0; i < BUFFER_COUNT; i++)
 	{
@@ -376,7 +376,7 @@ void Deferred::GeometryPass(XMMATRIX viewMatrix)
 
 void Deferred::LightPass()
 {
-	float clearColor[] = { 0,0,0,0 };
+	float clearColor[] = { 1,0,0,0 };
 	//Setting the back buffer as the sole render target.
 	//this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), this->depthStencilView);
 	this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), this->depthStencilView);

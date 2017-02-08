@@ -4,10 +4,16 @@ Texture2D diffuses : register(t1);
 Texture2D speculars : register(t2);
 Texture2D positions : register(t3);
 
-float4 main(in float4 screenPos : SV_POSITION) : SV_TARGET
+struct PS_IN
 {
-	float3 lightPos = { 0.0f, 4.0f, -10.0f };
-	float3 lightVec = lightPos - positions.Sample(samplerState, screenPos.xy).xyz;
-	float brightness = saturate(dot(normalize(lightVec), normals.Sample(samplerState, screenPos.xy).xyz));
-	return diffuses.Sample(samplerState, screenPos.xy) * brightness;
+	float4 pos : SV_POSITION;
+	float2 texcoord : TEXCOORD;
+};
+
+float4 main(PS_IN input) : SV_TARGET
+{
+	float3 lightPos = { 500.0f, 400.0f, 500.0f };
+	float3 lightVec = lightPos - positions.Sample(samplerState, input.texcoord).xyz;
+	float brightness = saturate(dot(normalize(lightVec), normals.Sample(samplerState, input.texcoord).xyz));
+	return diffuses.Sample(samplerState, input.texcoord) * brightness;
 }
