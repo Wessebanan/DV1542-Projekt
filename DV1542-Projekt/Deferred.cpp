@@ -399,6 +399,10 @@ void Deferred::LightPass()
 	//this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &this->fullscreenQuadBuffer, &vertexSize, &offset);
 
 	//this->direct3D.getDevCon()->Draw(0, 0);
+
+	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	this->direct3D.getDevCon()->Draw(4, 0);
+	this->direct3D.getSwapChain()->Present(1, 0);
 }
 
 void Deferred::setHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height) {
