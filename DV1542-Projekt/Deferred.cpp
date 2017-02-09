@@ -463,8 +463,7 @@ void Deferred::CreateCamPosBuffer()
 	bufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bufDesc.ByteWidth = sizeof(XMVECTOR);
 	bufDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bufDesc.MiscFlags = 0;
-	bufDesc.Usage = D3D11_USAGE_DEFAULT;
+	bufDesc.Usage = D3D11_USAGE_DYNAMIC;
 
 	if (FAILED(this->direct3D.getDevice()->CreateBuffer(&bufDesc, nullptr, &this->camPosBuffer)))
 	{
