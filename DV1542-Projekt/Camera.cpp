@@ -33,16 +33,19 @@ XMMATRIX Camera::UpdateCamera(float leftRight, float backForward, float upDown, 
 	
 		this->camPosition += leftRight * camRight;
 		this->camPosition += backForward * camForward;
+
+		// Out of bounds prevention
+
 		if (XMVectorGetX(camPosition) > 1000.0f) {
 			this->camPosition = XMVectorSetX(this->camPosition, 1000.0f);
 		}
-		else if (XMVectorGetX(camPosition) < -0.0f) {
+		else if (XMVectorGetX(camPosition) < 0.0f) {
 			this->camPosition = XMVectorSetX(this->camPosition, 0.0f);
 		}
 		if (XMVectorGetZ(camPosition) > 1000.0f) {
 			this->camPosition = XMVectorSetZ(this->camPosition, 1000.0f);
 		}
-		else if (XMVectorGetZ(camPosition) < -0.0f) {
+		else if (XMVectorGetZ(camPosition) < 0.0f) {
 			this->camPosition = XMVectorSetZ(this->camPosition, 0.0f);
 		}
 		this->camPosition = XMVectorSetY(this->camPosition,this->CalculateHeight(XMVectorGetX(camPosition), XMVectorGetZ(camPosition)));
@@ -63,6 +66,8 @@ void Camera::SetTerrainData(float* dataArray, unsigned int width, unsigned int h
 }
 
 float Camera::CalculateHeight(float newXPos, float newZPos) {
+	// This function uses the X and Z coordinate of the camera
+	// and then lerps between two points in the heightmap to position the camera along the terrain
 	double lowerXPos = 0;
 	float lerpValueX = modf(newXPos, &lowerXPos);
 	if (lowerXPos < 0) {

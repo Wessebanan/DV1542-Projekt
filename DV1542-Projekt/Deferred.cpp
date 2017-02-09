@@ -338,7 +338,7 @@ void Deferred::LightPass()
 
 void Deferred::setHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height) {
 	NoiseGenerator noise1(this->direct3D.getDevice(), width, height);
-	this->playerCamera.SetTerrainData(noise1.loadHeightmap(filepath, width, height), width, height);
+	this->playerCamera.SetTerrainData(noise1.loadHeightmap(filepath, width, height), width, height); // Loads the heightmap into the noiseGenerator and saved the data for use in the Camera
 
 
 	ID3D11ShaderResourceView* gTextureView = nullptr;
@@ -357,7 +357,7 @@ void Deferred::setHeightMapTexture(std::wstring filepath, unsigned int width, un
 	}
 
 	D3D11_SAMPLER_DESC samplerDesc = {};
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
 	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
