@@ -36,17 +36,17 @@ XMMATRIX Camera::UpdateCamera(float leftRight, float backForward, float upDown, 
 
 		// Out of bounds prevention
 
-		if (XMVectorGetX(camPosition) > 1000.0f) {
-			this->camPosition = XMVectorSetX(this->camPosition, 1000.0f);
+		if (XMVectorGetX(camPosition) > this->terrainWidth - 30) {
+			this->camPosition = XMVectorSetX(this->camPosition, this->terrainWidth - 30);
 		}
-		else if (XMVectorGetX(camPosition) < 0.0f) {
-			this->camPosition = XMVectorSetX(this->camPosition, 0.0f);
+		else if (XMVectorGetX(camPosition) < 30.0f) {
+			this->camPosition = XMVectorSetX(this->camPosition, 30.0f);
 		}
-		if (XMVectorGetZ(camPosition) > 1000.0f) {
-			this->camPosition = XMVectorSetZ(this->camPosition, 1000.0f);
+		if (XMVectorGetZ(camPosition) > this->terrainHeight - 30) {
+			this->camPosition = XMVectorSetZ(this->camPosition, this->terrainHeight - 30);
 		}
-		else if (XMVectorGetZ(camPosition) < 0.0f) {
-			this->camPosition = XMVectorSetZ(this->camPosition, 0.0f);
+		else if (XMVectorGetZ(camPosition) < 30.0f) {
+			this->camPosition = XMVectorSetZ(this->camPosition, 30.0f);
 		}
 		this->camPosition = XMVectorSetY(this->camPosition,this->CalculateHeight(XMVectorGetX(camPosition), XMVectorGetZ(camPosition)));
 		XMVECTOR test = camPosition;
