@@ -46,6 +46,7 @@ PS_OUT main(PS_IN input)
 		lowerTexIntensity = 1 - higherTexIntensity;
 		output.diffuse = dirtTex.Sample(samplerState, input.TexCoord) * lowerTexIntensity
 			+ grassTex.Sample(samplerState, input.TexCoord) * higherTexIntensity;
+		output.specular.w = 5 * lowerTexIntensity + 2 * higherTexIntensity;
 	}
 	else if (input.WPos.y < 45.0f)
 	{
@@ -58,6 +59,7 @@ PS_OUT main(PS_IN input)
 		lowerTexIntensity = 1 - higherTexIntensity;
 		output.diffuse = grassTex.Sample(samplerState, input.TexCoord) * lowerTexIntensity
 			+ rockTex.Sample(samplerState, input.TexCoord) * higherTexIntensity;
+		output.specular.w = 2 * lowerTexIntensity + 1 * higherTexIntensity;
 	}
 	else if(input.WPos.y < 80.0f)
 	{
