@@ -22,6 +22,7 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->pixelShaderL = nullptr;
 	this->samplerState = nullptr;
 	this->transformBuffer = nullptr;
+	this->camPosBuffer = nullptr;
 	this->Initialize();	
 
 	this->WVP.world = XMMatrixScaling(1.0f, 1.0f, 1.0f);
@@ -277,6 +278,8 @@ bool Deferred::Initialize()
 	this->textureSRVs[1] = this->dirtSRV;
 	this->textureSRVs[2] = this->rockSRV;
 
+	this->CreateCamPosBuffer();
+
 	return result;
 }
 
@@ -323,7 +326,9 @@ void Deferred::GeometryPass()
 	D3D11_MAPPED_SUBRESOURCE camPosDataPtr;
 	this->direct3D.getDevCon()->Map(this->camPosBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &camPosDataPtr);
 
-	memcpy(camPosDataPtr.pData, &this->playerCamera.GetCamPosition(), sizeof(XMVECTOR));
+	this->camPos = this->playerCamera.GetCamPosition();
+
+	memcpy(camPosDataPtr.pData, &this->camPos, sizeof(XMVECTOR));
 
 	this->direct3D.getDevCon()->Unmap(this->camPosBuffer, 0);
 
@@ -462,8 +467,8 @@ void Deferred::CreateCamPosBuffer()
 	bufDesc.MiscFlags = 0;
 	bufDesc.Usage = D3D11_USAGE_DEFAULT;
 
-	D3D11_SUBRESOURCE_DATA subData = {};
-	subData.pSysMem = &this->playerCamera.GetCamPosition();
-
-	this->CreateBuffer(&bufDesc, &subData, &this->camPosBuffer);	
+	if (FAILED(this->direct3D.getDevice()->CreateBuffer(&bufDesc, nullptr, &this->camPosBuffer)))
+	{
+		MessageBoxA(NULL, "ERROR CREATING CAMPOSBUFFER", NULL, MB_OK);
+	}
 }

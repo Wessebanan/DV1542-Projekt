@@ -3,7 +3,7 @@ Texture2D grassTex : register (t0);
 Texture2D dirtTex : register (t1);
 Texture2D rockTex : register (t2);
 
-cbuffer camPosBuffer : register (c0)
+cbuffer camPosBuffer : register (b0)
 {
 	float4 camPos;
 };

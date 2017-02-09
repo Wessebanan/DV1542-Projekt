@@ -60,7 +60,8 @@ private:
 
 	Camera playerCamera;
 
-	ID3D11Buffer* camPosBuffer = nullptr;
+	ID3D11Buffer* camPosBuffer;
+
 	XMVECTOR camPos;
 
 public:
