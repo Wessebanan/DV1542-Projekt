@@ -284,7 +284,7 @@ void Deferred::GeometryPass()
 	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);	
 
-	float clearColor[] = { 1,0,0,0 };
+	float clearColor[] = { 135.0f/255.0f,206.0f/255.0f,250.0f/255.0f,0 };
 
 	for (int i = 0; i < BUFFER_COUNT; i++)
 	{
@@ -316,7 +316,7 @@ void Deferred::GeometryPass()
 
 void Deferred::LightPass()
 {
-	float clearColor[] = { 1,0,0,0 };
+	float clearColor[] = { 135.0f / 255.0f,206.0f / 255.0f,250.0f / 255.0f,0 };
 	//Setting the back buffer as the sole render target.
 	this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), this->depthStencilView);
 	this->direct3D.getDevCon()->ClearRenderTargetView(*this->direct3D.getBackBufferRTV(), clearColor);
@@ -470,5 +470,14 @@ void Deferred::CreateTexture(BYTE** imageData, LPCWSTR filename, int &bytesPerRo
 	bytesPerRow = (textureWidth*bitsPerPixel) / 8;
 
 	int imageSize = bytesPerRow * textureHeight;
-	*imageData = new (BYTE);
+	*imageData = new BYTE[imageSize];
+	
+	hr = wicFrame->CopyPixels(0, bytesPerRow, imageSize, *imageData);
+	if (FAILED(hr))
+	{
+		MessageBoxA(NULL, "Error copying pixels!", NULL, MB_OK);
+	}
+
+	D3D11_TEXTURE2D_DESC textureDesc = {};
+	
 }
