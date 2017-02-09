@@ -16,5 +16,9 @@ float4 main(PS_IN input) : SV_TARGET
 	float3 lightVec = lightPos - positions.Sample(samplerState, input.texcoord).xyz;
 	float4 ambient = { 0.10f, 0.10f, 0.10f, 0.0f };
 	float brightness = saturate(dot(normalize(lightVec), normals.Sample(samplerState, input.texcoord).xyz));
+
+	float specularPart = dot(normals.Sample(samplerState, input.texcoord).xyz, speculars.Sample(samplerState, input.texcoord).xyz);
+	brightness = saturate(brightness + specularPart);
+
 	return saturate(diffuses.Sample(samplerState, input.texcoord) * (brightness + ambient));
 }

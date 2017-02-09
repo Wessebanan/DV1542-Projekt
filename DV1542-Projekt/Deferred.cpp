@@ -273,6 +273,8 @@ bool Deferred::Initialize()
 
 	this->CreateTextures();
 
+	this->CreateCamPosBuffer();
+
 	this->textureSRVs[0] = this->grassSRV;
 	this->textureSRVs[1] = this->dirtSRV;
 	this->textureSRVs[2] = this->rockSRV;
