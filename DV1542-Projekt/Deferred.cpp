@@ -274,7 +274,7 @@ bool Deferred::Initialize()
 	this->CreateTextures();
 
 	this->textureSRVs[0] = this->grassSRV;
-	this->textureSRVs[1] = this->waterSRV;
+	this->textureSRVs[1] = this->dirtSRV;
 	this->textureSRVs[2] = this->rockSRV;
 
 	return result;
@@ -309,16 +309,25 @@ void Deferred::GeometryPass()
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 3, this->textureSRVs);
 
 	//Setting the matrices to the transformBuffer with the relevant changes.
-	D3D11_MAPPED_SUBRESOURCE dataPtr;
-	this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
+	D3D11_MAPPED_SUBRESOURCE transformDataPtr;
+	this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &transformDataPtr);
 
 	this->WVP.view = this->playerCamera.GetViewMatrix(); 								 
 								 
-	memcpy(dataPtr.pData, &WVP, sizeof(matrixData));
+	memcpy(transformDataPtr.pData, &this->WVP, sizeof(matrixData));
 
 	this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);
 
 	this->direct3D.getDevCon()->GSSetConstantBuffers(0, 1, &this->transformBuffer);
+
+	D3D11_MAPPED_SUBRESOURCE camPosDataPtr;
+	this->direct3D.getDevCon()->Map(this->camPosBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &camPosDataPtr);
+
+	memcpy(camPosDataPtr.pData, &this->playerCamera.GetCamPosition(), sizeof(XMVECTOR));
+
+	this->direct3D.getDevCon()->Unmap(this->camPosBuffer, 0);
+
+	this->direct3D.getDevCon()->PSSetConstantBuffers(0, 1, &this->camPosBuffer);
 }
 
 void Deferred::LightPass()
@@ -437,9 +446,24 @@ void Deferred::CreateTextures()
 	{
 		MessageBoxA(NULL, "Error creating dirt texture.", NULL, MB_OK);
 	}
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"waterTex.dds", NULL, &waterSRV);
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"dirtTex.dds", NULL, &dirtSRV);
 	if (FAILED(hr))
 	{
-		MessageBoxA(NULL, "Error creating water texture.", NULL, MB_OK);
+		MessageBoxA(NULL, "Error creating dirt texture.", NULL, MB_OK);
 	}
+}
+
+void Deferred::CreateCamPosBuffer()
+{
+	D3D11_BUFFER_DESC bufDesc = {};
+	bufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	bufDesc.ByteWidth = sizeof(XMVECTOR);
+	bufDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	bufDesc.MiscFlags = 0;
+	bufDesc.Usage = D3D11_USAGE_DEFAULT;
+
+	D3D11_SUBRESOURCE_DATA subData = {};
+	subData.pSysMem = &this->playerCamera.GetCamPosition();
+
+	this->CreateBuffer(&bufDesc, &subData, &this->camPosBuffer);	
 }

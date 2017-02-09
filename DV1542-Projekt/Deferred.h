@@ -22,7 +22,7 @@ private:
 	ID3D11Texture2D* textures[BUFFER_COUNT];
 	ID3D11RenderTargetView* renderTargetViews[BUFFER_COUNT];
 	ID3D11ShaderResourceView* shaderResourceViews[BUFFER_COUNT];
-	
+
 	ID3D11ShaderResourceView* unbindingSRVs[BUFFER_COUNT] = { NULL };
 
 	D3D11_VIEWPORT viewPort;
@@ -40,14 +40,14 @@ private:
 	ID3D11Buffer* transformBuffer;
 
 	ID3D11Texture2D* grassTexture = nullptr;
-	ID3D11Texture2D* waterTexture = nullptr;
+	ID3D11Texture2D* dirtTexture = nullptr;
 	ID3D11Texture2D* rockTexture = nullptr;
 
-	//grass: 1, water: 2, dirt: 3
+	//grass: 1, dirt: 2, dirt: 3
 	ID3D11ShaderResourceView* textureSRVs[TEXTURE_COUNT];
 
 	ID3D11ShaderResourceView* grassSRV = nullptr;
-	ID3D11ShaderResourceView* waterSRV = nullptr;
+	ID3D11ShaderResourceView* dirtSRV = nullptr;
 	ID3D11ShaderResourceView* rockSRV = nullptr;
 
 	struct matrixData
@@ -59,6 +59,9 @@ private:
 	matrixData WVP;
 
 	Camera playerCamera;
+
+	ID3D11Buffer* camPosBuffer = nullptr;
+	XMVECTOR camPos;
 
 public:
 	Deferred(HINSTANCE hInstance);
@@ -82,4 +85,6 @@ public:
 	HWND GetWindowHandle();
 
 	void CreateTextures();
+
+	void CreateCamPosBuffer();
 };

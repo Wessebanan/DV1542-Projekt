@@ -1,7 +1,12 @@
 SamplerState samplerState : register (s0);
 Texture2D grassTex : register (t0);
-Texture2D waterTex : register (t1);
-Texture2D dirtTex : register (t2);
+Texture2D dirtTex : register (t1);
+Texture2D rockTex : register (t2);
+
+cbuffer camPosBuffer : register (c0)
+{
+	float4 camPos;
+};
 
 struct PS_IN
 {
@@ -27,7 +32,7 @@ PS_OUT main(PS_IN input)
 
 	if (input.WPos.y < 13.0f)
 	{
-		output.diffuse = waterTex.Sample(samplerState, input.TexCoord);
+		output.diffuse = dirtTex.Sample(samplerState, input.TexCoord);
 	}
 	else if (input.WPos.y < 46.0f)
 	{
@@ -35,7 +40,7 @@ PS_OUT main(PS_IN input)
 	}
 	else
 	{
-		output.diffuse = dirtTex.Sample(samplerState, input.TexCoord);
+		output.diffuse = rockTex.Sample(samplerState, input.TexCoord);
 	}
 	output.specular = float4(1.0f, 1.0f, 1.0f, 1.0f); //obj specularity?
 	output.position = float4(input.WPos, 1);
