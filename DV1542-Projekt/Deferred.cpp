@@ -275,7 +275,7 @@ bool Deferred::Initialize()
 
 	this->textureSRVs[0] = this->grassSRV;
 	this->textureSRVs[1] = this->waterSRV;
-	this->textureSRVs[2] = this->dirtSRV;
+	this->textureSRVs[2] = this->rockSRV;
 
 	return result;
 }
@@ -432,7 +432,7 @@ void Deferred::CreateTextures()
 	{
 		MessageBoxA(NULL, "Error creating grass texture.", NULL, MB_OK);
 	}
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"dirtTex.dds", NULL, &dirtSRV);
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"rockTex.dds", NULL, &rockSRV);
 	if (FAILED(hr))
 	{
 		MessageBoxA(NULL, "Error creating dirt texture.", NULL, MB_OK);

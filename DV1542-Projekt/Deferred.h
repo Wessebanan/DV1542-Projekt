@@ -41,14 +41,14 @@ private:
 
 	ID3D11Texture2D* grassTexture = nullptr;
 	ID3D11Texture2D* waterTexture = nullptr;
-	ID3D11Texture2D* dirtTexture = nullptr;
+	ID3D11Texture2D* rockTexture = nullptr;
 
 	//grass: 1, water: 2, dirt: 3
 	ID3D11ShaderResourceView* textureSRVs[TEXTURE_COUNT];
 
 	ID3D11ShaderResourceView* grassSRV = nullptr;
 	ID3D11ShaderResourceView* waterSRV = nullptr;
-	ID3D11ShaderResourceView* dirtSRV = nullptr;
+	ID3D11ShaderResourceView* rockSRV = nullptr;
 
 	struct matrixData
 	{
