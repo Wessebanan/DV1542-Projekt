@@ -7,6 +7,7 @@
 #include "Window.h"
 #include "Camera.h"
 #include "D3D.h"
+#include <DDSTextureLoader.h>
 using namespace DirectX;
 const int BUFFER_COUNT = 4;
 
@@ -40,6 +41,10 @@ private:
 	ID3D11Texture2D* grassTexture = nullptr;
 	ID3D11Texture2D* waterTexture = nullptr;
 	ID3D11Texture2D* dirtTexture = nullptr;
+
+	D3D11_TEXTURE2D_DESC grassTextureDesc;
+	D3D11_TEXTURE2D_DESC waterTextureDesc;
+	D3D11_TEXTURE2D_DESC dirtTextureDesc;
 
 	BYTE** grassImageData = nullptr;
 	BYTE** waterImageData = nullptr;
@@ -76,5 +81,5 @@ public:
 
 	HWND GetWindowHandle();
 
-	void CreateTexture(BYTE** imageData, LPCWSTR filename, int &bytesPerRow);
+	void CreateTexture(BYTE** imageData, LPCWSTR filename, int &bytesPerRow, D3D11_TEXTURE2D_DESC &textureDesc);
 };

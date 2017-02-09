@@ -417,67 +417,79 @@ HWND Deferred::GetWindowHandle()
 	return this->window.GetWindow();
 }
 
-void Deferred::CreateTexture(BYTE** imageData, LPCWSTR filename, int &bytesPerRow)
+void Deferred::CreateTexture(BYTE** imageData, LPCWSTR filename, int &bytesPerRow, D3D11_TEXTURE2D_DESC &textureDesc)
 {
-	static IWICImagingFactory* wicFactory;
-	IWICBitmapDecoder* wicDecoder = NULL;
-	IWICBitmapFrameDecode* wicFrame = NULL;
-	HRESULT hr;
-	
-	if (wicFactory == NULL)
-	{
-		//Initialize the COM library.
-		CoInitialize(NULL);
+	//static IWICImagingFactory* wicFactory;
+	//IWICBitmapDecoder* wicDecoder = NULL;
+	//IWICBitmapFrameDecode* wicFrame = NULL;
+	//HRESULT hr;
+	//
+	//if (wicFactory == NULL)
+	//{
+	//	//Initialize the COM library.
+	//	CoInitialize(NULL);
 
-		//Create the WIC factory.
-		hr = CoCreateInstance(
-			CLSID_WICImagingFactory,
-			NULL,
-			CLSCTX_INPROC_SERVER,
-			IID_PPV_ARGS(&wicFactory)
-			);
-		if (FAILED(hr))
-		{
-			MessageBoxA(NULL, "Error creating instance!", NULL, MB_OK);
-		}
-	}
-	//Create the decoder.
-	hr = wicFactory->CreateDecoderFromFilename(
-		filename,
-		NULL,
-		GENERIC_READ,
-		WICDecodeMetadataCacheOnLoad,
-		&wicDecoder);
-	if (FAILED(hr))
-	{
-		MessageBoxA(NULL, "Error creating decoder from filename!", NULL, MB_OK);
-	}
+	//	//Create the WIC factory.
+	//	hr = CoCreateInstance(
+	//		CLSID_WICImagingFactory,
+	//		NULL,
+	//		CLSCTX_INPROC_SERVER,
+	//		IID_PPV_ARGS(&wicFactory)
+	//		);
+	//	if (FAILED(hr))
+	//	{
+	//		MessageBoxA(NULL, "Error creating instance!", NULL, MB_OK);
+	//	}
+	//}
+	////Create the decoder.
+	//hr = wicFactory->CreateDecoderFromFilename(
+	//	filename,
+	//	NULL,
+	//	GENERIC_READ,
+	//	WICDecodeMetadataCacheOnLoad,
+	//	&wicDecoder);
+	//if (FAILED(hr))
+	//{
+	//	MessageBoxA(NULL, "Error creating decoder from filename!", NULL, MB_OK);
+	//}
 
-	//Get the image from decoder (decoding the "frame").
-	hr = wicDecoder->GetFrame(0, &wicFrame);
-	if (FAILED(hr))
-	{
-		MessageBoxA(NULL, "Error getting frame!", NULL, MB_OK);
-	}
+	////Get the image from decoder (decoding the "frame").
+	//hr = wicDecoder->GetFrame(0, &wicFrame);
+	//if (FAILED(hr))
+	//{
+	//	MessageBoxA(NULL, "Error getting frame!", NULL, MB_OK);
+	//}
 
-	UINT textureWidth, textureHeight;
-	hr = wicFrame->GetSize(&textureWidth, &textureHeight);
-	if (FAILED(hr))
-	{
-		MessageBoxA(NULL, "Error getting size!", NULL, MB_OK);
-	}
-	int bitsPerPixel = 32; //Number of bits per pixel for DXGI_FORMAT_R8G8B8A8_UNORM (the format for all textures).
-	bytesPerRow = (textureWidth*bitsPerPixel) / 8;
+	//UINT textureWidth, textureHeight;
+	//hr = wicFrame->GetSize(&textureWidth, &textureHeight);
+	//if (FAILED(hr))
+	//{
+	//	MessageBoxA(NULL, "Error getting size!", NULL, MB_OK);
+	//}
+	//int bitsPerPixel = 32; //Number of bits per pixel for DXGI_FORMAT_R8G8B8A8_UNORM (the format for all textures).
+	//bytesPerRow = (textureWidth*bitsPerPixel) / 8;
 
-	int imageSize = bytesPerRow * textureHeight;
-	*imageData = new BYTE[imageSize];
-	
-	hr = wicFrame->CopyPixels(0, bytesPerRow, imageSize, *imageData);
-	if (FAILED(hr))
-	{
-		MessageBoxA(NULL, "Error copying pixels!", NULL, MB_OK);
-	}
+	//int imageSize = bytesPerRow * textureHeight;
+	//*imageData = new BYTE[imageSize];
+	//
+	//hr = wicFrame->CopyPixels(0, bytesPerRow, imageSize, *imageData);
+	//if (FAILED(hr))
+	//{
+	//	MessageBoxA(NULL, "Error copying pixels!", NULL, MB_OK);
+	//}
 
-	D3D11_TEXTURE2D_DESC textureDesc = {};
+	//textureDesc.ArraySize = 1;
+	//textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+	//textureDesc.CPUAccessFlags = 0;
+	//textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	//textureDesc.Height = textureHeight;
+	//textureDesc.Width = textureWidth;
+	//textureDesc.MipLevels = 1;
+	//textureDesc.MiscFlags = 0;
+	//textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	//textureDesc.SampleDesc.Count = 1;
+	//textureDesc.SampleDesc.Quality = 0;
+
+	//CreateDDSTextureFromFile(this->direct3D.getDevice(), "grassTex.dds", this->grassTexture, this->unbindingSRVs[1], 1230, nullptr);
 	
 }
