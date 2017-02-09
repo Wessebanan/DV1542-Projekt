@@ -51,7 +51,7 @@ bool InitDirectInput(HINSTANCE hInstance, HWND hwnd) {
 
 	return SUCCEEDED(hr);
 }
-void DetectInput(double time) {
+void DetectInput(double time, Camera* camera) {
 	DIMOUSESTATE mouseCurrState;
 	BYTE keyboardState[256];
 
@@ -106,7 +106,7 @@ void DetectInput(double time) {
 	else if (camPitch < -1.57f) {
 		camPitch = -1.57f;
 	}
-	updateCamera(moveLeftRight, moveBackForward, moveUpDown, camPitch, camYaw);
+	camera->UpdateCamera(moveLeftRight, moveBackForward, moveUpDown, camPitch, camYaw);
 	moveLeftRight = 0.0f;
 	moveBackForward = 0.0f;
 	moveUpDown = 0.0f;
