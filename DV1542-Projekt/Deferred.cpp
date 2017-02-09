@@ -1,6 +1,5 @@
 #include "Deferred.h"
 #include "NoiseGenerator.h"
-//#include "InputHandler.h"
 
 Deferred::Deferred(HINSTANCE hInstance) :
 	window(hInstance)
