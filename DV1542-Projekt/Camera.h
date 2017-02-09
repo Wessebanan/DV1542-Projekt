@@ -15,11 +15,18 @@ private:
 	XMVECTOR camRight;
 	XMMATRIX viewMatrix;
 
+	float* terrainData;
+	unsigned int terrainWidth;
+	unsigned int terrainHeight;
+	
 
 public:
 	Camera();
 	~Camera();
 	XMMATRIX UpdateCamera(float leftRight, float backForward, float upDown, float pitch, float yaw);
+
+	void SetTerrainData(float* dataArray, unsigned int width, unsigned int height);
+	float CalculateHeight(float newXPos, float newZPos);
 
 	XMMATRIX GetViewMatrix();
 	XMVECTOR GetCamPosition();

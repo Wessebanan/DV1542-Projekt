@@ -23,7 +23,7 @@ public:
 	NoiseGenerator(ID3D11Device* device, int width, int height);
 	~NoiseGenerator();
 	void generateNoise();
-	void loadHeightmap(std::wstring fileName, int heightmapWidth, int heightmapHeight);
+	float* loadHeightmap(std::wstring fileName, int heightmapWidth, int heightmapHeight);
 	ID3D11Texture2D* getTexture();
 	D3D11_TEXTURE2D_DESC getTextureDesc();
 

@@ -24,7 +24,7 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->transformBuffer = nullptr;
 	this->Initialize();	
 
-	this->WVP.world = XMMatrixScaling(1.5f, 1.0f, 1.5f);
+	this->WVP.world = XMMatrixScaling(1.0f, 1.0f, 1.0f);
 	this->WVP.view = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
 	this->WVP.proj = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 20000.0f);
 
@@ -338,7 +338,7 @@ void Deferred::LightPass()
 
 void Deferred::setHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height) {
 	NoiseGenerator noise1(this->direct3D.getDevice(), width, height);
-	noise1.loadHeightmap(filepath, width, height);
+	this->playerCamera.SetTerrainData(noise1.loadHeightmap(filepath, width, height), width, height);
 
 
 	ID3D11ShaderResourceView* gTextureView = nullptr;
