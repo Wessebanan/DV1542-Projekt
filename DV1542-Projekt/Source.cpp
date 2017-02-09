@@ -38,9 +38,9 @@ matrixData WVP;
 
 float rotationAngle = 0.0f;
 
-void RenderDeferred(Deferred* def) 
+void RenderDeferred(Deferred* def, Camera* playerCam) 
 {
-	def->GeometryPass(viewMatrix);
+	def->GeometryPass(playerCam->GetViewMatrix());
 	def->Draw(gTriangleBuffer, gIndexBuffer, 6 * 999 * 999, sizeof(Vertex));
 	def->LightPass();
 }
@@ -124,6 +124,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	int nCmdShow)
 {
 	Deferred def(hInstance);
+	Camera playerCamera;
 	MSG msg;
 
 	if (!InitDirectInput(hInstance, def.GetWindowHandle())) {
@@ -161,9 +162,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 					break;
 			}
 			else {
-				DetectInput(GetFrameTime());
+				DetectInput(GetFrameTime(), &playerCamera);
 				
-				RenderDeferred(&def); //<-- Funkar!
+				RenderDeferred(&def, &playerCamera); //<-- Funkar!
 
 
 				// WEEEEW GAME CODE HERE LET'S GO
