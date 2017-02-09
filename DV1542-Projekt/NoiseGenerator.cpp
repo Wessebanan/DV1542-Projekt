@@ -55,7 +55,7 @@ void NoiseGenerator::generateNoise() {
 	delete[] noiseData;
 }
 
-void NoiseGenerator::loadHeightmap(std::wstring fileName, int heightmapWidth, int heightmapHeight) {
+float* NoiseGenerator::loadHeightmap(std::wstring fileName, int heightmapWidth, int heightmapHeight) {
 	this->height = heightmapHeight;
 	this->width = heightmapWidth;
 	this->noiseTextureDesc.Width = this->width;
@@ -87,7 +87,7 @@ void NoiseGenerator::loadHeightmap(std::wstring fileName, int heightmapWidth, in
 	if (FAILED(hr)) {
 		MessageBox(NULL, L"Something went wrong creating the noise texture", NULL, MB_OK);
 	}
-	delete[] mapData;
+	return mapData;
 }
 
 
