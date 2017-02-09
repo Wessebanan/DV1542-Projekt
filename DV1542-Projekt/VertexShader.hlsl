@@ -2,6 +2,7 @@ struct VS_IN
 {
 	float3 Pos : POSITION;
 	float3 Color : COLOR;
+	float2 TexCoord : TEXCOORD;
 };
 
 Texture2D heightMap : register(t0);
@@ -11,6 +12,7 @@ struct VS_OUT
 {
 	float4 Pos : POSITION;
 	float3 Color : COLOR;
+	float2 TexCoord : TEXCOORD;
 };
 //-----------------------------------------------------------------------------------------
 // VertexShader: VSScene
@@ -23,6 +25,7 @@ VS_OUT main(VS_IN input)
 	
 	output.Pos = float4(input.Pos.x, input.Pos.y + 100.0f * s.r, input.Pos.z, 1.0f);
 	output.Color = input.Color;
+	output.TexCoord = input.TexCoord;
 
 	return output;
 }

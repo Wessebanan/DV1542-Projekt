@@ -33,6 +33,11 @@ private:
 
 	ID3D11SamplerState* samplerState;
 	ID3D11Buffer* transformBuffer;
+
+	ID3D11Texture2D* grassTexture = nullptr;
+	ID3D11Texture2D* waterTexture = nullptr;
+	ID3D11Texture2D* dirtTexture = nullptr;
+
 	struct matrixData
 	{
 		XMMATRIX world;
@@ -66,4 +71,6 @@ public:
 	HWND GetWindowHandle();
 
 	IDXGISwapChain* GetSwapChain();
+
+	void CreateTextures();
 };

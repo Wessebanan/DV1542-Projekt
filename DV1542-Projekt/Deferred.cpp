@@ -432,3 +432,8 @@ IDXGISwapChain * Deferred::GetSwapChain()
 {
 	return this->direct3D.getSwapChain();
 }
+
+void Deferred::CreateTextures()
+{
+
+}
