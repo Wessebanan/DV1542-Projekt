@@ -22,7 +22,6 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->pixelShaderL = nullptr;
 	this->samplerState = nullptr;
 	this->transformBuffer = nullptr;
-	this->fullscreenQuadBuffer = nullptr;
 	this->Initialize();	
 
 	this->WVP.world = XMMatrixScaling(1.0f, 1.0f, 1.0f);
@@ -161,21 +160,6 @@ void Deferred::CreateShaders()
 	this->direct3D.getDevice()->CreateVertexShader(pVSL->GetBufferPointer(), pVSL->GetBufferSize(), nullptr, &this->vertexShaderLight);
 	pVSL->Release();
 	
-}
-
-ID3D11Texture2D * Deferred::GetTexture(int index)
-{
-	return this->textures[index];
-}
-
-ID3D11RenderTargetView * Deferred::GetRenderTargetView(int index)
-{
-	return this->renderTargetViews[index];
-}
-
-ID3D11ShaderResourceView * Deferred::GetShaderResourceView(int index)
-{
-	return this->shaderResourceViews[index];
 }
 
 bool Deferred::Initialize()
@@ -433,12 +417,58 @@ HWND Deferred::GetWindowHandle()
 	return this->window.GetWindow();
 }
 
-IDXGISwapChain * Deferred::GetSwapChain()
+void Deferred::CreateTexture(BYTE** imageData, LPCWSTR filename, int &bytesPerRow)
 {
-	return this->direct3D.getSwapChain();
-}
+	static IWICImagingFactory* wicFactory;
+	IWICBitmapDecoder* wicDecoder = NULL;
+	IWICBitmapFrameDecode* wicFrame = NULL;
+	HRESULT hr;
+	
+	if (wicFactory == NULL)
+	{
+		//Initialize the COM library.
+		CoInitialize(NULL);
 
-void Deferred::CreateTextures()
-{
+		//Create the WIC factory.
+		hr = CoCreateInstance(
+			CLSID_WICImagingFactory,
+			NULL,
+			CLSCTX_INPROC_SERVER,
+			IID_PPV_ARGS(&wicFactory)
+			);
+		if (FAILED(hr))
+		{
+			MessageBoxA(NULL, "Error creating instance!", NULL, MB_OK);
+		}
+	}
+	//Create the decoder.
+	hr = wicFactory->CreateDecoderFromFilename(
+		filename,
+		NULL,
+		GENERIC_READ,
+		WICDecodeMetadataCacheOnLoad,
+		&wicDecoder);
+	if (FAILED(hr))
+	{
+		MessageBoxA(NULL, "Error creating decoder from filename!", NULL, MB_OK);
+	}
 
+	//Get the image from decoder (decoding the "frame").
+	hr = wicDecoder->GetFrame(0, &wicFrame);
+	if (FAILED(hr))
+	{
+		MessageBoxA(NULL, "Error getting frame!", NULL, MB_OK);
+	}
+
+	UINT textureWidth, textureHeight;
+	hr = wicFrame->GetSize(&textureWidth, &textureHeight);
+	if (FAILED(hr))
+	{
+		MessageBoxA(NULL, "Error getting size!", NULL, MB_OK);
+	}
+	int bitsPerPixel = 32; //Number of bits per pixel for DXGI_FORMAT_R8G8B8A8_UNORM (the format for all textures).
+	bytesPerRow = (textureWidth*bitsPerPixel) / 8;
+
+	int imageSize = bytesPerRow * textureHeight;
+	*imageData = new (BYTE);
 }
