@@ -4,6 +4,7 @@
 #include <windowsx.h>
 #include <d3d11.h>
 #include <d3dcompiler.h>
+#include "Deferred.h"
 #include <DirectXMath.h>
 #include "Camera.h"
 #pragma comment (lib, "d3d11.lib")
@@ -51,7 +52,7 @@ bool InitDirectInput(HINSTANCE hInstance, HWND hwnd) {
 
 	return SUCCEEDED(hr);
 }
-void DetectInput(double time, Camera* camera) {
+void DetectInput(double time, Deferred* deferred) {
 	DIMOUSESTATE mouseCurrState;
 	BYTE keyboardState[256];
 
@@ -106,7 +107,7 @@ void DetectInput(double time, Camera* camera) {
 	else if (camPitch < -1.57f) {
 		camPitch = -1.57f;
 	}
-	camera->UpdateCamera(moveLeftRight, moveBackForward, moveUpDown, camPitch, camYaw);
+	deferred->GetCameraPointer()->UpdateCamera(moveLeftRight, moveBackForward, moveUpDown, camPitch, camYaw);
 	moveLeftRight = 0.0f;
 	moveBackForward = 0.0f;
 	moveUpDown = 0.0f;

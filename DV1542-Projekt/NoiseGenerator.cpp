@@ -74,9 +74,6 @@ void NoiseGenerator::loadHeightmap(std::wstring fileName, int heightmapWidth, in
 	for (int i = 0; i < this->height * this->width; i++) {
 		mapData[i] = in[i] / 255.0f;
 	}
-	float test1 = mapData[383];
-	float test2 = mapData[683];
-	float test3 = mapData[65000];
 	// Check if a texture already exists
 	if (this->noiseTexture != nullptr) {
 		this->noiseTexture->Release();
