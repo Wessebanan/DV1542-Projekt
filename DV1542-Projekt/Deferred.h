@@ -10,6 +10,7 @@
 #include <DDSTextureLoader.h>
 using namespace DirectX;
 const int BUFFER_COUNT = 4;
+const int TEXTURE_COUNT = 3;
 
 class Deferred 
 {
@@ -42,13 +43,12 @@ private:
 	ID3D11Texture2D* waterTexture = nullptr;
 	ID3D11Texture2D* dirtTexture = nullptr;
 
-	D3D11_TEXTURE2D_DESC grassTextureDesc;
-	D3D11_TEXTURE2D_DESC waterTextureDesc;
-	D3D11_TEXTURE2D_DESC dirtTextureDesc;
+	//grass: 1, water: 2, dirt: 3
+	ID3D11ShaderResourceView* textureSRVs[TEXTURE_COUNT];
 
-	BYTE** grassImageData = nullptr;
-	BYTE** waterImageData = nullptr;
-	BYTE** dirtImageData = nullptr;
+	ID3D11ShaderResourceView* grassSRV = nullptr;
+	ID3D11ShaderResourceView* waterSRV = nullptr;
+	ID3D11ShaderResourceView* dirtSRV = nullptr;
 
 	struct matrixData
 	{
@@ -81,5 +81,5 @@ public:
 
 	HWND GetWindowHandle();
 
-	void CreateTexture(BYTE** imageData, LPCWSTR filename, int &bytesPerRow, D3D11_TEXTURE2D_DESC &textureDesc);
+	void CreateTextures();
 };

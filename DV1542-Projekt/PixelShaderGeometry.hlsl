@@ -1,3 +1,8 @@
+SamplerState samplerState : register (s0);
+Texture2D grassTex : register (t0);
+Texture2D waterTex : register (t1);
+Texture2D dirtTex : register (t2);
+
 struct PS_IN
 {
 	float4 Pos : SV_POSITION;
@@ -19,7 +24,19 @@ PS_OUT main(PS_IN input)
 {
 	PS_OUT output = (PS_OUT)0;
 	output.normal = float4(input.Nor, 0);
-	output.diffuse = float4(input.Color, 1); //Sample texture with texcoord here.
+
+	if (input.WPos.y < 13.0f)
+	{
+		output.diffuse = waterTex.Sample(samplerState, input.TexCoord);
+	}
+	else if (input.WPos.y < 46.0f)
+	{
+		output.diffuse = grassTex.Sample(samplerState, input.TexCoord);
+	}
+	else
+	{
+		output.diffuse = dirtTex.Sample(samplerState, input.TexCoord);
+	}
 	output.specular = float4(1.0f, 1.0f, 1.0f, 1.0f); //obj specularity?
 	output.position = float4(input.WPos, 1);
 	return output;
