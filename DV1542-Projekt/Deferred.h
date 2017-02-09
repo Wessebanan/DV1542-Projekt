@@ -2,6 +2,8 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
+#include <wincodec.h>
+#include <wincodecsdk.h>
 #include "Window.h"
 #include "Camera.h"
 #include "D3D.h"
@@ -39,6 +41,10 @@ private:
 	ID3D11Texture2D* waterTexture = nullptr;
 	ID3D11Texture2D* dirtTexture = nullptr;
 
+	BYTE** grassImageData = nullptr;
+	BYTE** waterImageData = nullptr;
+	BYTE** dirtImageData = nullptr;
+
 	struct matrixData
 	{
 		XMMATRIX world;
@@ -49,16 +55,11 @@ private:
 
 	Camera playerCamera;
 
-	ID3D11Buffer* fullscreenQuadBuffer;
-
 public:
 	Deferred(HINSTANCE hInstance);
 	~Deferred();
 
 	void CreateShaders();
-	ID3D11Texture2D* GetTexture(int index);
-	ID3D11RenderTargetView* GetRenderTargetView(int index);
-	ID3D11ShaderResourceView* GetShaderResourceView(int index);
 	bool Initialize();
 	void GeometryPass();
 	void LightPass();
@@ -75,7 +76,5 @@ public:
 
 	HWND GetWindowHandle();
 
-	IDXGISwapChain* GetSwapChain();
-
-	void CreateTextures();
+	void CreateTexture(BYTE** imageData, LPCWSTR filename, int &bytesPerRow);
 };
