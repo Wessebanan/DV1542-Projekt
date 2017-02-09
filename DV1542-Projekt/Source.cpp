@@ -13,32 +13,9 @@
 #pragma comment (lib, "d3dcompiler.lib")
 using namespace DirectX;
 
-
-HWND InitWindow(HINSTANCE hInstance);
-LRESULT CALLBACK WindowProc(HWND hWnd,
-	UINT message,
-	WPARAM wParam,
-	LPARAM lParam);
-HRESULT CreateDirect3DContext(HWND wndHandle);
-
-IDXGISwapChain* gSwapChain = nullptr;
-ID3D11Device* gDevice = nullptr;
-ID3D11DeviceContext* gDeviceContext = nullptr;
-ID3D11RenderTargetView* gBackbufferRTV = nullptr;
-
-ID3D11InputLayout* gVertexLayout = nullptr;
-ID3D11VertexShader* gVertexShader = nullptr;
-ID3D11PixelShader* gPixelShader = nullptr;
-ID3D11GeometryShader* gGeometryShader = nullptr;
-
 ID3D11Buffer* gTriangleBuffer = nullptr;
-ID3D11Buffer* gTransformBuffer = nullptr;
 
 ID3D11Buffer* gIndexBuffer = nullptr;
-
-ID3D11DepthStencilView* gDepthStencilView = nullptr;
-ID3D11Texture2D* gDepthStencilBuffer = nullptr;
-
 
 ID3D11Texture2D* grassTexture = nullptr;
 ID3D11Texture2D* waterTexture = nullptr;
@@ -59,35 +36,6 @@ void RenderDeferred(Deferred* def)
 	def->GeometryPass(viewMatrix);
 	def->Draw(gTriangleBuffer, gIndexBuffer, 6 * 999 * 999);
 	def->LightPass();
-}
-
-void CreateDepthBuffer()
-{
-	D3D11_TEXTURE2D_DESC depthStencilDesc;
-
-	depthStencilDesc.Width = (float)640;
-	depthStencilDesc.Height = (float)480;
-	depthStencilDesc.MipLevels = 1;
-	depthStencilDesc.ArraySize = 1;
-	depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthStencilDesc.SampleDesc.Count = 1;
-	depthStencilDesc.SampleDesc.Quality = 0;
-	depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
-	depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-	depthStencilDesc.CPUAccessFlags = 0;
-	depthStencilDesc.MiscFlags = 0;
-
-	if (FAILED(gDevice->CreateTexture2D(&depthStencilDesc, NULL, &gDepthStencilBuffer)))
-	{
-		MessageBoxA(NULL, "Error creating depth buffer.", NULL, MB_OK);
-		exit(-1);
-	}
-	if (FAILED(gDevice->CreateDepthStencilView(gDepthStencilBuffer, NULL, &gDepthStencilView)))
-	{
-		MessageBoxA(NULL, "Error creating ds view.", NULL, MB_OK);
-		exit(-1);
-	}
-
 }
 
 void CreateTriangle(Deferred* def)
