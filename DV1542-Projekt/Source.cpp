@@ -162,21 +162,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		}
 
 		gTriangleBuffer->Release();
-		gBackbufferRTV->Release();
-		gVertexLayout->Release();
-		gVertexShader->Release();
-		gPixelShader->Release();
-		gGeometryShader->Release();
-		gSwapChain->Release();
-		gDevice->Release();
-		gDeviceContext->Release();
 		DIKeyboard->Unacquire();
 		DIMouse->Unacquire();
 		DirectInput->Release();
 		DestroyWindow(def.GetWindowHandle());
 		gIndexBuffer->Release();
-		gDepthStencilBuffer->Release();
-		gDepthStencilView->Release();
 	}
 
 	// return this part of the WM_QUIT message to Windows
