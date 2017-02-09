@@ -7,6 +7,7 @@
 #include "Deferred.h"
 #include <DirectXMath.h>
 #include "Camera.h"
+#include "Timer.h"
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 
@@ -36,6 +37,14 @@ float camYaw = 0.0f;
 float camPitch = 0.0f;
 XMMATRIX Rotationx;
 XMMATRIX Rotationz;
+
+//---------JUMP STUFF-------
+float maxDownSpeed = -200.0f;
+float jumpSpeed = 0.0f;
+float gravitation = -200.0f;
+bool isJumping = false;
+float totalHeightOfJump = 0.0f;
+//--------------------------
 
 bool InitDirectInput(HINSTANCE hInstance, HWND hwnd) {
 	HRESULT hr = DirectInput8Create(hInstance, DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&DirectInput, NULL);
@@ -86,9 +95,24 @@ void DetectInput(double time, Deferred* deferred) {
 		//rotx -= 1.0f * time;
 		moveBackForward -= speed;
 	}
+	//----------JUMP STUFF-------------------
 	if (keyboardState[DIK_SPACE] & 0x80) {
+		if (!isJumping)
+		{
+			isJumping = true;
+			jumpSpeed = 100.0f;
+		}
 		moveUpDown += speed;
 	}
+	if (isJumping)
+	{
+		totalHeightOfJump += jumpSpeed * time;
+		if (jumpSpeed > maxDownSpeed)
+		{
+			jumpSpeed += gravitation * time;
+		}
+	}	
+	//--------------------------------------
 	if (keyboardState[DIK_X] & 0x80) {
 		moveUpDown -= speed;
 	}
@@ -107,7 +131,7 @@ void DetectInput(double time, Deferred* deferred) {
 	else if (camPitch < -1.57f) {
 		camPitch = -1.57f;
 	}
-	deferred->GetCameraPointer()->UpdateCamera(moveLeftRight, moveBackForward, moveUpDown, camPitch, camYaw);
+	deferred->GetCameraPointer()->UpdateCamera(moveLeftRight, moveBackForward, moveUpDown, camPitch, camYaw, &isJumping, &totalHeightOfJump);
 	moveLeftRight = 0.0f;
 	moveBackForward = 0.0f;
 	moveUpDown = 0.0f;

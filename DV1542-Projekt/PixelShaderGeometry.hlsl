@@ -67,6 +67,7 @@ PS_OUT main(PS_IN input)
 		output.specular.w = 1;
 	}
 	
+
 	float3 lightVec = lightPos - input.WPos;
 	float3 lightCameraVec = camPos - input.WPos;
 	float3 specularReflection = normalize(lightVec + lightCameraVec);
