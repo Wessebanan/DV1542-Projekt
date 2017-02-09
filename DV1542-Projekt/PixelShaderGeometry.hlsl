@@ -30,19 +30,28 @@ PS_OUT main(PS_IN input)
 	PS_OUT output = (PS_OUT)0;
 	output.normal = float4(input.Nor, 0);
 
+	float3 lightPos = { 500.0f, 400.0f, 500.0f };
+
 	if (input.WPos.y < 13.0f)
 	{
 		output.diffuse = dirtTex.Sample(samplerState, input.TexCoord);
+		output.specular.w = 5;
 	}
 	else if (input.WPos.y < 46.0f)
 	{
 		output.diffuse = grassTex.Sample(samplerState, input.TexCoord);
+		output.specular.w = 2;
 	}
 	else
 	{
 		output.diffuse = rockTex.Sample(samplerState, input.TexCoord);
+		output.specular.w = 1;
 	}
-	output.specular = float4(1.0f, 1.0f, 1.0f, 1.0f); //obj specularity?
+	float3 lightVec = lightPos - input.WPos;
+	float3 lightCameraVec = camPos - input.WPos;
+	float3 specularReflection = normalize(lightVec + lightCameraVec);
+
+	output.specular.xyz = specularReflection;
 	output.position = float4(input.WPos, 1);
 	return output;
 }
