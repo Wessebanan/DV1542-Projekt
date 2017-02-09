@@ -6,7 +6,7 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	window(hInstance)
 {	
 	this->window.Initialize();
-	this->direct3D.Initialize(640, 480, this->window.GetWindow());
+	this->direct3D.Initialize(this->window.GetWindow());
 	for (int i = 0; i < BUFFER_COUNT; i++) 
 	{
 		this->textures[i] = nullptr;
@@ -28,48 +28,6 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->WVP.world = XMMatrixScaling(1.5f, 1.0f, 1.5f);
 	this->WVP.view = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
 	this->WVP.proj = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 20000.0f);
-
-	//Creating the full screen quad vertex buffer etc.
-	struct Vertex
-	{
-		float x, y, z;
-		float r, g, b;
-	};
-
-	Vertex fullScreenQuad[] =
-	{
-		-2.f, -2.f, 0.0f,
-		1.0f, 0.0f, 0.0f,
-
-		-2.f, 2.f, 0.0f,
-		0.0f, 1.0f, 0.0f,
-
-		2.f, -2.f, 0.0f,
-		0.0f, 0.0f, 1.0f,
-
-		2.f, -2.f, 0.0f,
-		0.0f, 0.0f, 1.0f,
-
-		-2.f, 2.f, 0.0f,
-		0.0f, 1.0f, 0.0f,		
-
-		2.f, 2.f, 0.0f,
-		0.5f, 0.0f, 0.5f,
-	};
-
-	D3D11_BUFFER_DESC fullscreenQuadDesc = {};
-	fullscreenQuadDesc.ByteWidth = sizeof(fullScreenQuad);
-	fullscreenQuadDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	fullscreenQuadDesc.Usage = D3D11_USAGE_DEFAULT;
-
-	D3D11_SUBRESOURCE_DATA fullscreenQuadData = {};
-	fullscreenQuadData.pSysMem = fullScreenQuad;
-
-	if (FAILED(this->CreateBuffer(&fullscreenQuadDesc, &fullscreenQuadData, &this->fullscreenQuadBuffer)))
-	{
-		MessageBoxA(NULL, "Error creating full screen quad buffer.", NULL, MB_OK);
-		exit(-1);
-	}
 
 	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
@@ -93,7 +51,6 @@ Deferred::~Deferred()
 	this->pixelShaderG->Release();
 	this->pixelShaderL->Release();
 	this->samplerState->Release();
-	this->fullscreenQuadBuffer->Release();
 	
 	if (this->transformBuffer != nullptr)
 	{
@@ -125,6 +82,7 @@ void Deferred::CreateShaders()
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
 	this->direct3D.getDevice()->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &this->vertexLayout);
@@ -335,10 +293,8 @@ bool Deferred::Initialize()
 void Deferred::GeometryPass(XMMATRIX viewMatrix)
 {
 
-	//-----------------------TEST-------------------------
-	ID3D11ShaderResourceView* const srv[4] = { NULL };
-	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, srv);
-	//----------------------------------------------------
+	//Unbinding the textures from input to render to them again.
+	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->unbindingSRVs);	
 
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
 	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -378,7 +334,6 @@ void Deferred::LightPass()
 {
 	float clearColor[] = { 1,0,0,0 };
 	//Setting the back buffer as the sole render target.
-	//this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), this->depthStencilView);
 	this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), this->depthStencilView);
 	this->direct3D.getDevCon()->ClearRenderTargetView(*this->direct3D.getBackBufferRTV(), clearColor);
 
@@ -387,18 +342,10 @@ void Deferred::LightPass()
 	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderL, nullptr, 0);
 	this->direct3D.getDevCon()->GSSetShader(nullptr, nullptr, 0);
 
-	//Setting the same sampler as the geometry pass, binding the g-buffer textures as shader resources. VS gets transformbuffer.
-	
+	//Setting the same sampler as the geometry pass, binding the g-buffer textures as shader resources. VS gets transformbuffer.	
 	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);				
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);
 	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);	
-
-	UINT32 vertexSize = sizeof(float) * 6;
-	UINT32 offset = 0;
-
-	//this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &this->fullscreenQuadBuffer, &vertexSize, &offset);
-
-	//this->direct3D.getDevCon()->Draw(0, 0);
 
 	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	this->direct3D.getDevCon()->Draw(4, 0);
@@ -443,11 +390,11 @@ void Deferred::setHeightMapTexture(std::wstring filepath, unsigned int width, un
 	this->direct3D.getDevCon()->VSSetSamplers(0, 1, &gSamplerState);
 }
 
-void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int numIndices)
+void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int numIndices, unsigned long long pVertexSize)
 {
 	if (!(vertexBuffer == nullptr))
 	{ 
-		UINT32 vertexSize = sizeof(float) * 6;
+		UINT32 vertexSize = pVertexSize;
 		UINT32 offset = 0;
 		this->direct3D.getDevCon()->VSSetSamplers(0, 1, &this->samplerState);
 		this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);

@@ -27,6 +27,13 @@ struct matrixData {
 	XMMATRIX ProjMatrix;					
 };
 
+struct Vertex
+{
+	float x, y, z;
+	float r, g, b;
+	float u, v;
+};
+
 matrixData WVP;
 
 float rotationAngle = 0.0f;
@@ -34,27 +41,29 @@ float rotationAngle = 0.0f;
 void RenderDeferred(Deferred* def) 
 {
 	def->GeometryPass(viewMatrix);
-	def->Draw(gTriangleBuffer, gIndexBuffer, 6 * 999 * 999);
+	def->Draw(gTriangleBuffer, gIndexBuffer, 6 * 999 * 999, sizeof(Vertex));
 	def->LightPass();
 }
 
 void CreateTriangle(Deferred* def)
 {
-	struct Vertex
-	{
-		float x, y, z;
-		float r, g, b;
-	};
-
 	int rows = 1000;
 	int columns = 1000;
+
+	//Texcoords:
+	float u = 0.0f;
+	float v = (float)columns/10;
+
 	Vertex* vertices = new Vertex[rows*columns];
 	unsigned long vertexIncrementer = 0;
 	for (int i = 0; i < rows; i++) {
 		for (int j = 0; j < columns; j++) {
-			vertices[vertexIncrementer] = { (float)j, -20.0f, (float)i, 0.0f, 1.0f, 0.0f };
+			vertices[vertexIncrementer] = { (float)j, -20.0f, (float)i, 0.0f, 1.0f, 0.0f, u, v };
 			vertexIncrementer++;
+			u += 0.1f;
 		}
+		u = 0;
+		v -= 0.1f;
 	}
 	
 	D3D11_BUFFER_DESC triangleBufferDesc = {};

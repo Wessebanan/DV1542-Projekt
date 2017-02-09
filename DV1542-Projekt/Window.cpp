@@ -66,8 +66,8 @@ bool Window::Initialize()
 		L"WindowClass1",    // name of the window class
 		L"wtf",   // title of the window
 		WS_OVERLAPPEDWINDOW,    // window style
-		100,    // x-position of the window
-		100,    // y-position of the window
+		0,    // x-position of the window
+		0,    // y-position of the window
 		wr.right - wr.left,    // width of the window
 		wr.bottom - wr.top,    // height of the window
 		NULL,    // we have no parent window, NULL

@@ -18,6 +18,8 @@ private:
 	ID3D11RenderTargetView* renderTargetViews[BUFFER_COUNT];
 	ID3D11ShaderResourceView* shaderResourceViews[BUFFER_COUNT];
 	
+	ID3D11ShaderResourceView* unbindingSRVs[BUFFER_COUNT] = { NULL };
+
 	D3D11_VIEWPORT viewPort;
 	ID3D11DepthStencilView* depthStencilView;
 	ID3D11Texture2D* depthStencilBuffer;
@@ -55,7 +57,7 @@ public:
 
 	void setHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height);
 
-	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices);
+	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, unsigned long long pVertexSize);
 
 	void CreateTransformBuffer();
 

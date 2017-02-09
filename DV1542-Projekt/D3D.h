@@ -23,7 +23,7 @@ public:
 	IDXGISwapChain* getSwapChain()const;
 	ID3D11RenderTargetView** getBackBufferRTV();
 
-	bool Initialize(int width, int height, HWND window);
+	bool Initialize(HWND window);
 };
 
 #endif

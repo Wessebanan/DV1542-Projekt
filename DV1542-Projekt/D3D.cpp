@@ -39,7 +39,7 @@ ID3D11RenderTargetView ** D3D::getBackBufferRTV()
 	return &this->backBufferRTV;
 }
 
-bool D3D::Initialize(int width, int height, HWND window)
+bool D3D::Initialize(HWND window)
 {
 	// create a struct to hold information about the swap chain
 	DXGI_SWAP_CHAIN_DESC scd;
