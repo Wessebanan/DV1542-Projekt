@@ -264,6 +264,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			}
 		}
 
+		gTransformBuffer->Release();
 		gTriangleBuffer->Release();
 		gBackbufferRTV->Release();
 		gVertexLayout->Release();
