@@ -290,7 +290,7 @@ bool Deferred::Initialize()
 	return result;
 }
 
-void Deferred::GeometryPass(XMMATRIX viewMatrix)
+void Deferred::GeometryPass()
 {
 
 	//Unbinding the textures from input to render to them again.
@@ -321,7 +321,7 @@ void Deferred::GeometryPass(XMMATRIX viewMatrix)
 	D3D11_MAPPED_SUBRESOURCE dataPtr;
 	this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dataPtr);
 
-	this->WVP.view = viewMatrix; 								 
+	this->WVP.view = this->playerCamera.GetViewMatrix(); 								 
 								 
 	memcpy(dataPtr.pData, &WVP, sizeof(matrixData));
 
@@ -416,6 +416,11 @@ void Deferred::CreateTransformBuffer()
 		MessageBoxA(NULL, "Error creating transform buffer.", NULL, MB_OK);
 		exit(-1);
 	}
+}
+
+Camera * Deferred::GetCameraPointer()
+{
+	return &this->playerCamera;
 }
 
 HRESULT Deferred::CreateBuffer(D3D11_BUFFER_DESC * bufferDesc, D3D11_SUBRESOURCE_DATA * subResData, ID3D11Buffer ** buffer)

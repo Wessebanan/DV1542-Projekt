@@ -3,6 +3,7 @@
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
 #include "Window.h"
+#include "Camera.h"
 #include "D3D.h"
 using namespace DirectX;
 const int BUFFER_COUNT = 4;
@@ -46,6 +47,8 @@ private:
 	};
 	matrixData WVP;
 
+	Camera playerCamera;
+
 	ID3D11Buffer* fullscreenQuadBuffer;
 
 public:
@@ -57,7 +60,7 @@ public:
 	ID3D11RenderTargetView* GetRenderTargetView(int index);
 	ID3D11ShaderResourceView* GetShaderResourceView(int index);
 	bool Initialize();
-	void GeometryPass(XMMATRIX viewMatrix);
+	void GeometryPass();
 	void LightPass();
 
 	void setHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height);
@@ -65,6 +68,8 @@ public:
 	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, unsigned long long pVertexSize);
 
 	void CreateTransformBuffer();
+
+	Camera* GetCameraPointer();
 
 	HRESULT CreateBuffer(D3D11_BUFFER_DESC* bufferDesc, D3D11_SUBRESOURCE_DATA* subResData, ID3D11Buffer** buffer);
 
