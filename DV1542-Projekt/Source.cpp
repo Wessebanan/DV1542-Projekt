@@ -45,36 +45,7 @@ void CreateTriangle(Deferred* def)
 		float x, y, z;
 		float r, g, b;
 	};
-	//Vertex vertices[] =
-	//{
 
-
-	//	// Kuuube ish
-	//	-0.5f, -0.5f, 0.0f,
-	//	1.0f, 0.0f, 0.0f,
-
-	//	-0.5f, 0.5f, 0.0f,
-	//	0.0f, 1.0f, 0.0f,
-
-	//	0.5f, -0.5f, 0.0f,
-	//	0.0f, 0.0f, 1.0f,
-
-	//	0.5f, 0.5f, 0.0f,
-	//	0.5f, 0.0f, 0.5f,
-
-	//	-0.5f, -0.5f, 1.0f,
-	//	1.0f, 0.0f, 0.0f,
-
-	//	-0.5f, 0.5f, 1.0f,
-	//	0.0f, 1.0f, 0.0f,
-
-	//	0.5f, -0.5f, 1.0f,
-	//	0.0f, 0.0f, 1.0f,
-
-	//	0.5f, 0.5f, 1.0f,
-	//	0.5f, 0.0f, 0.5f,
-
-	//};
 	int rows = 1000;
 	int columns = 1000;
 	Vertex* vertices = new Vertex[rows*columns];
@@ -94,11 +65,6 @@ void CreateTriangle(Deferred* def)
 	D3D11_SUBRESOURCE_DATA triangleData = {};
 	triangleData.pSysMem = vertices;
 
-	/*if (FAILED(gDevice->CreateBuffer(&triangleBufferDesc, &triangleData, &gTriangleBuffer)))
-	{
-		MessageBoxA(NULL, "Error creating triangle buffer.", NULL, MB_OK);
-		exit(-1);
-	}*/
 
 	if (FAILED(def->CreateBuffer(&triangleBufferDesc, &triangleData, &gTriangleBuffer)))
 	{
@@ -106,24 +72,8 @@ void CreateTriangle(Deferred* def)
 		exit(-1);
 	}
 
-	//DWORD indices[] = {
-	//	0, 1, 2,
-	//	2, 3, 1,
-	//	2,3,6,
-	//	6,7,3,
-	//	6,7,4,
-	//	4,5,7,
-	//	4,5,0,
-	//	0,1,5,
-	//	1,5,3,
-	//	3,7,5,
-	//	0,2,4,
-	//	4,6,2,
 
-	//	
-	//};
-
-	DWORD* indices = new DWORD[6 * (rows-1) * (columns-1)]; // 6 per quad, 81 quads total
+	DWORD* indices = new DWORD[6 * (rows-1) * (columns-1)]; // 6 per quad
 	unsigned long indexIncrementer = 0;
 	for (int i = 0; i < rows - 1; i++) {
 		for (int j = 0; j < columns - 1; j++) {
@@ -204,10 +154,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			else {
 				DetectInput(GetFrameTime());
 				
-				RenderDeferred(&def); //<-- Funkar inte pga problem med någonting i lightpass.
+				RenderDeferred(&def); //<-- Funkar!
 
-				/*Render();
-				gSwapChain->Present(1, 0);*/
+
 				// WEEEEW GAME CODE HERE LET'S GO
 			}
 		}
