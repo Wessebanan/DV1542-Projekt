@@ -128,7 +128,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	if (def.GetWindowHandle()) {
 
-		def.setHeightMapTexture(L"TestMap5.RAW", 1024, 1024);
+		def.setHeightMapTexture(L"TestMap1.RAW", 1024, 1024);
 
 		StartTimer(); // Starts global timer
 

@@ -34,15 +34,15 @@ XMMATRIX Camera::UpdateCamera(float leftRight, float backForward, float upDown, 
 		this->camPosition += leftRight * camRight;
 		this->camPosition += backForward * camForward;
 		if (XMVectorGetX(camPosition) > 1000.0f) {
-			this->camPosition = XMVectorSetX(this->camPosition, 999.0f);
+			this->camPosition = XMVectorSetX(this->camPosition, 1000.0f);
 		}
-		else if (XMVectorGetX(camPosition) < -1.0f) {
+		else if (XMVectorGetX(camPosition) < -0.0f) {
 			this->camPosition = XMVectorSetX(this->camPosition, 0.0f);
 		}
 		if (XMVectorGetZ(camPosition) > 1000.0f) {
-			this->camPosition = XMVectorSetZ(this->camPosition, 999.0f);
+			this->camPosition = XMVectorSetZ(this->camPosition, 1000.0f);
 		}
-		else if (XMVectorGetZ(camPosition) < -1.0f) {
+		else if (XMVectorGetZ(camPosition) < -0.0f) {
 			this->camPosition = XMVectorSetZ(this->camPosition, 0.0f);
 		}
 		this->camPosition = XMVectorSetY(this->camPosition,this->CalculateHeight(XMVectorGetX(camPosition), XMVectorGetZ(camPosition)));
