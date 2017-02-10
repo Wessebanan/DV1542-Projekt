@@ -69,13 +69,16 @@ public:
 	~Deferred();
 
 	void CreateShaders();
+
 	bool Initialize();
+
 	void GeometryPass();
+
 	void LightPass();
 
-	void setHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height);
+	void SetHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height);
 
-	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, unsigned long long pVertexSize);
+	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, unsigned long long pVertexSize, DXGI_FORMAT format);
 
 	void CreateTransformBuffer();
 
@@ -88,4 +91,6 @@ public:
 	void CreateTextures();
 
 	void CreateCamPosBuffer();
+
+	IDXGISwapChain* GetSwapChain();
 };

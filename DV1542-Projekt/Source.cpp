@@ -9,11 +9,13 @@
 #include "Deferred.h"
 #include<string>
 #include<fstream>
+#include <crtdbg.h>
+#include <d3d11sdklayers.h>
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 using namespace DirectX;
 
-ID3D11Buffer* gTriangleBuffer = nullptr;
+ID3D11Buffer* gTerrainBuffer = nullptr;
 ID3D11Buffer* gIndexBuffer = nullptr;
 
 struct matrixData {
@@ -36,11 +38,11 @@ float rotationAngle = 0.0f;
 void RenderDeferred(Deferred* def) 
 {
 	def->GeometryPass();
-	def->Draw(gTriangleBuffer, gIndexBuffer, 6 * 999 * 999, sizeof(Vertex));
+	def->Draw(gTerrainBuffer, gIndexBuffer, 6 * 999 * 999, sizeof(Vertex), DXGI_FORMAT_R32_UINT);
 	def->LightPass();
 }
 
-void CreateTriangle(Deferred* def)
+void CreateTerrainBuffers(Deferred* def)
 {
 	int rows = 1000;
 	int columns = 1000;
@@ -61,18 +63,18 @@ void CreateTriangle(Deferred* def)
 		v -= 0.1f;
 	}
 	
-	D3D11_BUFFER_DESC triangleBufferDesc = {};
-	triangleBufferDesc.ByteWidth = sizeof(Vertex) * rows * columns;
-	triangleBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	triangleBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	D3D11_BUFFER_DESC terrainBufferDesc = {};
+	terrainBufferDesc.ByteWidth = sizeof(Vertex) * rows * columns;
+	terrainBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	terrainBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 
-	D3D11_SUBRESOURCE_DATA triangleData = {};
-	triangleData.pSysMem = vertices;
+	D3D11_SUBRESOURCE_DATA terrainData = {};
+	terrainData.pSysMem = vertices;
 
 
-	if (FAILED(def->CreateBuffer(&triangleBufferDesc, &triangleData, &gTriangleBuffer)))
+	if (FAILED(def->CreateBuffer(&terrainBufferDesc, &terrainData, &gTerrainBuffer)))
 	{
-		MessageBoxA(NULL, "crapped the fuck out.", NULL, MB_OK);
+		MessageBoxA(NULL, "Error creating terrain buffer.", NULL, MB_OK);
 		exit(-1);
 	}
 
@@ -104,12 +106,12 @@ void CreateTriangle(Deferred* def)
 
 	delete[] vertices;
 	
-	//NEDAN ÄNDRAT TILL DEF ISTÄLLET FÖR gDevice FÖR ATT TESTA.
 	if (FAILED(def->CreateBuffer(&indexBufferDesc, &indexData, &gIndexBuffer)))
 	{
 		MessageBoxA(NULL, "Error creating index buffer.", NULL, MB_OK);
 		exit(-1);
 	}
+
 	delete[] indices;
 }
 
@@ -118,6 +120,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	LPSTR lpCmdLine,
 	int nCmdShow)
 {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	Deferred def(hInstance);
 	MSG msg;
 
@@ -128,21 +131,17 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 	if (def.GetWindowHandle()) {
 
-		def.setHeightMapTexture(L"TestMap1.RAW", 1024, 1024);
+		def.SetHeightMapTexture(L"TestMap5.RAW", 1024, 1024);
 
 		StartTimer(); // Starts global timer
 
 		ShowWindow(def.GetWindowHandle(), nCmdShow);
 
-		CreateTriangle(&def);
-
-		// enter the main loop:
-
-		// this struct holds Windows event messages
+		CreateTerrainBuffers(&def);
 
 		while (TRUE)
 		{
-			// Check to see if any messages are waiting in the queue
+			//Check to see if any messages are waiting in the queue
 			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 			{
 				// translate keystroke messages into the right format
@@ -156,7 +155,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 					break;
 			}
 			else {
-				DetectInput(GetFrameTime(), &def);
+				DetectInput((float)GetFrameTime(), &def);
 				
 				RenderDeferred(&def); //<-- Funkar!
 
@@ -165,7 +164,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			}
 		}
 
-		gTriangleBuffer->Release();
+		gTerrainBuffer->Release();
 		DIKeyboard->Unacquire();
 		DIMouse->Unacquire();
 		DirectInput->Release();
@@ -174,5 +173,5 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	}
 
 	// return this part of the WM_QUIT message to Windows
-	return msg.wParam;
+	return (int)msg.wParam;
 }

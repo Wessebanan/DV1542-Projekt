@@ -12,7 +12,7 @@ private:
 	HINSTANCE hInstance;
 	int height;
 	int width;
-	std::wstring title;
+	LPCWSTR title;
 public:
 	Window(HINSTANCE instance);
 	~Window();

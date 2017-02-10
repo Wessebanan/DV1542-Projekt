@@ -5,7 +5,7 @@ Window::Window(HINSTANCE instance) :
 {
 	this->window = nullptr;
 	this->hInstance = GetModuleHandle(0);
-	this->title = L"Imagination.";
+	this->title = L"DV1542 - Projekt - Robin W Rikard M";
 	this->width = 1280;
 	this->height = 720;
 }
@@ -57,14 +57,14 @@ bool Window::Initialize()
 	// AdjustWindowRect uses the desired client size (RECT wr) to specify the required window size
 
 
-	RECT wr = { 0, 0, 1280, 720 };    // set the size, but not the position
+	RECT wr = { 0, 0, this->width, this->height };    // set the size, but not the position
 	AdjustWindowRect(&wr, WS_OVERLAPPEDWINDOW, FALSE);    // adjust the size
 
 
 														  // create the window and use the result as the handle
 	this->window = CreateWindowEx(NULL,
 		L"WindowClass1",    // name of the window class
-		L"DV1542 - Projekt - Robin W Rikard M",   // title of the window
+		this->title,   // title of the window
 		WS_OVERLAPPEDWINDOW,    // window style
 		0,    // x-position of the window
 		0,    // y-position of the window

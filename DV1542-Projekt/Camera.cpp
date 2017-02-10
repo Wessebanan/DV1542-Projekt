@@ -18,8 +18,9 @@ Camera::Camera() {
 	this->startOfJumpYChecked = false;
 }
 
-Camera::~Camera() {
-
+Camera::~Camera() 
+{
+	delete[] this->terrainData;
 }
 
 XMMATRIX Camera::UpdateCamera(float leftRight, float backForward, float upDown, float pitch, float yaw, bool* isJumping, float* totalHeightOfJump) {

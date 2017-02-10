@@ -61,7 +61,7 @@ bool InitDirectInput(HINSTANCE hInstance, HWND hwnd) {
 
 	return SUCCEEDED(hr);
 }
-void DetectInput(double time, Deferred* deferred) {
+void DetectInput(float time, Deferred* deferred) {
 	DIMOUSESTATE mouseCurrState;
 	BYTE keyboardState[256];
 
@@ -137,15 +137,15 @@ void DetectInput(double time, Deferred* deferred) {
 	moveUpDown = 0.0f;
 
 
-	if (rotx > 6.28)
-		rotx -= 6.28;
-	else if (rotx < 0)
-		rotx = 6.28 + rotx;
+	if (rotx > 6.28f)
+		rotx -= 6.28f;
+	else if (rotx < 0.0f)
+		rotx = 6.28f + rotx;
 
-	if (rotz > 6.28)
-		rotz -= 6.28;
-	else if (rotz < 0)
-		rotz = 6.28 + rotz;
+	if (rotz > 6.28f)
+		rotz -= 6.28f;
+	else if (rotz < 0.0f)
+		rotz = 6.28f + rotz;
 
 	mouseLastState = mouseCurrState;
 

@@ -14,9 +14,7 @@ struct VS_OUT
 	float3 Color : COLOR;
 	float2 TexCoord : TEXCOORD;
 };
-//-----------------------------------------------------------------------------------------
-// VertexShader: VSScene
-//-----------------------------------------------------------------------------------------
+
 VS_OUT main(VS_IN input)
 {
 	VS_OUT output = (VS_OUT)0;
