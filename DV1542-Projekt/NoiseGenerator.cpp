@@ -26,11 +26,9 @@ NoiseGenerator::~NoiseGenerator(){
 	this->noiseTexture->Release();
 }
 
-
-
 void NoiseGenerator::generateNoise() {
 	//random noise
-	srand(time(NULL));
+	srand((unsigned int)time(NULL));
 	float* noiseData = new float[this->width * this->height];
 	for (int i = 0; i < this->width * this->height; i++) {
 			noiseData[i] = ((rand() % 32768) / 32768.0f);

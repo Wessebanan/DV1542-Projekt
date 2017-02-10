@@ -7,16 +7,18 @@
 #include "NoiseGenerator.h"
 #include "Timer.h"
 #include "Deferred.h"
-#include<string>
-#include<fstream>
+#include <string>
+#include <fstream>
 #include <crtdbg.h>
-#include <d3d11sdklayers.h>
+#include <DDSTextureLoader.h>
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 using namespace DirectX;
 
 ID3D11Buffer* gTerrainBuffer = nullptr;
 ID3D11Buffer* gIndexBuffer = nullptr;
+
+
 
 struct matrixData {
 	XMMATRIX WorldMatrix;					
@@ -113,6 +115,12 @@ void CreateTerrainBuffers(Deferred* def)
 	}
 
 	delete[] indices;
+}
+
+void CreateSkyBox(Deferred* def)
+{
+	
+
 }
 
 int WINAPI WinMain(HINSTANCE hInstance,
