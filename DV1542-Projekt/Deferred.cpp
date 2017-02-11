@@ -1,5 +1,6 @@
 #include "Deferred.h"
 #include "NoiseGenerator.h"
+#include <DirectXTex.h>
 
 Deferred::Deferred(HINSTANCE hInstance) :
 	window(hInstance)
@@ -392,6 +393,14 @@ void Deferred::SetHeightMapTexture(std::wstring filepath, unsigned int width, un
 
 	this->direct3D.getDevCon()->VSSetShaderResources(0, 1, &gTextureView);
 	this->direct3D.getDevCon()->VSSetSamplers(0, 1, &gSamplerState);
+
+	Image test = { 1024, 1024, DXGI_FORMAT_R16_UNORM, 1024, 1024 * 1024, (uint8_t*)noise1.loadHeightmap(filepath, width, height) };
+	ScratchImage test2;
+	hr = ComputeNormalMap(test, CNMAP_CHANNEL_LUMINANCE | CNMAP_COMPUTE_OCCLUSION, 2.f, DXGI_FORMAT_R16_UNORM, test2);
+	if (!SUCCEEDED(hr)) {
+		MessageBox(NULL, L"Skiten fungerar inte!", NULL, MB_ICONEXCLAMATION);
+	}
+	
 }
 
 void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int numIndices, unsigned long long pVertexSize, DXGI_FORMAT format)
