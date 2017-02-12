@@ -2,6 +2,7 @@ SamplerState samplerState : register (s0);
 Texture2D grassTex : register (t0);
 Texture2D dirtTex : register (t1);
 Texture2D rockTex : register (t2);
+Texture2D normalMap : register (t3);
 
 cbuffer camPosBuffer : register (b0)
 {
@@ -69,10 +70,11 @@ PS_OUT main(PS_IN input)
 	
 
 	float3 lightVec = lightPos - input.WPos; // Vector from point to light
-	float3 lightCameraVec = camPos - input.WPos; // Vector from point to camera
+	float3 lightCameraVec = (camPos - input.WPos).xyz; // Vector from point to camera
 	float3 specularReflection = normalize(lightVec + lightCameraVec);
 
 	output.specular.xyz = specularReflection;
 	output.position = float4(input.WPos, 1);
+
 	return output;
 }

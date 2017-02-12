@@ -10,6 +10,7 @@
 #include <DDSTextureLoader.h>
 using namespace DirectX;
 const int BUFFER_COUNT = 4;
+
 const int TEXTURE_COUNT = 3;
 
 class Deferred 
@@ -49,6 +50,9 @@ private:
 	ID3D11ShaderResourceView* grassSRV = nullptr;
 	ID3D11ShaderResourceView* dirtSRV = nullptr;
 	ID3D11ShaderResourceView* rockSRV = nullptr;
+
+	ID3D11Texture2D* normalMap = nullptr;
+	ID3D11ShaderResourceView* normalSRV = nullptr;
 
 	struct matrixData
 	{

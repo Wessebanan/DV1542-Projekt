@@ -1,6 +1,6 @@
 #include "Deferred.h"
 #include "NoiseGenerator.h"
-#include <DirectXTex.h>
+//#include <DirectXTex.h>
 
 Deferred::Deferred(HINSTANCE hInstance) :
 	window(hInstance)
@@ -309,6 +309,9 @@ void Deferred::GeometryPass()
 	//Setting environment textures to the pixel shader.
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 3, this->textureSRVs);
 
+	//Setting the normal map to the vertex shader.
+	this->direct3D.getDevCon()->VSSetShaderResources(1, 1, &this->normalSRV);
+
 	//Setting the matrices to the transformBuffer with the relevant changes.
 	D3D11_MAPPED_SUBRESOURCE transformDataPtr;
 	this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &transformDataPtr);
@@ -357,7 +360,8 @@ void Deferred::LightPass()
 	this->direct3D.getSwapChain()->Present(1, 0);
 }
 
-void Deferred::SetHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height) {
+void Deferred::SetHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height) 
+{
 	NoiseGenerator noise1(this->direct3D.getDevice(), width, height);
 	// Loads the heightmap into the noiseGenerator and saved the data for use in the Camera
 	this->playerCamera.SetTerrainData(noise1.loadHeightmap(filepath, width, height), width, height);
@@ -394,12 +398,14 @@ void Deferred::SetHeightMapTexture(std::wstring filepath, unsigned int width, un
 	this->direct3D.getDevCon()->VSSetShaderResources(0, 1, &gTextureView);
 	this->direct3D.getDevCon()->VSSetSamplers(0, 1, &gSamplerState);
 
-	Image test = { 1024, 1024, DXGI_FORMAT_R16_UNORM, 1024, 1024 * 1024, (uint8_t*)noise1.loadHeightmap(filepath, width, height) };
+	/*Image test = { 1024, 1024, DXGI_FORMAT_R16_UNORM, 1024, 1024 * 1024, (uint8_t*)noise1.loadHeightmap(filepath, width, height) };
 	ScratchImage test2;
 	hr = ComputeNormalMap(test, CNMAP_CHANNEL_LUMINANCE | CNMAP_COMPUTE_OCCLUSION, 2.f, DXGI_FORMAT_R16_UNORM, test2);
 	if (!SUCCEEDED(hr)) {
 		MessageBox(NULL, L"Skiten fungerar inte!", NULL, MB_ICONEXCLAMATION);
-	}
+	}*/
+	gTextureView->Release();
+	gSamplerState->Release();
 	
 }
 
@@ -449,20 +455,27 @@ HWND Deferred::GetWindowHandle()
 void Deferred::CreateTextures()
 {
 	HRESULT hr;
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"grassTex.dds", NULL, &grassSRV);
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"grassTex.dds", NULL, &this->grassSRV);
 	if (FAILED(hr))
 	{
 		MessageBoxA(NULL, "Error creating grass texture.", NULL, MB_OK);
 	}
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"rockTex.dds", NULL, &rockSRV);
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"rockTex.dds", NULL, &this->rockSRV);
 	if (FAILED(hr))
 	{
 		MessageBoxA(NULL, "Error creating rock texture.", NULL, MB_OK);
 	}
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"dirtTex.dds", NULL, &dirtSRV);
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"dirtTex.dds", NULL, &this->dirtSRV);
 	if (FAILED(hr))
 	{
 		MessageBoxA(NULL, "Error creating dirt texture.", NULL, MB_OK);
+	}
+
+	//Normal map texture:
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"NormalMap9.dds", NULL, &this->normalSRV);
+	if (FAILED(hr))
+	{
+		MessageBoxA(NULL, "Error creating normal map.", NULL, MB_OK);
 	}
 }
 
