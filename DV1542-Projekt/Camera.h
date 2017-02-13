@@ -19,11 +19,14 @@ private:
 	unsigned int terrainWidth;
 	unsigned int terrainHeight;
 	
-
+	//-----JUMP STUFF-----
+	bool startOfJumpYChecked;
+	float startOfJumpY;
+	//--------------------
 public:
 	Camera();
 	~Camera();
-	XMMATRIX UpdateCamera(float leftRight, float backForward, float upDown, float pitch, float yaw);
+	XMMATRIX UpdateCamera(float leftRight, float backForward, float upDown, float pitch, float yaw, bool* isJumping, float* totalHeightOfJump);
 
 	void SetTerrainData(float* dataArray, unsigned int width, unsigned int height);
 	float CalculateHeight(float newXPos, float newZPos);

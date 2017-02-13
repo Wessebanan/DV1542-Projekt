@@ -3,7 +3,7 @@
 
 #include <windows.h>    
 #include <windowsx.h>
-#include<string>
+#include <string>
 
 class Window
 {
@@ -12,7 +12,7 @@ private:
 	HINSTANCE hInstance;
 	int height;
 	int width;
-	std::wstring title;
+	LPCWSTR title;
 public:
 	Window(HINSTANCE instance);
 	~Window();

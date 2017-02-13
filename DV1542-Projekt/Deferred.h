@@ -2,14 +2,13 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
-#include <wincodec.h>
-#include <wincodecsdk.h>
 #include "Window.h"
 #include "Camera.h"
 #include "D3D.h"
 #include <DDSTextureLoader.h>
 using namespace DirectX;
 const int BUFFER_COUNT = 4;
+
 const int TEXTURE_COUNT = 3;
 
 class Deferred 
@@ -50,6 +49,9 @@ private:
 	ID3D11ShaderResourceView* dirtSRV = nullptr;
 	ID3D11ShaderResourceView* rockSRV = nullptr;
 
+	ID3D11Texture2D* normalMap = nullptr;
+	ID3D11ShaderResourceView* normalSRV = nullptr;
+
 	struct matrixData
 	{
 		XMMATRIX world;
@@ -69,13 +71,16 @@ public:
 	~Deferred();
 
 	void CreateShaders();
+
 	bool Initialize();
+
 	void GeometryPass();
+
 	void LightPass();
 
-	void setHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height);
+	void SetHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height);
 
-	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, unsigned long long pVertexSize);
+	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, unsigned long long pVertexSize, DXGI_FORMAT format);
 
 	void CreateTransformBuffer();
 
@@ -88,4 +93,6 @@ public:
 	void CreateTextures();
 
 	void CreateCamPosBuffer();
+
+	IDXGISwapChain* GetSwapChain();
 };

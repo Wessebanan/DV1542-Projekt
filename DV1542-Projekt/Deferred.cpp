@@ -1,12 +1,13 @@
 #include "Deferred.h"
 #include "NoiseGenerator.h"
-//#include "InputHandler.h"
+//#include <DirectXTex.h>
 
 Deferred::Deferred(HINSTANCE hInstance) :
 	window(hInstance)
 {	
 	this->window.Initialize();
 	this->direct3D.Initialize(this->window.GetWindow());
+
 	for (int i = 0; i < BUFFER_COUNT; i++) 
 	{
 		this->textures[i] = nullptr;
@@ -23,13 +24,13 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->samplerState = nullptr;
 	this->transformBuffer = nullptr;
 	this->camPosBuffer = nullptr;
+
 	this->Initialize();	
 
 	this->WVP.world = XMMatrixScaling(1.0f, 1.0f, 1.0f);
 	this->WVP.view = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
 	this->WVP.proj = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 20000.0f);
 
-	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
 	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
 }
@@ -63,17 +64,17 @@ void Deferred::CreateShaders()
 	//create vertex shader
 	ID3DBlob* pVS = nullptr;
 	D3DCompileFromFile(
-		L"VertexShader.hlsl",	// filename
-		nullptr,				// optional macros
-		nullptr,				// optional include files
-		"main",					// entry point
-		"vs_5_0",				// shader model (target)
-		0,						// shader compile options			// here DEBUGGING OPTIONS
-		0,						// effect compile options
-		&pVS,					// double pointer to ID3DBlob		
-		nullptr					// pointer for Error Blob messages.
-								// how to use the Error blob, see here
-								// https://msdn.microsoft.com/en-us/library/windows/desktop/hh968107(v=vs.85).aspx
+		L"VS_Terrain.hlsl",
+		nullptr,				
+		nullptr,				
+		"main",					
+		"vs_5_0",				
+		0,						
+		0,						
+		&pVS,					
+		nullptr					
+								
+								
 	);
 
 	this->direct3D.getDevice()->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &this->vertexShader);
@@ -85,35 +86,30 @@ void Deferred::CreateShaders()
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
-	this->direct3D.getDevice()->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &this->vertexLayout);
-	
-	// we do not need anymore this COM object, so we release it.
+	this->direct3D.getDevice()->CreateInputLayout(inputDesc, ARRAYSIZE(inputDesc), pVS->GetBufferPointer(), pVS->GetBufferSize(), &this->vertexLayout);	
 	pVS->Release();
 
-	//create pixel shader
 	ID3DBlob* pPS = nullptr;
 	D3DCompileFromFile(
-		L"PixelShaderGeometry.hlsl", // filename
-		nullptr,		// optional macros
-		nullptr,		// optional include files
-		"main",		// entry point
-		"ps_5_0",		// shader model (target)
-		0,				// shader compile options
-		0,				// effect compile options
-		&pPS,			// double pointer to ID3DBlob		
-		nullptr			// pointer for Error Blob messages.
-						// how to use the Error blob, see here
-						// https://msdn.microsoft.com/en-us/library/windows/desktop/hh968107(v=vs.85).aspx
+		L"PS_Terrain.hlsl",
+		nullptr,	
+		nullptr,	
+		"main",		
+		"ps_5_0",	
+		0,			
+		0,			
+		&pPS,		
+		nullptr		
+					
+					
 	);
 
-	this->direct3D.getDevice()->CreatePixelShader(pPS->GetBufferPointer(), pPS->GetBufferSize(), nullptr, &this->pixelShaderG);
-	// we do not need anymore this COM object, so we release it.
+	this->direct3D.getDevice()->CreatePixelShader(pPS->GetBufferPointer(), pPS->GetBufferSize(), nullptr, &this->pixelShaderG);	
 	pPS->Release();
 
-	//create geomety shader (same way as the other shaders).
 	ID3DBlob* pGS = nullptr;
 	D3DCompileFromFile(
-		L"GeometryShader.hlsl",
+		L"GS_Terrain.hlsl",
 		nullptr,
 		nullptr,
 		"main",
@@ -130,7 +126,7 @@ void Deferred::CreateShaders()
 	ID3DBlob* pPSL = nullptr;
 
 	D3DCompileFromFile(
-		L"PixelShaderLight.hlsl",
+		L"PS_Light.hlsl",
 		nullptr,
 		nullptr,
 		"main",
@@ -147,7 +143,7 @@ void Deferred::CreateShaders()
 	ID3DBlob* pVSL = nullptr;
 	
 	D3DCompileFromFile(
-		L"VertexShaderLight.hlsl",
+		L"VS_Light.hlsl",
 		nullptr,
 		nullptr,
 		"main",
@@ -166,9 +162,6 @@ void Deferred::CreateShaders()
 bool Deferred::Initialize()
 {
 	bool result = true;
-	D3D11_TEXTURE2D_DESC texDesc{};
-	D3D11_RENDER_TARGET_VIEW_DESC RTviewDesc{};
-	D3D11_SHADER_RESOURCE_VIEW_DESC SRviewDesc{};
 
 	D3D11_SAMPLER_DESC sDesc{};
 	sDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT; //Point sampling for min, mag and mip.
@@ -187,6 +180,7 @@ bool Deferred::Initialize()
 	}
 
 	// Creating the textures.
+	D3D11_TEXTURE2D_DESC texDesc{};
 	texDesc.Width = this->window.GetWidth();
 	texDesc.Height = this->window.GetHeight();
 	texDesc.MipLevels = 1;
@@ -207,6 +201,7 @@ bool Deferred::Initialize()
 	}
 
 	// Creating the render target views.
+	D3D11_RENDER_TARGET_VIEW_DESC RTviewDesc{};
 	RTviewDesc.Format = texDesc.Format;
 	RTviewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
 	RTviewDesc.Texture2D.MipSlice = 0;
@@ -220,6 +215,7 @@ bool Deferred::Initialize()
 	}
 
 	// Creating the shader resource views.
+	D3D11_SHADER_RESOURCE_VIEW_DESC SRviewDesc{};
 	SRviewDesc.Format = texDesc.Format;
 	SRviewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
 	SRviewDesc.Texture2D.MostDetailedMip = 0;
@@ -290,8 +286,10 @@ void Deferred::GeometryPass()
 
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
 	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	//Setting the g-buffer textures as render targets.
 	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);	
 
+	//Clearing the RTVs with a sky blue color.
 	float clearColor[] = { 135.0f/255.0f,206.0f/255.0f,250.0f/255.0f,0 };
 
 	for (int i = 0; i < BUFFER_COUNT; i++)
@@ -308,7 +306,11 @@ void Deferred::GeometryPass()
 
 	//Setting a generic sampler for sampling whatever needs to be sampled.
 	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);
+	//Setting environment textures to the pixel shader.
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 3, this->textureSRVs);
+
+	//Setting the normal map to the vertex shader.
+	this->direct3D.getDevCon()->VSSetShaderResources(1, 1, &this->normalSRV);
 
 	//Setting the matrices to the transformBuffer with the relevant changes.
 	D3D11_MAPPED_SUBRESOURCE transformDataPtr;
@@ -322,6 +324,7 @@ void Deferred::GeometryPass()
 
 	this->direct3D.getDevCon()->GSSetConstantBuffers(0, 1, &this->transformBuffer);
 
+	//Same process as for transformBuffer but for the camera position.
 	D3D11_MAPPED_SUBRESOURCE camPosDataPtr;
 	this->direct3D.getDevCon()->Map(this->camPosBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &camPosDataPtr);
 
@@ -351,15 +354,17 @@ void Deferred::LightPass()
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);
 	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);	
 
+	//Drawing a full screen quad generated by the system as no vertex buffer is set.
 	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	this->direct3D.getDevCon()->Draw(4, 0);
 	this->direct3D.getSwapChain()->Present(1, 0);
 }
 
-void Deferred::setHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height) {
+void Deferred::SetHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height) 
+{
 	NoiseGenerator noise1(this->direct3D.getDevice(), width, height);
-	this->playerCamera.SetTerrainData(noise1.loadHeightmap(filepath, width, height), width, height); // Loads the heightmap into the noiseGenerator and saved the data for use in the Camera
-
+	// Loads the heightmap into the noiseGenerator and saved the data for use in the Camera
+	this->playerCamera.SetTerrainData(noise1.loadHeightmap(filepath, width, height), width, height);
 
 	ID3D11ShaderResourceView* gTextureView = nullptr;
 	ID3D11SamplerState* gSamplerState = nullptr;
@@ -392,9 +397,19 @@ void Deferred::setHeightMapTexture(std::wstring filepath, unsigned int width, un
 
 	this->direct3D.getDevCon()->VSSetShaderResources(0, 1, &gTextureView);
 	this->direct3D.getDevCon()->VSSetSamplers(0, 1, &gSamplerState);
+
+	/*Image test = { 1024, 1024, DXGI_FORMAT_R16_UNORM, 1024, 1024 * 1024, (uint8_t*)noise1.loadHeightmap(filepath, width, height) };
+	ScratchImage test2;
+	hr = ComputeNormalMap(test, CNMAP_CHANNEL_LUMINANCE | CNMAP_COMPUTE_OCCLUSION, 2.f, DXGI_FORMAT_R16_UNORM, test2);
+	if (!SUCCEEDED(hr)) {
+		MessageBox(NULL, L"Skiten fungerar inte!", NULL, MB_ICONEXCLAMATION);
+	}*/
+	gTextureView->Release();
+	gSamplerState->Release();
+	
 }
 
-void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int numIndices, unsigned long long pVertexSize)
+void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int numIndices, unsigned long long pVertexSize, DXGI_FORMAT format)
 {
 	if (!(vertexBuffer == nullptr))
 	{ 
@@ -402,8 +417,8 @@ void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int
 		UINT32 offset = 0;
 		this->direct3D.getDevCon()->VSSetSamplers(0, 1, &this->samplerState);
 		this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
-		this->direct3D.getDevCon()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-		this->direct3D.getDevCon()->DrawIndexed(numIndices, 0, 0);
+		this->direct3D.getDevCon()->IASetIndexBuffer(indexBuffer, format, 0);
+		this->direct3D.getDevCon()->DrawIndexed(numIndices, 0, 0);		
 	}
 }
 
@@ -440,20 +455,27 @@ HWND Deferred::GetWindowHandle()
 void Deferred::CreateTextures()
 {
 	HRESULT hr;
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"grassTex.dds", NULL, &grassSRV);
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"grassTex.dds", NULL, &this->grassSRV);
 	if (FAILED(hr))
 	{
 		MessageBoxA(NULL, "Error creating grass texture.", NULL, MB_OK);
 	}
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"rockTex.dds", NULL, &rockSRV);
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"rockTex.dds", NULL, &this->rockSRV);
+	if (FAILED(hr))
+	{
+		MessageBoxA(NULL, "Error creating rock texture.", NULL, MB_OK);
+	}
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"dirtTex.dds", NULL, &this->dirtSRV);
 	if (FAILED(hr))
 	{
 		MessageBoxA(NULL, "Error creating dirt texture.", NULL, MB_OK);
 	}
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"dirtTex.dds", NULL, &dirtSRV);
+
+	//Normal map texture:
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"NormalMap9.dds", NULL, &this->normalSRV);
 	if (FAILED(hr))
 	{
-		MessageBoxA(NULL, "Error creating dirt texture.", NULL, MB_OK);
+		MessageBoxA(NULL, "Error creating normal map.", NULL, MB_OK);
 	}
 }
 
@@ -467,6 +489,12 @@ void Deferred::CreateCamPosBuffer()
 
 	if (FAILED(this->direct3D.getDevice()->CreateBuffer(&bufDesc, nullptr, &this->camPosBuffer)))
 	{
-		MessageBoxA(NULL, "ERROR CREATING CAMPOSBUFFER", NULL, MB_OK);
+		MessageBoxA(NULL, "Error creating camPosBuffer.", NULL, MB_OK);
+		exit(-1);
 	}
+}
+
+IDXGISwapChain * Deferred::GetSwapChain()
+{
+	return this->direct3D.getSwapChain();
 }

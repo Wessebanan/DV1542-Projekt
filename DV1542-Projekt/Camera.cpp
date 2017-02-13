@@ -13,13 +13,17 @@ Camera::Camera() {
 	this->terrainHeight = 0;
 
 	this->viewMatrix = XMMatrixLookAtLH(this->camPosition, this->defaultForward, this->camUp);
+
+	this->startOfJumpY = 0.0f;
+	this->startOfJumpYChecked = false;
 }
 
-Camera::~Camera() {
-
+Camera::~Camera() 
+{
+	delete[] this->terrainData;
 }
 
-XMMATRIX Camera::UpdateCamera(float leftRight, float backForward, float upDown, float pitch, float yaw) {
+XMMATRIX Camera::UpdateCamera(float leftRight, float backForward, float upDown, float pitch, float yaw, bool* isJumping, float* totalHeightOfJump) {
 		XMMATRIX camRotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, 0);
 		XMVECTOR camLookAt = XMVector3TransformCoord(this->defaultForward, camRotationMatrix);
 		camLookAt = XMVector3Normalize(camLookAt);
@@ -48,8 +52,37 @@ XMMATRIX Camera::UpdateCamera(float leftRight, float backForward, float upDown, 
 		else if (XMVectorGetZ(camPosition) < 30.0f) {
 			this->camPosition = XMVectorSetZ(this->camPosition, 30.0f);
 		}
-		this->camPosition = XMVectorSetY(this->camPosition,this->CalculateHeight(XMVectorGetX(camPosition), XMVectorGetZ(camPosition)));
-		XMVECTOR test = camPosition;
+		//-----------------JUMP STUFF------------------		
+		if (*isJumping && !this->startOfJumpYChecked)
+		{
+			this->startOfJumpY = XMVectorGetY(this->camPosition);
+			this->startOfJumpYChecked = true;
+		}
+		else if (!*isJumping && this->startOfJumpYChecked)
+		{
+			this->startOfJumpY = 0.0f;
+			this->startOfJumpYChecked = false;
+		}
+		if (*isJumping)
+		{
+			float potentialY = *totalHeightOfJump + this->startOfJumpY;
+			float groundY = this->CalculateHeight(XMVectorGetX(camPosition), XMVectorGetZ(camPosition));
+			if (potentialY > groundY)
+			{
+				this->camPosition = XMVectorSetY(this->camPosition, *totalHeightOfJump + this->startOfJumpY);
+			}
+			else
+			{
+				*isJumping = false;
+				*totalHeightOfJump = 0.0f;
+			}
+		}
+		//---------------------------------------------
+		else
+		{
+			this->camPosition = XMVectorSetY(this->camPosition, this->CalculateHeight(XMVectorGetX(camPosition), XMVectorGetZ(camPosition)));
+		}
+
 		camLookAt = camPosition + camLookAt;
 		
 		this->viewMatrix = XMMatrixLookAtLH(camPosition, camLookAt, camUp);
@@ -87,7 +120,7 @@ float Camera::CalculateHeight(float newXPos, float newZPos) {
 	double bottomRightValue = this->terrainData[(int)lowerXPos + (int)upperZPos * this->terrainWidth];
 
 	double lerpX = 100.0f * bottomLeftValue + lerpValueX * (topLeftValue - bottomLeftValue);
-	double lerpZ = 100.0f *  bottomLeftValue + lerpValueZ * (bottomRightValue - bottomLeftValue);
+	double lerpZ = 100.0f * bottomLeftValue + lerpValueZ * (bottomRightValue - bottomLeftValue);
 	float finalValue = (lerpX + lerpZ) / 2;
 	return finalValue;
 }

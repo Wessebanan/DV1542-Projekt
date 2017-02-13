@@ -2,7 +2,7 @@
 #define TIMER_H
 #include <Windows.h>
 
-double countsPerSecond = 0.0;
+double countsPerSecond = 0.0f;
 __int64 CounterStart = 0;
 
 int frameCount = 0;
@@ -38,8 +38,8 @@ double GetFrameTime()
 	tickCount = currentTime.QuadPart - frameTimeOld;
 	frameTimeOld = currentTime.QuadPart;
 
-	if (tickCount < 0.0f)
-		tickCount = 0.0f;
+	if (tickCount < 0)
+		tickCount = 0;
 
 	return float(tickCount) / countsPerSecond;
 }
