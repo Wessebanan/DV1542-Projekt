@@ -12,7 +12,7 @@ struct PS_IN
 
 float4 main(PS_IN input) : SV_TARGET
 {
-	float3 lightPos = { 1000.0f, 400.0f, 1000.0f };
+	float3 lightPos = { 0.0f, 15000.0f, 0.0f };
 	float3 lightVec = lightPos - positions.Sample(samplerState, input.texcoord).xyz;
 	float4 ambient = { 0.10f, 0.10f, 0.10f, 0.0f };
 	float brightness = saturate(dot(normalize(lightVec), normals.Sample(samplerState, input.texcoord).xyz));

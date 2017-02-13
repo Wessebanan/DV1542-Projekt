@@ -2,7 +2,8 @@
 #include <time.h> 
 #include <vector>
 #include <fstream>
-NoiseGenerator::NoiseGenerator(ID3D11Device* device, int width, int height){
+NoiseGenerator::NoiseGenerator(ID3D11Device* device, int width, int height)
+{
 	this->width = width;
 	this->height = height;
 	this->noiseTextureDesc.Width = this->width;
@@ -22,11 +23,13 @@ NoiseGenerator::NoiseGenerator(ID3D11Device* device, int width, int height){
 	this->generateNoise();
 }
 
-NoiseGenerator::~NoiseGenerator(){
+NoiseGenerator::~NoiseGenerator()
+{
 	this->noiseTexture->Release();
 }
 
-void NoiseGenerator::generateNoise() {
+void NoiseGenerator::generateNoise() 
+{
 	//random noise
 	srand((unsigned int)time(NULL));
 	float* noiseData = new float[this->width * this->height];
@@ -44,7 +47,8 @@ void NoiseGenerator::generateNoise() {
 	data.SysMemPitch = this->width * sizeof(float);
 	data.SysMemSlicePitch = this->width * this->height * sizeof(float);
 	HRESULT hr = this->gDevice->CreateTexture2D(&this->noiseTextureDesc, &data, &this->noiseTexture);
-	if (FAILED(hr)) {
+	if (FAILED(hr)) 
+	{
 		MessageBox(NULL, L"Something went wrong creating the noise texture", NULL, MB_OK);
 	}
 
@@ -53,7 +57,8 @@ void NoiseGenerator::generateNoise() {
 	delete[] noiseData;
 }
 
-float* NoiseGenerator::loadHeightmap(std::wstring fileName, int heightmapWidth, int heightmapHeight) {
+float* NoiseGenerator::loadHeightmap(std::wstring fileName, int heightmapWidth, int heightmapHeight)
+{
 	this->height = heightmapHeight;
 	this->width = heightmapWidth;
 	this->noiseTextureDesc.Width = this->width;
@@ -82,7 +87,8 @@ float* NoiseGenerator::loadHeightmap(std::wstring fileName, int heightmapWidth, 
 	data.SysMemPitch = this->width * sizeof(float);
 	data.SysMemSlicePitch = this->width * this->height * sizeof(float);
 	HRESULT hr = this->gDevice->CreateTexture2D(&this->noiseTextureDesc, &data, &this->noiseTexture);
-	if (FAILED(hr)) {
+	if (FAILED(hr)) 
+	{
 		MessageBox(NULL, L"Something went wrong creating the noise texture", NULL, MB_OK);
 	}
 	return mapData;

@@ -3,7 +3,7 @@
 
 #include <windows.h>    
 #include <windowsx.h>
-#include<string>
+#include <string>
 
 class Window
 {

@@ -64,7 +64,7 @@ void Deferred::CreateShaders()
 	//create vertex shader
 	ID3DBlob* pVS = nullptr;
 	D3DCompileFromFile(
-		L"VertexShaderGeometryAndHeightmap.hlsl",
+		L"VS_Terrain.hlsl",
 		nullptr,				
 		nullptr,				
 		"main",					
@@ -91,7 +91,7 @@ void Deferred::CreateShaders()
 
 	ID3DBlob* pPS = nullptr;
 	D3DCompileFromFile(
-		L"PixelShaderGeometry.hlsl",
+		L"PS_Terrain.hlsl",
 		nullptr,	
 		nullptr,	
 		"main",		
@@ -109,7 +109,7 @@ void Deferred::CreateShaders()
 
 	ID3DBlob* pGS = nullptr;
 	D3DCompileFromFile(
-		L"GeometryShader.hlsl",
+		L"GS_Terrain.hlsl",
 		nullptr,
 		nullptr,
 		"main",
@@ -126,7 +126,7 @@ void Deferred::CreateShaders()
 	ID3DBlob* pPSL = nullptr;
 
 	D3DCompileFromFile(
-		L"PixelShaderLight.hlsl",
+		L"PS_Light.hlsl",
 		nullptr,
 		nullptr,
 		"main",
@@ -143,7 +143,7 @@ void Deferred::CreateShaders()
 	ID3DBlob* pVSL = nullptr;
 	
 	D3DCompileFromFile(
-		L"VertexShaderLight.hlsl",
+		L"VS_Light.hlsl",
 		nullptr,
 		nullptr,
 		"main",

@@ -2,8 +2,6 @@
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <DirectXMath.h>
-#include <wincodec.h>
-#include <wincodecsdk.h>
 #include "Window.h"
 #include "Camera.h"
 #include "D3D.h"

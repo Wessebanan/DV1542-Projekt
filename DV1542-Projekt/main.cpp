@@ -20,9 +20,8 @@ using namespace DirectX;
 ID3D11Buffer* gTerrainBuffer = nullptr;
 ID3D11Buffer* gIndexBuffer = nullptr;
 
-
-
-struct matrixData {
+struct matrixData 
+{
 	XMMATRIX WorldMatrix;					
 	XMMATRIX ViewMatrix;					
 	XMMATRIX ProjMatrix;					
@@ -117,12 +116,6 @@ void CreateTerrainBuffers(Deferred* def)
 	}
 
 	delete[] indices;
-}
-
-void CreateSkyBox(Deferred* def)
-{
-	
-
 }
 
 int WINAPI WinMain(HINSTANCE hInstance,
