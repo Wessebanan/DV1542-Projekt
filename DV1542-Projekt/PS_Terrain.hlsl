@@ -31,7 +31,7 @@ PS_OUT main(PS_IN input)
 	PS_OUT output = (PS_OUT)0;
 	output.normal = float4(input.Nor, 0);
 
-	float3 lightPos = { 500.0f, 400.0f, 500.0f };
+	float3 lightPos = { 500.0f, 1000.0f, 500.0f };
 
 	float higherTexIntensity = 0.0f;
 	float lowerTexIntensity = 0.0f;
