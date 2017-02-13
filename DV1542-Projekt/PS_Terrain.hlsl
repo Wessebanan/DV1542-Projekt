@@ -53,7 +53,7 @@ PS_OUT main(PS_IN input)
 	{
 		//output.diffuse = grassTex.Sample(samplerState, input.TexCoord);
 		output.diffuse = float4(1.0f, 0, 0, 0);
-		output.specular.w = 0.1f;
+		output.specular.w = 32.1f;
 	}
 	else if (input.WPos.y < 55.0f)
 	{
@@ -73,7 +73,7 @@ PS_OUT main(PS_IN input)
 	float3 lightVec = input.WPos - lightPos; // Vector from light to point
 	float3 reflectedLightVec = 2 * input.Nor * dot(-input.Nor, lightVec);
 	float3 reflection = normalize(lightVec + reflectedLightVec);
-	float3 pointToCamera = normalize(input.WPos - camPos);
+	float3 pointToCamera = normalize(camPos - input.WPos);
 	float specularReflection = saturate(dot(reflection, pointToCamera));
 
 	output.specular.x = specularReflection;
