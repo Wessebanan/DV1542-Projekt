@@ -51,8 +51,8 @@ PS_OUT main(PS_IN input)
 	}
 	else if (input.WPos.y < 45.0f)
 	{
-		//output.diffuse = grassTex.Sample(samplerState, input.TexCoord);
-		output.diffuse = float4(1.0f, 0, 0, 0);
+		output.diffuse = grassTex.Sample(samplerState, input.TexCoord);
+		//output.diffuse = float4(1.0f, 0, 0, 0);
 		output.specular.w = 32.1f;
 	}
 	else if (input.WPos.y < 55.0f)

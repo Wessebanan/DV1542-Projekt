@@ -59,8 +59,7 @@ void main( triangle GS_IN input[3],  inout TriangleStream< GS_OUT > output)
 			input[i].Normal.x, input[i].Normal.y, input[i].Normal.z, 0,
 			0, 0, 0, 1
 		);
-	}
-	
+	}	
 
 	matrix wvp = mul(proj, mul(view, world));
 	for (uint i = 0; i < 3; i++)
@@ -68,7 +67,7 @@ void main( triangle GS_IN input[3],  inout TriangleStream< GS_OUT > output)
 		GS_OUT element;
 		element.Pos = mul(wvp, input[i].Pos);
 		element.Color = input[i].Color;
-		element.Nor = mul(input[i].Normal, tangentFrames[i]);
+		element.Nor = mul(input[i].Normal, world);
 		
 		element.WPos = mul(world, input[i].Pos);
 		element.TexCoord = input[i].TexCoord;
