@@ -39,7 +39,7 @@ PS_OUT main(PS_IN input)
 	if (input.WPos.y < 10.0f)
 	{
 		output.diffuse = dirtTex.Sample(samplerState, input.TexCoord);
-		output.specular.w = 5;
+		output.specular.w = 50;
 	}
 	else if (input.WPos.y < 20.0f)
 	{
@@ -47,12 +47,13 @@ PS_OUT main(PS_IN input)
 		lowerTexIntensity = 1 - higherTexIntensity;
 		output.diffuse = dirtTex.Sample(samplerState, input.TexCoord) * lowerTexIntensity
 			+ grassTex.Sample(samplerState, input.TexCoord) * higherTexIntensity;
-		output.specular.w = 5 * lowerTexIntensity + 2 * higherTexIntensity;
+		output.specular.w = 0.1f * lowerTexIntensity + 0.1f * higherTexIntensity;
 	}
 	else if (input.WPos.y < 45.0f)
 	{
-		output.diffuse = grassTex.Sample(samplerState, input.TexCoord);
-		output.specular.w = 2;
+		//output.diffuse = grassTex.Sample(samplerState, input.TexCoord);
+		output.diffuse = float4(1.0f, 0, 0, 0);
+		output.specular.w = 0.1f;
 	}
 	else if (input.WPos.y < 55.0f)
 	{
@@ -69,11 +70,13 @@ PS_OUT main(PS_IN input)
 	}
 	
 
-	float3 lightVec = lightPos - input.WPos; // Vector from point to light
-	float3 lightCameraVec = (camPos - input.WPos).xyz; // Vector from point to camera
-	float3 specularReflection = normalize(lightVec + lightCameraVec);
+	float3 lightVec = input.WPos - lightPos; // Vector from light to point
+	float3 reflectedLightVec = 2 * input.Nor * dot(-input.Nor, lightVec);
+	float3 reflection = normalize(lightVec + reflectedLightVec);
+	float3 pointToCamera = normalize(input.WPos - camPos);
+	float specularReflection = saturate(dot(reflection, pointToCamera));
 
-	output.specular.xyz = specularReflection;
+	output.specular.x = specularReflection;
 	output.position = float4(input.WPos, 1);
 
 	return output;

@@ -36,7 +36,8 @@ void main( triangle GS_IN input[3],  inout TriangleStream< GS_OUT > output)
 		GS_OUT element;
 		element.Pos = mul(wvp, input[i].Pos);
 		element.Color = input[i].Color;
-		element.Nor = input[i].Normal;
+		//element.Nor = input[i].Normal;
+		element.Nor = mul(world,nor);
 		
 		element.WPos = mul(world, input[i].Pos);
 		element.TexCoord = input[i].TexCoord;
