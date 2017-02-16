@@ -36,6 +36,9 @@
     <ClCompile Include="SkyBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Shadowmap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl" />
@@ -44,6 +47,8 @@
     <FxCompile Include="PS_Light.hlsl" />
     <FxCompile Include="VS_Light.hlsl" />
     <FxCompile Include="GS_Terrain.hlsl" />
+    <FxCompile Include="PS_Shadow.hlsl" />
+    <FxCompile Include="VS_Shadow.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Deferred.h">
@@ -71,6 +76,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="OBJLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Shadowmap.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

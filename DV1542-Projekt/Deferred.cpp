@@ -306,6 +306,7 @@ void Deferred::GeometryPass()
 
 	//Setting a generic sampler for sampling whatever needs to be sampled.
 	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);
+
 	//Setting environment textures to the pixel shader.
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 3, this->textureSRVs);
 
