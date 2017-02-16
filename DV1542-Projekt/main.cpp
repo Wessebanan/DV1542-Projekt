@@ -10,7 +10,7 @@
 #include <string>
 #include <fstream>
 #include <crtdbg.h>
-
+#include "OBJLoader.h"
 #include <DDSTextureLoader.h>
 
 #pragma comment (lib, "d3d11.lib")
@@ -27,12 +27,6 @@ struct matrixData
 	XMMATRIX ProjMatrix;					
 };
 
-struct Vertex
-{
-	float x, y, z;
-	float r, g, b;
-	float u, v;
-};
 
 matrixData WVP;
 
