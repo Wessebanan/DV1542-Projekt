@@ -217,6 +217,7 @@
     <ClInclude Include="Deferred.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="NoiseGenerator.h" />
+    <ClInclude Include="OBJLoader.h" />
     <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Window.h" />

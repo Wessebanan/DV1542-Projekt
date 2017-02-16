@@ -38,6 +38,8 @@ matrixData WVP;
 
 float rotationAngle = 0.0f;
 
+
+
 void RenderDeferred(Deferred* def) 
 {
 	def->GeometryPass();
