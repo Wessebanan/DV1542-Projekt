@@ -31,7 +31,6 @@ struct PS_OUT
 PS_OUT main(PS_IN input)
 {
 	PS_OUT output = (PS_OUT)0;
-	//output.normal = float4(input.Nor, 0);
 
 	float3 lightPos = { 500.0f, 1000.0f, 500.0f };
 
@@ -96,7 +95,7 @@ PS_OUT main(PS_IN input)
 	output.specular.x = specularReflection;
 	output.position = float4(input.WPos, 1);
 
-	float3x3 tangentFrame = float3x3
+	float3x3 TBN = float3x3
 		(
 			input.Tangent,
 			input.Bitangent,
@@ -104,10 +103,10 @@ PS_OUT main(PS_IN input)
 		);
 
 	//Sampling and decompressing the normal in tangent space
-	float3 normalTS = normalMap.Sample(samplerState, input.TexCoord / 1000.0f).xyz;
+	float3 normalTS = normalMap.Sample(samplerState, input.TexCoord / 100.0f).xyz;
 	normalTS = normalize((normalTS * 2.0f) - 1.0f);
 	//Transforming the normal to world space using tangent frame and setting to output
-	output.normal = normalize(float4(mul(normalTS, tangentFrame), 1.0f) + float4(input.Nor, 1));
+	output.normal = normalize(float4(mul(normalTS, TBN), 1.0f));
 
 	return output;
 }
