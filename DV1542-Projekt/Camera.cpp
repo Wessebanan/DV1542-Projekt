@@ -58,11 +58,7 @@ XMMATRIX Camera::UpdateCamera(float leftRight, float backForward, float upDown, 
 			this->startOfJumpY = XMVectorGetY(this->camPosition);
 			this->startOfJumpYChecked = true;
 		}
-		else if (!*isJumping && this->startOfJumpYChecked)
-		{
-			this->startOfJumpY = 0.0f;
-			this->startOfJumpYChecked = false;
-		}
+		
 		if (*isJumping)
 		{
 			float potentialY = *totalHeightOfJump + this->startOfJumpY;
@@ -75,6 +71,8 @@ XMMATRIX Camera::UpdateCamera(float leftRight, float backForward, float upDown, 
 			{
 				*isJumping = false;
 				*totalHeightOfJump = 0.0f;
+				this->startOfJumpY = 0.0f;
+				this->startOfJumpYChecked = false;
 			}
 		}
 		//---------------------------------------------
