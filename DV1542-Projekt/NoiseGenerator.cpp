@@ -74,6 +74,7 @@ float* NoiseGenerator::loadHeightmap(std::wstring fileName, int heightmapWidth, 
 	}
 
 	float* mapData = new float[this->height * this->width];
+
 	for (int i = 0; i < this->height * this->width; i++) {
 		mapData[i] = in[i] / 255.0f;
 	}

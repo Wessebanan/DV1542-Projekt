@@ -51,6 +51,7 @@ Deferred::~Deferred()
 	this->geometryShader->Release();
 	this->pixelShaderG->Release();
 	this->pixelShaderL->Release();
+	this->vertexShaderGenericObject->Release();
 	this->samplerState->Release();
 	
 	if (this->transformBuffer != nullptr)
@@ -82,7 +83,7 @@ void Deferred::CreateShaders()
 	//create input layout (verified using vertex shader)
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] = {
 		{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0 },
-		{ "COLOR", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
+		{ "NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0 },
 		{ "TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0}
 	};
 
@@ -156,7 +157,38 @@ void Deferred::CreateShaders()
 
 	this->direct3D.getDevice()->CreateVertexShader(pVSL->GetBufferPointer(), pVSL->GetBufferSize(), nullptr, &this->vertexShaderLight);
 	pVSL->Release();
-	
+
+	ID3DBlob* pVSGO = nullptr;
+
+	D3DCompileFromFile(
+		L"VS_GenericObject.hlsl",
+		nullptr,
+		nullptr,
+		"main",
+		"vs_5_0",
+		0,
+		0,
+		&pVSGO,
+		nullptr
+	);
+	this->direct3D.getDevice()->CreateVertexShader(pVSGO->GetBufferPointer(), pVSGO->GetBufferSize(), nullptr, &this->vertexShaderGenericObject);
+	pVSGO->Release();
+
+	ID3DBlob* pPSGO = nullptr;
+
+	D3DCompileFromFile(
+		L"PS_GenericObject.hlsl",
+		nullptr,
+		nullptr,
+		"main",
+		"ps_5_0",
+		0,
+		0,
+		&pPSGO,
+		nullptr
+	);
+	this->direct3D.getDevice()->CreatePixelShader(pPSGO->GetBufferPointer(), pPSGO->GetBufferSize(), nullptr, &this->pixelShaderGenericObject);
+	pPSGO->Release();
 }
 
 bool Deferred::Initialize()

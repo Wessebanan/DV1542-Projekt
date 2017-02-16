@@ -35,6 +35,9 @@ private:
 	ID3D11PixelShader* pixelShaderG;
 	ID3D11PixelShader* pixelShaderL;
 
+	ID3D11VertexShader* vertexShaderGenericObject;
+	ID3D11PixelShader* pixelShaderGenericObject;
+
 	ID3D11SamplerState* samplerState;
 	ID3D11Buffer* transformBuffer;
 

@@ -7,14 +7,14 @@
 struct Vertex
 {
 	float x, y, z;
-	float r, g, b;
+	float norX, norY, norZ;
 	float u, v;
 };
 
 using namespace DirectX;
 
 
-bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices) {
+bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <unsigned int> &indices) {
 	// This function reads obj files of format
 	// v 1 1 1
 	// vt 1 1 
@@ -36,7 +36,7 @@ bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices) {
 	bool readingFile = true;
 	while (readingFile) {
 		char lineHeader[128];
-		int result = fscanf_s(file, "%s", lineHeader);
+		int result = fscanf(file, "%s", &lineHeader);
 		if (result == EOF) { // Terminate if end of file has been reached
 			readingFile = false;
 		}
@@ -81,4 +81,12 @@ bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices) {
 		}
 
 	}
+	for (int i = 0; i < vertexIndices.size(); i++) {
+		Vertex newVert = { tempVerts[vertexIndices[i] - 1].x, tempVerts[vertexIndices[i] - 1].y, tempVerts[vertexIndices[i] - 1].z,
+							tempNormals[normalIndices[i] - 1].x, tempNormals[normalIndices[i] - 1].y, tempNormals[normalIndices[i] - 1].z,
+							tempTexCoords[texCoordIndices[i] - 1].x, tempTexCoords[texCoordIndices[i] - 1].y };
+		vertices.push_back(newVert);
+		indices.push_back(i);
+	}
+	return true;
 }

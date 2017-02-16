@@ -9,7 +9,7 @@ cbuffer TRANSFORM_BUFFER : register(b0)
 struct GS_IN
 {
 	float4 Pos : POSITION;
-	float3 Color : COLOR;
+	float3 Normal : NORMAL;
 	float2 TexCoord : TEXCOORD;
 };
 
@@ -18,7 +18,6 @@ struct GS_OUT
 	float4 Pos : SV_POSITION;
 	float3 Nor : NORMAL;
 	float3 WPos : POSITION;
-	float3 Color : COLOR;
 	float2 TexCoord : TEXCOORD;
 	float3 Tangent : TANGENT;
 	float3 Bitangent : BINORMAL;
@@ -56,7 +55,6 @@ void main(triangle GS_IN input[3], inout TriangleStream< GS_OUT > output)
 	{
 		GS_OUT element;
 		element.Pos = mul(wvp, input[i].Pos);
-		element.Color = input[i].Color;
 		element.Nor = mul(world, nor);		
 		element.WPos = mul(world, input[i].Pos);
 		element.TexCoord = input[i].TexCoord;

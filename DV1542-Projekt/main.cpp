@@ -18,7 +18,10 @@
 using namespace DirectX;
 
 ID3D11Buffer* gTerrainBuffer = nullptr;
-ID3D11Buffer* gIndexBuffer = nullptr;
+ID3D11Buffer* gIndexBufferTerrain = nullptr;
+
+ID3D11Buffer* gCubeBuffer = nullptr;
+ID3D11Buffer* gIndexBufferCube = nullptr;
 
 struct matrixData 
 {
@@ -37,8 +40,45 @@ float rotationAngle = 0.0f;
 void RenderDeferred(Deferred* def) 
 {
 	def->GeometryPass();
-	def->Draw(gTerrainBuffer, gIndexBuffer, 6 * 999 * 999, sizeof(Vertex), DXGI_FORMAT_R32_UINT);
+	def->Draw(gTerrainBuffer, gIndexBufferTerrain, 6 * 999 * 999, sizeof(Vertex), DXGI_FORMAT_R32_UINT);
+	def->Draw(gCubeBuffer, gIndexBufferCube, 36, sizeof(Vertex), DXGI_FORMAT_R32_UINT);
 	def->LightPass();
+}
+
+void CreateCubeBuffer(Deferred* def) {
+	std::vector<Vertex> vertices;
+	std::vector<unsigned int> indices;
+	bool result = loadOBJ("cube_green_phong_12_tris_TRIANGULATED.obj", vertices, indices);
+
+	D3D11_BUFFER_DESC cubeBufferDesc = {};
+	cubeBufferDesc.ByteWidth = sizeof(Vertex) * vertices.size();
+	cubeBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	cubeBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+
+	D3D11_SUBRESOURCE_DATA cubeData = {};
+	cubeData.pSysMem = vertices.data();
+	if (FAILED(def->CreateBuffer(&cubeBufferDesc, &cubeData, &gCubeBuffer))) {
+		MessageBoxA(NULL, "Error creating CUBE buffer.", NULL, MB_OK);
+		exit(-1);
+	}
+
+	D3D11_BUFFER_DESC indexBufferDesc = {};
+	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth = sizeof(unsigned int) * indices.size();
+	unsigned int test1 = indices.size();
+	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags = 0;
+	indexBufferDesc.MiscFlags = 0;
+
+	D3D11_SUBRESOURCE_DATA indexData;
+	indexData.pSysMem = indices.data();
+
+	if (FAILED(def->CreateBuffer(&indexBufferDesc, &indexData, &gIndexBufferCube)))
+	{
+		MessageBoxA(NULL, "Error creating index buffer for cube.", NULL, MB_OK);
+		exit(-1);
+	}
+
 }
 
 void CreateTerrainBuffers(Deferred* def)
@@ -112,9 +152,9 @@ void CreateTerrainBuffers(Deferred* def)
 
 	delete[] vertices;
 	
-	if (FAILED(def->CreateBuffer(&indexBufferDesc, &indexData, &gIndexBuffer)))
+	if (FAILED(def->CreateBuffer(&indexBufferDesc, &indexData, &gIndexBufferTerrain)))
 	{
-		MessageBoxA(NULL, "Error creating index buffer.", NULL, MB_OK);
+		MessageBoxA(NULL, "Error creating index buffer for terrain.", NULL, MB_OK);
 		exit(-1);
 	}
 
@@ -145,6 +185,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 
 		CreateTerrainBuffers(&def);
 
+		CreateCubeBuffer(&def);
+
 		while (TRUE)
 		{
 			//Check to see if any messages are waiting in the queue
@@ -171,11 +213,13 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		}
 
 		gTerrainBuffer->Release();
+		gCubeBuffer->Release();
 		DIKeyboard->Unacquire();
 		DIMouse->Unacquire();
 		DirectInput->Release();
 		DestroyWindow(def.GetWindowHandle());
-		gIndexBuffer->Release();
+		gIndexBufferTerrain->Release();
+		gIndexBufferCube->Release();
 	}
 
 	// return this part of the WM_QUIT message to Windows

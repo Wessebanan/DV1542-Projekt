@@ -14,7 +14,6 @@ struct PS_IN
 	float4 Pos : SV_POSITION;
 	float3 Nor : NORMAL;
 	float3 WPos : POSITION;
-	float3 Color : COLOR;
 	float2 TexCoord : TEXCOORD;
 	float3 Tangent : TANGENT;
 	float3 Bitangent : BINORMAL;
