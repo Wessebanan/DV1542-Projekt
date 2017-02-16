@@ -56,9 +56,16 @@ void CreateTerrainBuffers(Deferred* def)
 
 	Vertex* vertices = new Vertex[rows*columns];
 	unsigned long vertexIncrementer = 0;
-	for (int i = 0; i < rows; i++) {
-		for (int j = 0; j < columns; j++) {
-			vertices[vertexIncrementer] = { (float)j, -20.0f, (float)i, 0.0f, 1.0f, 0.0f, u, v };
+	for (int i = 0; i < rows; i++) 
+	{
+		for (int j = 0; j < columns; j++)
+		{
+			vertices[vertexIncrementer] = 
+			{ 
+				(float)j, -20.0f, (float)i, 
+				0.0f, 1.0f, 0.0f, 
+				u, v 
+			};
 			vertexIncrementer++;
 			u += 0.1f;
 		}

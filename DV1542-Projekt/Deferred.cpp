@@ -310,7 +310,7 @@ void Deferred::GeometryPass()
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 3, this->textureSRVs);
 
 	//Setting the normal map to the vertex shader.
-	this->direct3D.getDevCon()->VSSetShaderResources(1, 1, &this->normalSRV);
+	this->direct3D.getDevCon()->PSSetShaderResources(3, 1, &this->normalSRV);
 
 	//Setting the matrices to the transformBuffer with the relevant changes.
 	D3D11_MAPPED_SUBRESOURCE transformDataPtr;
