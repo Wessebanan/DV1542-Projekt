@@ -22,7 +22,7 @@ PS_OUT main( VS_OUT input )
 {
 	PS_OUT output = (PS_OUT)0;
 	output.normal = float4(input.Normal, 0.0f);
-	output.diffuse = objectTex.Sample(samplerState, input.TexCoord);
+	output.diffuse = objectTex.Sample(samplerState, input.TexCoord * 10.0f);
 	output.specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	output.position = float4(input.WPos, 1.0f);
 	return output;

@@ -17,14 +17,6 @@
 #pragma comment (lib, "d3dcompiler.lib")
 using namespace DirectX;
 
-//ID3D11Buffer* gTerrainBuffer = nullptr;
-//ID3D11Buffer* gIndexBufferTerrain = nullptr;
-//
-//ID3D11Buffer* gCubeBuffer = nullptr;
-//ID3D11Buffer* gIndexBufferCube = nullptr;
-
-float rotationAngle = 0.0f;
-
 struct Object
 {
 	ID3D11Buffer* vertexBuffer;
@@ -223,13 +215,11 @@ int WINAPI WinMain(HINSTANCE hInstance,
 				// WEEEEW GAME CODE HERE LET'S GO
 			}
 		}
-
 		DIKeyboard->Unacquire();
 		DIMouse->Unacquire();
 		DirectInput->Release();
-		DestroyWindow(def.GetWindowHandle());		
+		DestroyWindow(def.GetWindowHandle());
 	}
-
 	// return this part of the WM_QUIT message to Windows
 	return (int)msg.wParam;
 }

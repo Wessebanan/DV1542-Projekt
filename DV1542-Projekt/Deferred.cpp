@@ -368,7 +368,7 @@ void Deferred::BindTerrain()
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 3, this->textureSRVs);
 
 	//Setting the normal map to the pixel shader.
-	this->direct3D.getDevCon()->PSSetShaderResources(3, 1, &this->normalSRV);	
+	this->direct3D.getDevCon()->PSSetShaderResources(3, 1, &this->TerrainNormalSRV);	
 
 	//Setting the matrices to the transformBuffer with the relevant changes.
 	D3D11_MAPPED_SUBRESOURCE transformDataPtr;
@@ -401,6 +401,9 @@ void Deferred::BindGenericObject()
 	this->direct3D.getDevCon()->VSSetShader(this->vertexShaderGenericObject, nullptr, 0);
 	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderGenericObject, nullptr, 0);
 	this->direct3D.getDevCon()->GSSetShader(nullptr, nullptr, 0);
+
+	//Binding shader resources where relevant.
+	this->direct3D.getDevCon()->PSSetShaderResources(0, 1, &this->brickSRV);
 }
 
 void Deferred::LightPass()
@@ -479,13 +482,9 @@ void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int
 
 		D3D11_MAPPED_SUBRESOURCE transformDataPtr;
 		this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &transformDataPtr);
-
 		this->WVP.world = world;
-
 		memcpy(transformDataPtr.pData, &this->WVP, sizeof(matrixData));
-
 		this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);
-
 		this->direct3D.getDevCon()->GSSetConstantBuffers(0, 1, &this->transformBuffer);
 
 		this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
@@ -542,12 +541,15 @@ void Deferred::CreateTextures()
 	{
 		MessageBoxA(NULL, "Error creating dirt texture.", NULL, MB_OK);
 	}
-
-	//Normal map texture:
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"NormalMap9.dds", NULL, &this->normalSRV);
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"NormalMap9.dds", NULL, &this->TerrainNormalSRV);
 	if (FAILED(hr))
 	{
 		MessageBoxA(NULL, "Error creating normal map.", NULL, MB_OK);
+	}
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"brickTex.dds", NULL, &this->brickSRV);
+	if (FAILED(hr))
+	{
+		MessageBoxA(NULL, "Error creating brick texture", NULL, MB_OK);
 	}
 }
 
