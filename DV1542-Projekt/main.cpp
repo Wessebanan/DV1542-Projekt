@@ -33,10 +33,10 @@ void RenderDeferred(Deferred* def)
 {
 	def->InitialGeometryBinds();
 	def->BindTerrain();
-	def->Draw(Terrain.vertexBuffer, Terrain.indexBuffer, Terrain.numIndices, Terrain.world);
+	def->Draw(Terrain.vertexBuffer, Terrain.indexBuffer, Terrain.numIndices, Terrain.world, TERRAIN);
 	def->BindGenericObject();
-	def->Draw(Cube.vertexBuffer, Cube.indexBuffer, Cube.numIndices, Cube.world);
-	def->Draw(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world);
+	def->Draw(Cube.vertexBuffer, Cube.indexBuffer, Cube.numIndices, Cube.world, CUBE);
+	def->Draw(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world, BEAR);
 	def->LightPass();
 }
 
@@ -244,7 +244,7 @@ void CreateObjects(Deferred* def)
 	//Create bear object
 	CreateObjectBuffers(def, &Bear, "bear.obj");
 	Bear.numIndices = 3912;
-	Bear.world = XMMatrixTranslation(500, 55, 500);
+	Bear.world = XMMatrixTranslation(150, -20, 170);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance,

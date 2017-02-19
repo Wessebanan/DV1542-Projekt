@@ -11,6 +11,13 @@ const int BUFFER_COUNT = 4;
 
 const int TEXTURE_COUNT = 3;
 
+enum OBJECT_TYPE
+{
+	TERRAIN = 0,
+	CUBE = 1,
+	BEAR = 2
+};
+
 class Deferred 
 {
 private:
@@ -45,14 +52,16 @@ private:
 	ID3D11Texture2D* dirtTexture = nullptr;
 	ID3D11Texture2D* rockTexture = nullptr;
 	ID3D11Texture2D* brickTexture = nullptr;
+	ID3D11Texture2D* bearTexture = nullptr;
 
-	//grass: 1, dirt: 2, dirt: 3
+	//grass: 1, dirt: 2, dirt: 3 (for terrain).
 	ID3D11ShaderResourceView* textureSRVs[TEXTURE_COUNT];
 
 	ID3D11ShaderResourceView* grassSRV = nullptr;
 	ID3D11ShaderResourceView* dirtSRV = nullptr;
 	ID3D11ShaderResourceView* rockSRV = nullptr;
 	ID3D11ShaderResourceView* brickSRV = nullptr;
+	ID3D11ShaderResourceView* bearSRV = nullptr;
 
 	ID3D11Texture2D* TerrainNormalMap = nullptr;
 	ID3D11ShaderResourceView* TerrainNormalSRV = nullptr;
@@ -90,7 +99,7 @@ public:
 
 	void SetHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height);
 
-	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, XMMATRIX world);
+	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, XMMATRIX world, OBJECT_TYPE type);
 
 	void CreateTransformBuffer();
 

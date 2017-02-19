@@ -365,34 +365,34 @@ void Deferred::BindTerrain()
 	this->direct3D.getDevCon()->VSSetSamplers(0, 1, &this->samplerState);
 
 	//Setting environment textures to the pixel shader.
-	this->direct3D.getDevCon()->PSSetShaderResources(0, 3, this->textureSRVs);
+	//this->direct3D.getDevCon()->PSSetShaderResources(0, 3, this->textureSRVs);
 
 	//Setting the normal map to the pixel shader.
 	this->direct3D.getDevCon()->PSSetShaderResources(3, 1, &this->TerrainNormalSRV);	
 
-	//Setting the matrices to the transformBuffer with the relevant changes.
-	D3D11_MAPPED_SUBRESOURCE transformDataPtr;
-	this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &transformDataPtr);
+	////Setting the matrices to the transformBuffer with the relevant changes.
+	//D3D11_MAPPED_SUBRESOURCE transformDataPtr;
+	//this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &transformDataPtr);
 
-	this->WVP.view = this->playerCamera.GetViewMatrix();
+	//this->WVP.view = this->playerCamera.GetViewMatrix();
 
-	memcpy(transformDataPtr.pData, &this->WVP, sizeof(matrixData));
+	//memcpy(transformDataPtr.pData, &this->WVP, sizeof(matrixData));
 
-	this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);
+	//this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);
 
-	this->direct3D.getDevCon()->GSSetConstantBuffers(0, 1, &this->transformBuffer);
+	//this->direct3D.getDevCon()->GSSetConstantBuffers(0, 1, &this->transformBuffer);
 
-	//Same process as for transformBuffer but for the camera position.
-	D3D11_MAPPED_SUBRESOURCE camPosDataPtr;
-	this->direct3D.getDevCon()->Map(this->camPosBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &camPosDataPtr);
+	////Same process as for transformBuffer but for the camera position.
+	//D3D11_MAPPED_SUBRESOURCE camPosDataPtr;
+	//this->direct3D.getDevCon()->Map(this->camPosBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &camPosDataPtr);
 
-	this->camPos = this->playerCamera.GetCamPosition();
+	//this->camPos = this->playerCamera.GetCamPosition();
 
-	memcpy(camPosDataPtr.pData, &this->camPos, sizeof(XMVECTOR));
+	//memcpy(camPosDataPtr.pData, &this->camPos, sizeof(XMVECTOR));
 
-	this->direct3D.getDevCon()->Unmap(this->camPosBuffer, 0);
-	
-	this->direct3D.getDevCon()->PSSetConstantBuffers(0, 1, &this->camPosBuffer);
+	//this->direct3D.getDevCon()->Unmap(this->camPosBuffer, 0);
+	//
+	//this->direct3D.getDevCon()->PSSetConstantBuffers(0, 1, &this->camPosBuffer);
 }
 
 void Deferred::BindGenericObject()
@@ -403,7 +403,7 @@ void Deferred::BindGenericObject()
 	this->direct3D.getDevCon()->GSSetShader(nullptr, nullptr, 0);
 
 	//Binding shader resources where relevant.
-	this->direct3D.getDevCon()->PSSetShaderResources(0, 1, &this->brickSRV);
+	//this->direct3D.getDevCon()->PSSetShaderResources(0, 1, &this->brickSRV);
 }
 
 void Deferred::LightPass()
@@ -473,7 +473,7 @@ void Deferred::SetHeightMapTexture(std::wstring filepath, unsigned int width, un
 	
 }
 
-void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int numIndices, XMMATRIX world)
+void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int numIndices, XMMATRIX world, OBJECT_TYPE type)
 {
 	if (!(vertexBuffer == nullptr))
 	{ 
@@ -486,6 +486,25 @@ void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int
 		memcpy(transformDataPtr.pData, &this->WVP, sizeof(matrixData));
 		this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);
 		this->direct3D.getDevCon()->GSSetConstantBuffers(0, 1, &this->transformBuffer);
+
+		switch (type)
+		{
+		case TERRAIN:
+		{
+			this->direct3D.getDevCon()->PSSetShaderResources(0, 3, this->textureSRVs);
+			break;
+		}
+		case CUBE:
+		{
+			this->direct3D.getDevCon()->PSSetShaderResources(0, 1, &this->brickSRV);
+			break;
+		}
+		case BEAR:
+		{
+			this->direct3D.getDevCon()->PSSetShaderResources(0, 1, &this->bearSRV);
+			break;
+		}
+		}
 
 		this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
 		this->direct3D.getDevCon()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
@@ -547,9 +566,14 @@ void Deferred::CreateTextures()
 		MessageBoxA(NULL, "Error creating normal map.", NULL, MB_OK);
 	}
 	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"brickTex.dds", NULL, &this->brickSRV);
-	if (FAILED(hr))
+	if (FAILED(hr))	
 	{
 		MessageBoxA(NULL, "Error creating brick texture", NULL, MB_OK);
+	}
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"bearTex.dds", NULL, &this->bearSRV);
+	if (FAILED(hr))
+	{
+		MessageBoxA(NULL, "Error creating bear texture", NULL, MB_OK);
 	}
 }
 
