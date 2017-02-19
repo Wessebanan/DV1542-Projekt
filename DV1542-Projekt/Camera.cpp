@@ -75,7 +75,7 @@ XMMATRIX Camera::UpdateCamera(float leftRight, float backForward, float upDown, 
 				this->startOfJumpYChecked = false;
 			}
 		}
-		//---------------------------------------------
+		//----------------------------------------------
 		else
 		{
 			this->camPosition = XMVectorSetY(this->camPosition, this->CalculateHeight(XMVectorGetX(camPosition), XMVectorGetZ(camPosition)));

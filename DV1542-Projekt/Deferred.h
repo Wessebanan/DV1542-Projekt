@@ -29,11 +29,11 @@ private:
 	ID3D11Texture2D* depthStencilBuffer;
 
 	ID3D11InputLayout* vertexLayout;
-	ID3D11VertexShader* vertexShader;
+	ID3D11VertexShader* vertexShaderTerrain;
 	ID3D11VertexShader* vertexShaderLight;
-	ID3D11GeometryShader* geometryShader;
-	ID3D11PixelShader* pixelShaderG;
-	ID3D11PixelShader* pixelShaderL;
+	ID3D11GeometryShader* geometryShaderTerrain;
+	ID3D11PixelShader* pixelShaderTerrain;
+	ID3D11PixelShader* pixelShaderLight;
 
 	ID3D11VertexShader* vertexShaderGenericObject;
 	ID3D11PixelShader* pixelShaderGenericObject;
@@ -69,6 +69,9 @@ private:
 
 	XMVECTOR camPos;
 
+	bool nulled = false; //To only null the SRs in PSL once.
+	bool set = false; //To only set RTs once.
+
 public:
 	Deferred(HINSTANCE hInstance);
 	~Deferred();
@@ -77,13 +80,15 @@ public:
 
 	bool Initialize();
 
-	void GeometryPass();
+	void InitialGeometryBinds();
+	void BindTerrain();
+	void BindGenericObject();
 
 	void LightPass();
 
 	void SetHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height);
 
-	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, unsigned long long pVertexSize, DXGI_FORMAT format);
+	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, unsigned long long pVertexSize, XMMATRIX world);
 
 	void CreateTransformBuffer();
 

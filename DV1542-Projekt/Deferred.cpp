@@ -17,10 +17,10 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->depthStencilBuffer = nullptr;
 	this->depthStencilView = nullptr;
 	this->vertexLayout = nullptr;
-	this->vertexShader = nullptr;
-	this->geometryShader = nullptr;
-	this->pixelShaderG = nullptr;
-	this->pixelShaderL = nullptr;
+	this->vertexShaderTerrain = nullptr;
+	this->geometryShaderTerrain = nullptr;
+	this->pixelShaderTerrain = nullptr;
+	this->pixelShaderLight = nullptr;
 	this->samplerState = nullptr;
 	this->transformBuffer = nullptr;
 	this->camPosBuffer = nullptr;
@@ -46,11 +46,11 @@ Deferred::~Deferred()
 	this->depthStencilBuffer->Release();
 	this->depthStencilView->Release();
 	this->vertexLayout->Release();
-	this->vertexShader->Release();
+	this->vertexShaderTerrain->Release();
 	this->vertexShaderLight->Release();
-	this->geometryShader->Release();
-	this->pixelShaderG->Release();
-	this->pixelShaderL->Release();
+	this->geometryShaderTerrain->Release();
+	this->pixelShaderTerrain->Release();
+	this->pixelShaderLight->Release();
 	this->vertexShaderGenericObject->Release();
 	this->samplerState->Release();
 	
@@ -78,7 +78,7 @@ void Deferred::CreateShaders()
 								
 	);
 
-	this->direct3D.getDevice()->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &this->vertexShader);
+	this->direct3D.getDevice()->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &this->vertexShaderTerrain);
 
 	//create input layout (verified using vertex shader)
 	D3D11_INPUT_ELEMENT_DESC inputDesc[] = {
@@ -105,7 +105,7 @@ void Deferred::CreateShaders()
 					
 	);
 
-	this->direct3D.getDevice()->CreatePixelShader(pPS->GetBufferPointer(), pPS->GetBufferSize(), nullptr, &this->pixelShaderG);	
+	this->direct3D.getDevice()->CreatePixelShader(pPS->GetBufferPointer(), pPS->GetBufferSize(), nullptr, &this->pixelShaderTerrain);	
 	pPS->Release();
 
 	ID3DBlob* pGS = nullptr;
@@ -121,7 +121,7 @@ void Deferred::CreateShaders()
 		nullptr
 	);
 
-	this->direct3D.getDevice()->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &this->geometryShader);
+	this->direct3D.getDevice()->CreateGeometryShader(pGS->GetBufferPointer(), pGS->GetBufferSize(), nullptr, &this->geometryShaderTerrain);
 	pGS->Release();
 
 	ID3DBlob* pPSL = nullptr;
@@ -138,7 +138,7 @@ void Deferred::CreateShaders()
 		nullptr
 	);
 
-	this->direct3D.getDevice()->CreatePixelShader(pPSL->GetBufferPointer(), pPSL->GetBufferSize(), nullptr, &this->pixelShaderL);
+	this->direct3D.getDevice()->CreatePixelShader(pPSL->GetBufferPointer(), pPSL->GetBufferSize(), nullptr, &this->pixelShaderLight);
 	pPSL->Release();
 
 	ID3DBlob* pVSL = nullptr;
@@ -310,20 +310,14 @@ bool Deferred::Initialize()
 	return result;
 }
 
-void Deferred::GeometryPass()
+void Deferred::InitialGeometryBinds()
 {
-
 	//Unbinding the textures from input to render to them again.
-	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->unbindingSRVs);	
+	
+	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->unbindingSRVs);
 
-	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
-	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-	//Setting the g-buffer textures as render targets.
-	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);	
-
-	//Clearing the RTVs with a sky blue color.
-	float clearColor[] = { 135.0f/255.0f,206.0f/255.0f,250.0f/255.0f,0 };
-
+	float clearColor[] = { 135.0f / 255.0f,206.0f / 255.0f,250.0f / 255.0f,0 };
+	
 	for (int i = 0; i < BUFFER_COUNT; i++)
 	{
 		this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[i], clearColor);
@@ -331,26 +325,57 @@ void Deferred::GeometryPass()
 
 	this->direct3D.getDevCon()->ClearDepthStencilView(this->depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-	//Setting the correct shaders for the geometry pass.
-	this->direct3D.getDevCon()->VSSetShader(this->vertexShader, nullptr, 0);
-	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderG, nullptr, 0);
-	this->direct3D.getDevCon()->GSSetShader(this->geometryShader, nullptr, 0);
+	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
+	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	//Setting a generic sampler for sampling whatever needs to be sampled.
-	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);
-
-	//Setting environment textures to the pixel shader.
-	this->direct3D.getDevCon()->PSSetShaderResources(0, 3, this->textureSRVs);
-
-	//Setting the normal map to the vertex shader.
-	this->direct3D.getDevCon()->PSSetShaderResources(3, 1, &this->normalSRV);
+	//Setting the g-buffer textures as render targets.
+	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);
+	
 
 	//Setting the matrices to the transformBuffer with the relevant changes.
 	D3D11_MAPPED_SUBRESOURCE transformDataPtr;
 	this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &transformDataPtr);
 
-	this->WVP.view = this->playerCamera.GetViewMatrix(); 								 
-								 
+	this->WVP.view = this->playerCamera.GetViewMatrix();
+
+	memcpy(transformDataPtr.pData, &this->WVP, sizeof(matrixData));
+
+	this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);
+
+	//Same process as for transformBuffer but for the camera position.
+	D3D11_MAPPED_SUBRESOURCE camPosDataPtr;
+	this->direct3D.getDevCon()->Map(this->camPosBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &camPosDataPtr);
+
+	this->camPos = this->playerCamera.GetCamPosition();
+
+	memcpy(camPosDataPtr.pData, &this->camPos, sizeof(XMVECTOR));
+
+	this->direct3D.getDevCon()->Unmap(this->camPosBuffer, 0);
+}
+
+void Deferred::BindTerrain()
+{
+	//Setting the correct shaders for the terrain.
+	this->direct3D.getDevCon()->VSSetShader(this->vertexShaderTerrain, nullptr, 0);
+	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderTerrain, nullptr, 0);
+	this->direct3D.getDevCon()->GSSetShader(this->geometryShaderTerrain, nullptr, 0);
+
+	//Setting a generic sampler for sampling whatever needs to be sampled.
+	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);
+	this->direct3D.getDevCon()->VSSetSamplers(0, 1, &this->samplerState);
+
+	//Setting environment textures to the pixel shader.
+	this->direct3D.getDevCon()->PSSetShaderResources(0, 3, this->textureSRVs);
+
+	//Setting the normal map to the pixel shader.
+	this->direct3D.getDevCon()->PSSetShaderResources(3, 1, &this->normalSRV);	
+
+	//Setting the matrices to the transformBuffer with the relevant changes.
+	D3D11_MAPPED_SUBRESOURCE transformDataPtr;
+	this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &transformDataPtr);
+
+	this->WVP.view = this->playerCamera.GetViewMatrix();
+
 	memcpy(transformDataPtr.pData, &this->WVP, sizeof(matrixData));
 
 	this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);
@@ -366,8 +391,16 @@ void Deferred::GeometryPass()
 	memcpy(camPosDataPtr.pData, &this->camPos, sizeof(XMVECTOR));
 
 	this->direct3D.getDevCon()->Unmap(this->camPosBuffer, 0);
-
+	
 	this->direct3D.getDevCon()->PSSetConstantBuffers(0, 1, &this->camPosBuffer);
+}
+
+void Deferred::BindGenericObject()
+{
+	//Setting the correct shaders for the geometry pass.
+	this->direct3D.getDevCon()->VSSetShader(this->vertexShaderGenericObject, nullptr, 0);
+	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderGenericObject, nullptr, 0);
+	this->direct3D.getDevCon()->GSSetShader(nullptr, nullptr, 0);
 }
 
 void Deferred::LightPass()
@@ -379,12 +412,13 @@ void Deferred::LightPass()
 
 	//Setting the shaders for the light pass, no GS necessary.
 	this->direct3D.getDevCon()->VSSetShader(this->vertexShaderLight, nullptr, 0);
-	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderL, nullptr, 0);
+	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderLight, nullptr, 0);
 	this->direct3D.getDevCon()->GSSetShader(nullptr, nullptr, 0);
 
 	//Setting the same sampler as the geometry pass, binding the g-buffer textures as shader resources. VS gets transformbuffer.	
 	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);				
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);
+
 	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);	
 
 	//Drawing a full screen quad generated by the system as no vertex buffer is set.
@@ -431,26 +465,31 @@ void Deferred::SetHeightMapTexture(std::wstring filepath, unsigned int width, un
 	this->direct3D.getDevCon()->VSSetShaderResources(0, 1, &gTextureView);
 	this->direct3D.getDevCon()->VSSetSamplers(0, 1, &gSamplerState);
 
-	/*Image test = { 1024, 1024, DXGI_FORMAT_R16_UNORM, 1024, 1024 * 1024, (uint8_t*)noise1.loadHeightmap(filepath, width, height) };
-	ScratchImage test2;
-	hr = ComputeNormalMap(test, CNMAP_CHANNEL_LUMINANCE | CNMAP_COMPUTE_OCCLUSION, 2.f, DXGI_FORMAT_R16_UNORM, test2);
-	if (!SUCCEEDED(hr)) {
-		MessageBox(NULL, L"Skiten fungerar inte!", NULL, MB_ICONEXCLAMATION);
-	}*/
 	gTextureView->Release();
 	gSamplerState->Release();
 	
 }
 
-void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int numIndices, unsigned long long pVertexSize, DXGI_FORMAT format)
+void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int numIndices, unsigned long long pVertexSize, XMMATRIX world)
 {
 	if (!(vertexBuffer == nullptr))
 	{ 
 		UINT32 vertexSize = pVertexSize;
 		UINT32 offset = 0;
-		this->direct3D.getDevCon()->VSSetSamplers(0, 1, &this->samplerState);
+
+		D3D11_MAPPED_SUBRESOURCE transformDataPtr;
+		this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &transformDataPtr);
+
+		this->WVP.world = world;
+
+		memcpy(transformDataPtr.pData, &this->WVP, sizeof(matrixData));
+
+		this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);
+
+		this->direct3D.getDevCon()->GSSetConstantBuffers(0, 1, &this->transformBuffer);
+
 		this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
-		this->direct3D.getDevCon()->IASetIndexBuffer(indexBuffer, format, 0);
+		this->direct3D.getDevCon()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		this->direct3D.getDevCon()->DrawIndexed(numIndices, 0, 0);		
 	}
 }
