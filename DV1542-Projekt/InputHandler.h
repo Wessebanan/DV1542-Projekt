@@ -52,7 +52,7 @@ bool InitDirectInput(HINSTANCE hInstance, HWND hwnd) {
 	hr = DirectInput->CreateDevice(GUID_SysMouse, &DIMouse, NULL);
 
 	hr = DIKeyboard->SetDataFormat(&c_dfDIKeyboard); // Standard keyboard layout
-	hr = DIKeyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+	hr = DIKeyboard->SetCooperativeLevel(hwnd, DISCL_FOREGROUND | DISCL_NOWINKEY);
 
 	hr = DIMouse->SetDataFormat(&c_dfDIMouse); // Standard 3 axes (x, y, scrollwheel) / 4 button mouse
 	hr = DIMouse->SetCooperativeLevel(hwnd, DISCL_EXCLUSIVE | DISCL_FOREGROUND);
