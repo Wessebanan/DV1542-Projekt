@@ -90,7 +90,7 @@ public:
 
 	void SetHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height);
 
-	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, unsigned long long pVertexSize, XMMATRIX world);
+	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, XMMATRIX world);
 
 	void CreateTransformBuffer();
 

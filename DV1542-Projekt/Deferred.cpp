@@ -473,11 +473,11 @@ void Deferred::SetHeightMapTexture(std::wstring filepath, unsigned int width, un
 	
 }
 
-void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int numIndices, unsigned long long pVertexSize, XMMATRIX world)
+void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int numIndices, XMMATRIX world)
 {
 	if (!(vertexBuffer == nullptr))
 	{ 
-		UINT32 vertexSize = pVertexSize;
+		UINT32 vertexSize = sizeof(float) * 8;
 		UINT32 offset = 0;
 
 		D3D11_MAPPED_SUBRESOURCE transformDataPtr;
