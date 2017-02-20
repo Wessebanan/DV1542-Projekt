@@ -33,6 +33,8 @@ PS_OUT main(PS_IN input)
 
 	float3 lightPos = { 500.0f, 1000.0f, 500.0f };
 
+	float3 lightDir = { 1.0f, -1.0f, 1.0f };
+
 	float higherTexIntensity = 0.0f;
 	float lowerTexIntensity = 0.0f;
 

@@ -1,5 +1,5 @@
-
-struct VS_IN {
+struct VS_IN 
+{
 	float3 Pos : POSITION;
 	float3 Normal : NORMAL;
 	float2 TexCoord : TEXCOORD;
@@ -30,7 +30,7 @@ VS_OUT main( VS_IN input ) {
 	output.Pos = mul(wvp,float4(input.Pos,1.0f));
 	output.WPos = mul(world, input.Pos);
 	output.Normal = mul(world, input.Normal);
-	output.TexCoord = mul(world, input.TexCoord);
+	output.TexCoord = input.TexCoord;
 
 	return output;
 }

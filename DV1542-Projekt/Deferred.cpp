@@ -27,7 +27,7 @@ Deferred::Deferred(HINSTANCE hInstance) :
 
 	this->Initialize();	
 
-	this->WVP.world = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+	this->WVP.world = XMMatrixIdentity();
 	this->WVP.view = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
 	this->WVP.proj = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 20000.0f);
 

@@ -34,14 +34,19 @@ Shadowmap::Shadowmap(D3D direct3D, D3D11_VIEWPORT vp, int height, int width)
 
 	this->direct3D.getDevice()->CreateShaderResourceView(this->depthStencilBuffer, &srvDesc, &this->depthMapSRV);
 
+	this->CreateTransformationMatrices();
+
 	D3D11_BUFFER_DESC bufDesc{};
 	bufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bufDesc.ByteWidth = sizeof(XMMATRIX) * 3;
 	bufDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	bufDesc.MiscFlags = 0;
 	bufDesc.Usage = D3D11_USAGE_DEFAULT;
+
+	D3D11_SUBRESOURCE_DATA subResData{};
+	subResData.pSysMem = &this->WVP;
 	
-	this->direct3D.getDevice()->CreateBuffer(&bufDesc, nullptr, &this->transformBuffer);
+	this->direct3D.getDevice()->CreateBuffer(&bufDesc, &subResData, &this->transformBuffer);
 
 	this->CreateShaders();
 
@@ -56,6 +61,13 @@ Shadowmap::~Shadowmap()
 	this->depthMapSRV->Release();
 	this->depthMapSRV->Release();
 	this->depthStencilView->Release();
+}
+
+void Shadowmap::CreateTransformationMatrices()
+{
+	this->WVP.world = XMMatrixIdentity();
+	this->WVP.view = XMMatrixLookAtLH(-100.0f*this->lightDir + XMVectorSet(0.0f, 0.0f, 500.0f, 1.0f), XMVectorSet(0.0f, 0.0f, 500.0f, 0.0f), XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+	this->WVP.proj = XMMatrixOrthographicLH(1000.0f, 1000.0f, 1.0f, 2500.0f);
 }
 
 void Shadowmap::CreateShaders()
@@ -115,5 +127,6 @@ void Shadowmap::Shadowpass(XMVECTOR lightDir)
 
 	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);
 
-	
+	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
+	this->direct3D.getDevCon()->Draw(4, 0);	
 }

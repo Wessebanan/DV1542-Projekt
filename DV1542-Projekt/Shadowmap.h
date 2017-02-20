@@ -20,11 +20,19 @@ private:
 
 	D3D11_VIEWPORT viewPort;
 
-
+	struct matrixData
+	{
+		XMMATRIX world;
+		XMMATRIX view;
+		XMMATRIX proj;
+	};
+	matrixData WVP;
+	XMVECTOR lightDir;
 public:
 	Shadowmap(D3D direct3D, D3D11_VIEWPORT vp, int height, int width);
 	~Shadowmap();
 
+	void CreateTransformationMatrices();
 	void CreateShaders();
 	void Shadowpass(XMVECTOR lightDir);
 };
