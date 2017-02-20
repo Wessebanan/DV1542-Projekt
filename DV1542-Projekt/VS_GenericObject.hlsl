@@ -1,5 +1,5 @@
-
-struct VS_IN {
+struct VS_IN 
+{
 	float3 Pos : POSITION;
 	float3 Normal : NORMAL;
 	float2 TexCoord : TEXCOORD;

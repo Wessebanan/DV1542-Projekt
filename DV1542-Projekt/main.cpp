@@ -77,78 +77,6 @@ void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath)
 	}
 }
 
-//void CreateCubeBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer) {
-//	std::vector<Vertex> vertices;
-//	std::vector<unsigned int> indices;
-//	bool result = loadOBJ("cube_green_phong_12_tris_TRIANGULATED.obj", vertices, indices);
-//
-//	D3D11_BUFFER_DESC cubeBufferDesc = {};
-//	cubeBufferDesc.ByteWidth = sizeof(Vertex) * vertices.size();
-//	cubeBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-//	cubeBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-//
-//	D3D11_SUBRESOURCE_DATA cubeData = {};
-//	cubeData.pSysMem = vertices.data();
-//	if (FAILED(def->CreateBuffer(&cubeBufferDesc, &cubeData, &Cube.vertexBuffer))) {
-//		MessageBoxA(NULL, "Error creating CUBE buffer.", NULL, MB_OK);
-//		exit(-1);
-//	}
-//
-//	D3D11_BUFFER_DESC indexBufferDesc = {};
-//	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-//	indexBufferDesc.ByteWidth = sizeof(unsigned int) * indices.size();
-//	unsigned int test1 = indices.size();
-//	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-//	indexBufferDesc.CPUAccessFlags = 0;
-//	indexBufferDesc.MiscFlags = 0;
-//
-//	D3D11_SUBRESOURCE_DATA indexData;
-//	indexData.pSysMem = indices.data();
-//
-//	if (FAILED(def->CreateBuffer(&indexBufferDesc, &indexData, &Cube.indexBuffer)))
-//	{
-//		MessageBoxA(NULL, "Error creating index buffer for cube.", NULL, MB_OK);
-//		exit(-1);
-//	}
-//
-//}
-//
-//void CreateBearBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer)
-//{
-//	std::vector<Vertex> vertices;
-//	std::vector<unsigned int> indices;
-//	bool result = loadOBJ("bear.obj", vertices, indices);
-//
-//	D3D11_BUFFER_DESC cubeBufferDesc = {};
-//	cubeBufferDesc.ByteWidth = sizeof(Vertex) * vertices.size();
-//	cubeBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-//	cubeBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-//
-//	D3D11_SUBRESOURCE_DATA cubeData = {};
-//	cubeData.pSysMem = vertices.data();
-//	if (FAILED(def->CreateBuffer(&cubeBufferDesc, &cubeData, &Cube.vertexBuffer))) {
-//		MessageBoxA(NULL, "Error creating CUBE buffer.", NULL, MB_OK);
-//		exit(-1);
-//	}
-//
-//	D3D11_BUFFER_DESC indexBufferDesc = {};
-//	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-//	indexBufferDesc.ByteWidth = sizeof(unsigned int) * indices.size();
-//	unsigned int test1 = indices.size();
-//	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-//	indexBufferDesc.CPUAccessFlags = 0;
-//	indexBufferDesc.MiscFlags = 0;
-//
-//	D3D11_SUBRESOURCE_DATA indexData;
-//	indexData.pSysMem = indices.data();
-//
-//	if (FAILED(def->CreateBuffer(&indexBufferDesc, &indexData, &Cube.indexBuffer)))
-//	{
-//		MessageBoxA(NULL, "Error creating index buffer for cube.", NULL, MB_OK);
-//		exit(-1);
-//	}
-//}
-
 void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer)
 {
 	int rows = 1000;
@@ -244,7 +172,7 @@ void CreateObjects(Deferred* def)
 	//Create bear object
 	CreateObjectBuffers(def, &Bear, "bear.obj");
 	Bear.numIndices = 3912;
-	Bear.world = XMMatrixTranslation(150, -20, 170);
+	Bear.world =  XMMatrixTranslation(300, 5, 300);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance,

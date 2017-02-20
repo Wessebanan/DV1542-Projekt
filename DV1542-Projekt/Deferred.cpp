@@ -27,7 +27,7 @@ Deferred::Deferred(HINSTANCE hInstance) :
 
 	this->Initialize();	
 
-	this->WVP.world = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+	this->WVP.world = XMMatrixIdentity();
 	this->WVP.view = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
 	this->WVP.proj = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 20000.0f);
 
@@ -261,8 +261,7 @@ bool Deferred::Initialize()
 		}
 	}		
 	
-	// Creating the depth stencil view and the depth stencil buffer.
-	
+	// Creating the depth stencil view and the depth stencil buffer.	
 	D3D11_TEXTURE2D_DESC depthBufferDesc{};
 	depthBufferDesc.Width = this->window.GetWidth();
 	depthBufferDesc.Height = this->window.GetHeight();
@@ -364,35 +363,8 @@ void Deferred::BindTerrain()
 	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);
 	this->direct3D.getDevCon()->VSSetSamplers(0, 1, &this->samplerState);
 
-	//Setting environment textures to the pixel shader.
-	//this->direct3D.getDevCon()->PSSetShaderResources(0, 3, this->textureSRVs);
-
 	//Setting the normal map to the pixel shader.
 	this->direct3D.getDevCon()->PSSetShaderResources(3, 1, &this->TerrainNormalSRV);	
-
-	////Setting the matrices to the transformBuffer with the relevant changes.
-	//D3D11_MAPPED_SUBRESOURCE transformDataPtr;
-	//this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &transformDataPtr);
-
-	//this->WVP.view = this->playerCamera.GetViewMatrix();
-
-	//memcpy(transformDataPtr.pData, &this->WVP, sizeof(matrixData));
-
-	//this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);
-
-	//this->direct3D.getDevCon()->GSSetConstantBuffers(0, 1, &this->transformBuffer);
-
-	////Same process as for transformBuffer but for the camera position.
-	//D3D11_MAPPED_SUBRESOURCE camPosDataPtr;
-	//this->direct3D.getDevCon()->Map(this->camPosBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &camPosDataPtr);
-
-	//this->camPos = this->playerCamera.GetCamPosition();
-
-	//memcpy(camPosDataPtr.pData, &this->camPos, sizeof(XMVECTOR));
-
-	//this->direct3D.getDevCon()->Unmap(this->camPosBuffer, 0);
-	//
-	//this->direct3D.getDevCon()->PSSetConstantBuffers(0, 1, &this->camPosBuffer);
 }
 
 void Deferred::BindGenericObject()
@@ -401,9 +373,6 @@ void Deferred::BindGenericObject()
 	this->direct3D.getDevCon()->VSSetShader(this->vertexShaderGenericObject, nullptr, 0);
 	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderGenericObject, nullptr, 0);
 	this->direct3D.getDevCon()->GSSetShader(nullptr, nullptr, 0);
-
-	//Binding shader resources where relevant.
-	//this->direct3D.getDevCon()->PSSetShaderResources(0, 1, &this->brickSRV);
 }
 
 void Deferred::LightPass()
