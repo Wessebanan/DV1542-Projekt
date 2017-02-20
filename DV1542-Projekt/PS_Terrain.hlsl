@@ -107,7 +107,7 @@ PS_OUT main(PS_IN input)
 	float3 normalTS = normalMap.Sample(samplerState, input.TexCoord / 100.0f).xyz;
 	normalTS = normalize((normalTS * 2.0f) - 1.0f);
 	//Transforming the normal to world space using tangent frame and setting to output
-	output.normal = normalize(float4(mul(normalTS, TBN), 1.0f));
+	output.normal = normalize(float4(mul(normalTS, TBN), 0.0f));
 
 	return output;
 }
