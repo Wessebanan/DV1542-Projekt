@@ -10,6 +10,7 @@ class Shadowmap
 private:
 	D3D direct3D;
 	ID3D11DepthStencilView* depthStencilView = nullptr;
+	ID3D11ShaderResourceView* depthMapSRV = nullptr;
 	ID3D11Texture2D* depthStencilBuffer = nullptr;
 
 	ID3D11VertexShader* VS_Shadow = nullptr;
@@ -17,10 +18,11 @@ private:
 
 	ID3D11Buffer* transformBuffer = nullptr;
 
+	D3D11_VIEWPORT viewPort;
 
 
 public:
-	Shadowmap(D3D direct3D);
+	Shadowmap(D3D direct3D, D3D11_VIEWPORT vp, int height, int width);
 	~Shadowmap();
 
 	void CreateShaders();
