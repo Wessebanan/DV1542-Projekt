@@ -178,7 +178,7 @@ void CreateObjects(Deferred* def)
 	//Create bear object
 	CreateObjectBuffers(def, &Bear, "bear.obj", OPENGL);
 	Bear.numIndices = 3912;
-	Bear.world =  XMMatrixTranslation(300, 5, 300);
+	Bear.world = XMMatrixTranslation(500, 54, 500);
 }
 
 int WINAPI WinMain(HINSTANCE hInstance,
