@@ -179,7 +179,7 @@ void CreateObjects(Deferred* def)
 	CreateObjectBuffers(def, &Bear, "bear.obj", OPENGL);
 	Bear.numIndices = 3912;
 	srand(GetFrameTime());
-	Bear.world = XMMatrixRotationRollPitchYaw(0.34f, 1.47f, 2.01f) * XMMatrixTranslation(500, 53, 300) ;
+	Bear.world = XMMatrixRotationRollPitchYaw(0.34f, 1.47f, 2.01f) * XMMatrixTranslation(500, 63, 500) ;
 }
 
 int WINAPI WinMain(HINSTANCE hInstance,

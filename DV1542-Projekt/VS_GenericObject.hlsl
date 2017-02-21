@@ -29,7 +29,7 @@ VS_OUT main( VS_IN input ) {
 
 	output.Pos = mul(wvp,float4(input.Pos,1.0f));
 	output.WPos = mul(world, input.Pos);
-	output.Normal = mul(world, input.Normal);
+	output.Normal = normalize(mul(world, input.Normal));
 	output.TexCoord = input.TexCoord;
 
 	return output;
