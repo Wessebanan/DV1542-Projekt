@@ -25,6 +25,8 @@ struct Object
 	XMMATRIX world;
 };
 
+
+
 Object Terrain;
 Object Cube;
 Object Bear;
@@ -44,11 +46,11 @@ void RenderDeferred(Deferred* def)
 	def->LightPass();
 }
 
-void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath)
+void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, TEX_COORD_TYPE texType = DIRECTX)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
-	bool result = loadOBJ(filePath, vertices, indices);
+	bool result = loadOBJ(filePath, vertices, indices, texType);
 
 	D3D11_BUFFER_DESC vertexBufferDesc = {};
 	vertexBufferDesc.ByteWidth = sizeof(Vertex) * vertices.size();
@@ -174,7 +176,7 @@ void CreateObjects(Deferred* def)
 	Cube.world = XMMatrixScaling(50.0f, 50.0f, 50.0f) * XMMatrixTranslation(500, 30, 500);
 
 	//Create bear object
-	CreateObjectBuffers(def, &Bear, "bear.obj");
+	CreateObjectBuffers(def, &Bear, "bear.obj", OPENGL);
 	Bear.numIndices = 3912;
 	Bear.world =  XMMatrixTranslation(300, 5, 300);
 }
