@@ -11,10 +11,15 @@ struct Vertex
 	float u, v;
 };
 
+enum TEX_COORD_TYPE {
+	DIRECTX = 0,
+	OPENGL = 1
+};
+
 using namespace DirectX;
 
 
-bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <unsigned int> &indices) {
+bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <unsigned int> &indices, TEX_COORD_TYPE texType = DIRECTX) {
 	// This function reads obj files of format
 	// v 1 1 1
 	// vt 1 1 
@@ -82,9 +87,17 @@ bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <
 
 	}
 	for (int i = 0; i < vertexIndices.size(); i++) {
-		Vertex newVert = { tempVerts[vertexIndices[i] - 1].x, tempVerts[vertexIndices[i] - 1].y, tempVerts[vertexIndices[i] - 1].z,
-							tempNormals[normalIndices[i] - 1].x, tempNormals[normalIndices[i] - 1].y, tempNormals[normalIndices[i] - 1].z,
-							tempTexCoords[texCoordIndices[i] - 1].x, tempTexCoords[texCoordIndices[i] - 1].y };
+		Vertex newVert;
+		if (texType == DIRECTX) {
+			newVert = { tempVerts[vertexIndices[i] - 1].x, tempVerts[vertexIndices[i] - 1].y, tempVerts[vertexIndices[i] - 1].z,
+								tempNormals[normalIndices[i] - 1].x, tempNormals[normalIndices[i] - 1].y, tempNormals[normalIndices[i] - 1].z,
+								tempTexCoords[texCoordIndices[i] - 1].x, tempTexCoords[texCoordIndices[i] - 1].y };
+		}
+		else {
+			newVert = { tempVerts[vertexIndices[i] - 1].x, tempVerts[vertexIndices[i] - 1].y, tempVerts[vertexIndices[i] - 1].z,
+				tempNormals[normalIndices[i] - 1].x, tempNormals[normalIndices[i] - 1].y, tempNormals[normalIndices[i] - 1].z,
+				tempTexCoords[texCoordIndices[i] - 1].x, 1 - tempTexCoords[texCoordIndices[i] - 1].y };
+		}
 		vertices.push_back(newVert);
 		indices.push_back(i);
 	}
