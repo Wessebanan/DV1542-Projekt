@@ -367,6 +367,8 @@ void Deferred::BindTerrain()
 
 	//Setting the normal map to the pixel shader.
 	this->direct3D.getDevCon()->PSSetShaderResources(3, 1, &this->TerrainNormalSRV);	
+
+	this->direct3D.getDevCon()->PSSetConstantBuffers(0, 1, &this->camPosBuffer);
 }
 
 void Deferred::BindGenericObject()
