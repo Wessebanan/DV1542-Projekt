@@ -31,6 +31,10 @@ Object Bear;
 
 void RenderDeferred(Deferred* def) 
 {
+	//-------Shadow map--------
+	//def->GetShadowmap().BindShadowPass();
+	//-------------------------
+
 	def->InitialGeometryBinds();
 	def->BindTerrain();
 	def->Draw(Terrain.vertexBuffer, Terrain.indexBuffer, Terrain.numIndices, Terrain.world, TERRAIN);

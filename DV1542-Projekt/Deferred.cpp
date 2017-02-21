@@ -33,6 +33,8 @@ Deferred::Deferred(HINSTANCE hInstance) :
 
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
 	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
+
+	//this->shadowmap = Shadowmap(this->direct3D, this->viewPort, this->window.GetHeight(), this->window.GetWidth());
 }
 
 Deferred::~Deferred()
@@ -565,3 +567,8 @@ IDXGISwapChain * Deferred::GetSwapChain()
 {
 	return this->direct3D.getSwapChain();
 }
+
+//Shadowmap Deferred::GetShadowmap()
+//{
+//	return this->shadowmap;
+//}
