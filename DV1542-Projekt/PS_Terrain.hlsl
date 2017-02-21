@@ -33,7 +33,7 @@ PS_OUT main(PS_IN input)
 
 	float3 lightPos = { 500.0f, 1000.0f, 500.0f };
 
-	float3 lightDir = { 1.0f, -1.0f, 1.0f };
+	float3 lightDir = { 1.0f, -1.0f, 0.0f };
 
 	float higherTexIntensity = 0.0f;
 	float lowerTexIntensity = 0.0f;
@@ -86,9 +86,9 @@ PS_OUT main(PS_IN input)
 	}
 	
 
-	float3 lightVec = input.WPos - lightPos; // Vector from light to point (Vector I)
-	float3 reflectedLightVec = 2 * input.Nor * dot(-input.Nor, lightVec); // (Vector V)
-	float3 reflection = normalize(lightVec + reflectedLightVec); // (Vector R)
+	//float3 lightVec = input.WPos - lightPos; // Vector from light to point (Vector I)
+	float3 reflectedLightVec = 2 * input.Nor * dot(-input.Nor, lightDir); // (Vector V)
+	float3 reflection = normalize(lightDir + reflectedLightVec); // (Vector R)
 	float3 pointToCamera = normalize(camPos.xyz - input.WPos);
 
 	float specularReflection = specIntensity * pow(saturate(dot(reflection, pointToCamera)),specPow);

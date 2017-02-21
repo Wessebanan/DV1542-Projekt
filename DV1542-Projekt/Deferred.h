@@ -6,6 +6,8 @@
 #include "Camera.h"
 #include "D3D.h"
 #include <DDSTextureLoader.h>
+#include "Shadowmap.h"
+
 using namespace DirectX;
 const int BUFFER_COUNT = 4;
 
@@ -23,6 +25,7 @@ class Deferred
 private:
 	Window window;
 	D3D direct3D;
+	//Shadowmap shadowmap;
 
 	// 0: normals, 1: diffuse, 2: specular, 3: position
 	ID3D11Texture2D* textures[BUFFER_COUNT];
@@ -114,4 +117,6 @@ public:
 	void CreateCamPosBuffer();
 
 	IDXGISwapChain* GetSwapChain();
+
+	Shadowmap GetShadowmap();
 };

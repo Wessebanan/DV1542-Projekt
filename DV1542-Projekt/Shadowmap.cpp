@@ -1,5 +1,10 @@
 #include "Shadowmap.h"
 
+Shadowmap::Shadowmap()
+{
+	
+}
+
 Shadowmap::Shadowmap(D3D direct3D, D3D11_VIEWPORT vp, int height, int width)
 {
 	this->direct3D = direct3D;
@@ -55,12 +60,23 @@ Shadowmap::Shadowmap(D3D direct3D, D3D11_VIEWPORT vp, int height, int width)
 
 Shadowmap::~Shadowmap()
 {
-	this->VS_Shadow->Release();
-	this->PS_Shadow->Release();
-	this->transformBuffer->Release();
-	this->depthMapSRV->Release();
-	this->depthMapSRV->Release();
-	this->depthStencilView->Release();
+	if(this->VS_Shadow != nullptr)
+		this->VS_Shadow->Release();
+	if(this->PS_Shadow != nullptr)
+		this->PS_Shadow->Release();
+	if(this->transformBuffer != nullptr)
+		this->transformBuffer->Release();
+	if(this->depthMapSRV != nullptr)
+		this->depthMapSRV->Release();
+	if(this->depthStencilBuffer != nullptr)
+		this->depthStencilBuffer->Release();
+	if(this->depthStencilView != nullptr)
+		this->depthStencilView->Release();
+}
+
+ID3D11ShaderResourceView * Shadowmap::GetSRV()
+{
+	return this->depthMapSRV;
 }
 
 void Shadowmap::CreateTransformationMatrices()
@@ -117,7 +133,7 @@ void Shadowmap::CreateShaders()
 	pPS->Release();
 }
 
-void Shadowmap::Shadowpass(XMVECTOR lightDir)
+void Shadowmap::BindShadowPass()
 {
 	this->direct3D.getDevCon()->VSSetShader(this->VS_Shadow, nullptr, 0);
 	this->direct3D.getDevCon()->PSSetShader(this->PS_Shadow, nullptr, 0);
@@ -126,7 +142,4 @@ void Shadowmap::Shadowpass(XMVECTOR lightDir)
 	this->direct3D.getDevCon()->OMSetRenderTargets(1, &nullRTV, this->depthStencilView);
 
 	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);
-
-	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
-	this->direct3D.getDevCon()->Draw(4, 0);	
 }

@@ -29,10 +29,13 @@ private:
 	matrixData WVP;
 	XMVECTOR lightDir;
 public:
+	Shadowmap();
 	Shadowmap(D3D direct3D, D3D11_VIEWPORT vp, int height, int width);
 	~Shadowmap();
 
+	ID3D11ShaderResourceView* GetSRV();
+
 	void CreateTransformationMatrices();
 	void CreateShaders();
-	void Shadowpass(XMVECTOR lightDir);
+	void BindShadowPass();
 };

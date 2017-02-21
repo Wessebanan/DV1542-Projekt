@@ -18,8 +18,11 @@ float4 main(PS_IN input) : SV_TARGET
 	float4 color = diffuses.Sample(samplerState, input.texcoord);
 	//------------------------------------
 
-	float3 lightPos = { 500.0f, 1000.0f, 500.0f };
-	float3 lightVec = lightPos - position;
+	float3 lightDir = { 1.0f, -1.0f, 0.0f };
+
+	//float3 lightPos = { 500.0f, 1000.0f, 500.0f };
+	//float3 lightVec = lightPos - position;
+	float3 lightVec = -lightDir;
 	float4 ambient = { 0.10f, 0.10f, 0.10f, 0.0f };
 	float brightness =  0.5f * saturate(dot(normalize(lightVec), normal));
 
