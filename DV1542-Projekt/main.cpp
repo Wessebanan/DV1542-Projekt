@@ -171,14 +171,15 @@ void CreateObjects(Deferred* def)
 	Terrain.world = XMMatrixIdentity();
 
 	//Create cube object
-	CreateObjectBuffers(def, &Cube, "cube_green_phong_12_tris_TRIANGULATED.obj");
+	CreateObjectBuffers(def, &Cube, "cube_green_phong_12_tris_TRIANGULATED.obj", OPENGL);
 	Cube.numIndices = 36; 
-	Cube.world = XMMatrixScaling(50.0f, 50.0f, 50.0f) * XMMatrixTranslation(500, 30, 500);
+	Cube.world = XMMatrixRotationRollPitchYaw(0.34f, 1.47f, 2.01f) * XMMatrixScaling(50.0f, 50.0f, 50.0f) * XMMatrixTranslation(500, 30, 500);
 
 	//Create bear object
 	CreateObjectBuffers(def, &Bear, "bear.obj", OPENGL);
 	Bear.numIndices = 3912;
-	Bear.world =  XMMatrixTranslation(300, 5, 300);
+	srand(GetFrameTime());
+	Bear.world = XMMatrixRotationRollPitchYaw(0.34f, 1.47f, 2.01f) * XMMatrixTranslation(500, 53, 300) ;
 }
 
 int WINAPI WinMain(HINSTANCE hInstance,
