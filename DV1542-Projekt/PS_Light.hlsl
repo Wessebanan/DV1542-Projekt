@@ -9,6 +9,11 @@ cbuffer camPosBuffer : register (b0)
 	float4 camPos;
 };
 
+cbuffer lightDirBuffer : register (b1)
+{
+	float4 lightDir;
+}
+
 struct PS_IN
 {
 	float4 pos : SV_POSITION;
