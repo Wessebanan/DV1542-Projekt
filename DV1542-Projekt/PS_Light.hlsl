@@ -40,9 +40,11 @@ float4 main(PS_IN input) : SV_TARGET
 	float3 reflection = normalize(lightDir + reflectedLightVec);
 	float3 pointToCamera = normalize(camPos.xyz - position);
 
-	float specularReflection = saturate(specular.x * pow(saturate(dot(reflection, pointToCamera)), specular.y));
+	float specularReflection = 0.0f;
+	
 
-
+	if (dot(normalize(lightDir), normal) <= 0.0f)
+		specularReflection = saturate(specular.x * pow(saturate(dot(reflection, pointToCamera)), specular.y));
 
 
 
@@ -57,7 +59,8 @@ float4 main(PS_IN input) : SV_TARGET
 	float brightness =  saturate(dot(normalize(lightVec), normal));
 
 	//float specularPart =  1.0f * dot(normals.Sample(samplerState, input.texcoord).xyz, speculars.Sample(samplerState, input.texcoord).xyz);
-	float specularPart = speculars.Sample(samplerState, input.texcoord).x;
+	/*float specularPart = speculars.Sample(samplerState, input.texcoord).x;*/
+
 	brightness = saturate(brightness + specularReflection);
 	float4 test = { 1.0f, 1.0f, 1.0f, 1.0f };
 
