@@ -82,6 +82,7 @@ private:
 	ID3D11Buffer* camPosBuffer;
 
 	XMVECTOR camPos;
+	XMVECTOR lightDir;
 
 	bool nulled = false; //To only null the SRs in PSL once.
 	bool set = false; //To only set RTs once.

@@ -34,6 +34,7 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
 	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
 
+	this->lightDir = { 1.0f, -1.0f, 0.0f };
 	//this->shadowmap = Shadowmap(this->direct3D, this->viewPort, this->window.GetHeight(), this->window.GetWidth());
 }
 
@@ -318,8 +319,13 @@ void Deferred::InitialGeometryBinds()
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->unbindingSRVs);
 
 	float clearColor[] = { 135.0f / 255.0f,206.0f / 255.0f,250.0f / 255.0f,0 };
-	
-	for (int i = 0; i < BUFFER_COUNT; i++)
+	XMVECTOR normalizedLightDir = this->lightDir;
+	XMVector3Normalize(normalizedLightDir);
+	float clearColor2[] = { -XMVectorGetX(normalizedLightDir), -XMVectorGetY(normalizedLightDir), -XMVectorGetZ(normalizedLightDir) };
+
+	this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[0], clearColor2);
+
+	for (int i = 1; i < BUFFER_COUNT; i++)
 	{
 		this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[i], clearColor);
 	}
