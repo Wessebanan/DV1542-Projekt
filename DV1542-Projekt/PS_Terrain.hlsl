@@ -4,10 +4,7 @@ Texture2D dirtTex : register (t1);
 Texture2D rockTex : register (t2);
 Texture2D normalMap : register (t3);
 
-cbuffer camPosBuffer : register (b0)
-{
-	float4 camPos;
-};
+
 
 struct PS_IN
 {
@@ -41,10 +38,12 @@ PS_OUT main(PS_IN input)
 	float specPow = 1.0f;
 	float specIntensity = 0.0f;
 
-	float dirtSpecPower = 1.0f;
+	float dirtSpecPower = 50.0f;
 	float dirtSpecIntensity = 0.0f;
+
 	float grassSpecPower = 10.0f;
 	float grassSpecIntensity = 0.5f;
+
 	float rockSpecPower = 32.0f;
 	float rockSpecIntensity = 1.0f;
 
@@ -86,14 +85,19 @@ PS_OUT main(PS_IN input)
 	}
 	
 
-	//float3 lightVec = input.WPos - lightPos; // Vector from light to point (Vector I)
-	float3 reflectedLightVec = 2 * input.Nor * dot(-input.Nor, lightDir); // (Vector V)
-	float3 reflection = normalize(lightDir + reflectedLightVec); // (Vector R)
-	float3 pointToCamera = normalize(camPos.xyz - input.WPos);
+	////float3 lightVec = input.WPos - lightPos; // Vector from light to point (Vector I)
+	//float3 reflectedLightVec = 2 * input.Nor * dot(-input.Nor, lightDir); // (Vector V)
+	//float3 reflection = normalize(lightDir + reflectedLightVec); // (Vector R)
+	//float3 pointToCamera = normalize(camPos.xyz - input.WPos);
 
-	float specularReflection = specIntensity * pow(saturate(dot(reflection, pointToCamera)),specPow);
+	//float specularReflection = specIntensity * pow(saturate(dot(reflection, pointToCamera)),specPow);
 
-	output.specular.x = specularReflection;
+	//output.specular.x = specularReflection;
+
+
+	output.specular.x = specIntensity;
+	output.specular.y = specPow;
+
 	output.position = float4(input.WPos, 1);
 
 	float3x3 TBN = float3x3

@@ -26,8 +26,9 @@ VS_OUT main( VS_IN input ) {
 
 	matrix wvp = mul(proj, mul(view, world));
 
-	output.Pos = mul(wvp, float4(input.Pos, 1.0f));
-	output.WPos = mul(world, float4(input.Pos, 1.0f)).xyz;
+
+	output.Pos = mul(wvp,float4(input.Pos,1.0f));
+	output.WPos = mul(world, input.Pos);
 	output.Normal = normalize(mul(world, input.Normal));
 	output.TexCoord = input.TexCoord;
 
