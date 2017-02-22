@@ -28,9 +28,6 @@ PS_OUT main(PS_IN input)
 {
 	PS_OUT output = (PS_OUT)0;
 
-	float3 lightPos = { 500.0f, 1000.0f, 500.0f };
-
-	float3 lightDir = { 1.0f, -1.0f, 0.0f };
 
 	float higherTexIntensity = 0.0f;
 	float lowerTexIntensity = 0.0f;
@@ -38,13 +35,13 @@ PS_OUT main(PS_IN input)
 	float specPow = 1.0f;
 	float specIntensity = 0.0f;
 
-	float dirtSpecPower = 50.0f;
+	float dirtSpecPower = 1.0f;
 	float dirtSpecIntensity = 0.0f;
 
-	float grassSpecPower = 10.0f;
-	float grassSpecIntensity = 0.5f;
+	float grassSpecPower = 1.0f;
+	float grassSpecIntensity = 0.7f;
 
-	float rockSpecPower = 32.0f;
+	float rockSpecPower = 7.0f;
 	float rockSpecIntensity = 1.0f;
 
 	if (input.WPos.y < 10.0f)
