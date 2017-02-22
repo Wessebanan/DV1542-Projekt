@@ -24,9 +24,6 @@ struct Object
 	unsigned int numIndices;
 	XMMATRIX world;
 };
-
-
-
 Object Terrain;
 Object Cube;
 Object Bear;
@@ -34,7 +31,10 @@ Object Bear;
 void RenderDeferred(Deferred* def) 
 {
 	//-------Shadow map--------
-	//def->GetShadowmap().BindShadowPass();
+	/*def->GetShadowmap()->BindShadowPass();
+	def->DrawShadow(Terrain.vertexBuffer, Terrain.indexBuffer, Terrain.numIndices, Terrain.world);
+	def->DrawShadow(Cube.vertexBuffer, Cube.indexBuffer, Cube.numIndices, Cube.world);
+	def->DrawShadow(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world);*/
 	//-------------------------
 
 	def->InitialGeometryBinds();

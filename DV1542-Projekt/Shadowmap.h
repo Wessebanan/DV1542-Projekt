@@ -8,13 +8,17 @@
 class Shadowmap
 {
 private:
-	D3D direct3D;
+	ID3D11Device* device = nullptr;
+	ID3D11DeviceContext* devCon = nullptr;
+
 	ID3D11DepthStencilView* depthStencilView = nullptr;
 	ID3D11ShaderResourceView* depthMapSRV = nullptr;
 	ID3D11Texture2D* depthStencilBuffer = nullptr;
 
 	ID3D11VertexShader* VS_Shadow = nullptr;
 	ID3D11PixelShader* PS_Shadow = nullptr;
+
+	ID3D11InputLayout* inputLayout = nullptr;
 
 	ID3D11Buffer* transformBuffer = nullptr;
 
@@ -30,11 +34,12 @@ private:
 	XMVECTOR lightDir;
 public:
 	Shadowmap();
-	Shadowmap(D3D direct3D, D3D11_VIEWPORT vp, int height, int width);
 	~Shadowmap();
 
 	ID3D11ShaderResourceView* GetSRV();
 
+	void Initialize(D3D* direct3D, D3D11_VIEWPORT* vp, int height, int width, XMVECTOR lightDir, ID3D11InputLayout* inputLayout);
+	void SwitchWorldMatrix(XMMATRIX world);
 	void CreateTransformationMatrices();
 	void CreateShaders();
 	void BindShadowPass();

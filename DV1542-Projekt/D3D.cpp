@@ -2,27 +2,38 @@
 
 D3D::D3D()
 {
-	this->backBufferRTV = nullptr;
+	/*this->backBufferRTV = nullptr;
 	this->devCon = nullptr;
 	this->device = nullptr;
-	this->swapChain = nullptr;
+	this->swapChain = nullptr;*/
 }
 
 D3D::~D3D()
 {
-	if(this->swapChain != nullptr)
+	if (this->swapChain != nullptr)
+	{
 		this->swapChain->Release();
-	if(this->backBufferRTV != nullptr)
+		this->swapChain = nullptr;
+	}
+	if (this->backBufferRTV != nullptr)
+	{
 		this->backBufferRTV->Release();
-
+		this->backBufferRTV = nullptr;
+	}
 	if (this->devCon)
 	{
 		this->devCon->ClearState();
 	}
-	if(this->device != nullptr)
+	if (this->device != nullptr)
+	{
 		this->device->Release();
-	if(this->devCon != nullptr)
-		this->devCon->Release();	
+		this->device = nullptr;
+	}
+	if (this->devCon != nullptr)
+	{
+		this->devCon->Release();
+		this->devCon = nullptr;
+	}
 }
 
 ID3D11Device * D3D::getDevice() const

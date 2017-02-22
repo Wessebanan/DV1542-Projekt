@@ -4,6 +4,11 @@ Texture2D diffuses : register(t1);
 Texture2D speculars : register(t2);
 Texture2D positions : register(t3);
 
+cbuffer lightDirBuffer : register(b0)
+{
+	float4 lightDir;
+}
+
 struct PS_IN
 {
 	float4 pos : SV_POSITION;
@@ -18,7 +23,7 @@ float4 main(PS_IN input) : SV_TARGET
 	float4 color = diffuses.Sample(samplerState, input.texcoord);
 	//------------------------------------
 
-	float3 lightDir = { 1.0f, -1.0f, 0.0f };
+	//float3 lightDir = { 1.0f, -1.0f, 0.0f };
 
 	//float3 lightPos = { 500.0f, 1000.0f, 500.0f };
 	//float3 lightVec = lightPos - position;

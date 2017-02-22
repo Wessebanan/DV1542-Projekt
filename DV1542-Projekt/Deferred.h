@@ -25,7 +25,7 @@ class Deferred
 private:
 	Window window;
 	D3D direct3D;
-	//Shadowmap shadowmap;
+	Shadowmap shadowmap;
 
 	// 0: normals, 1: diffuse, 2: specular, 3: position
 	ID3D11Texture2D* textures[BUFFER_COUNT];
@@ -39,6 +39,7 @@ private:
 	ID3D11Texture2D* depthStencilBuffer;
 
 	ID3D11InputLayout* vertexLayout;
+
 	ID3D11VertexShader* vertexShaderTerrain;
 	ID3D11VertexShader* vertexShaderLight;
 	ID3D11GeometryShader* geometryShaderTerrain;
@@ -57,7 +58,7 @@ private:
 	ID3D11Texture2D* brickTexture = nullptr;
 	ID3D11Texture2D* bearTexture = nullptr;
 
-	//grass: 1, dirt: 2, dirt: 3 (for terrain).
+	//grass: 0, dirt: 1, dirt: 2, normal: 3 (for terrain).
 	ID3D11ShaderResourceView* textureSRVs[TEXTURE_COUNT];
 
 	ID3D11ShaderResourceView* grassSRV = nullptr;
@@ -80,11 +81,10 @@ private:
 	Camera playerCamera;
 
 	ID3D11Buffer* camPosBuffer;
+	ID3D11Buffer* lightDirBuffer;
 
 	XMVECTOR camPos;
-
-	bool nulled = false; //To only null the SRs in PSL once.
-	bool set = false; //To only set RTs once.
+	XMVECTOR lightDir; //Istället för att hårdkoda på flera ställen.
 
 public:
 	Deferred(HINSTANCE hInstance);
@@ -103,6 +103,7 @@ public:
 	void SetHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height);
 
 	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, XMMATRIX world, OBJECT_TYPE type);
+	void DrawShadow(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, XMMATRIX world);
 
 	void CreateTransformBuffer();
 
@@ -115,8 +116,9 @@ public:
 	void CreateTextures();
 
 	void CreateCamPosBuffer();
+	void CreateLightDirBuffer();
 
 	IDXGISwapChain* GetSwapChain();
 
-	Shadowmap GetShadowmap();
+	Shadowmap* GetShadowmap();
 };
