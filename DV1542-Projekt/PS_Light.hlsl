@@ -12,7 +12,7 @@ cbuffer camPosBuffer : register (b0)
 cbuffer lightDirBuffer : register (b1)
 {
 	float4 lightDir;
-}
+};
 
 struct PS_IN
 {
@@ -29,15 +29,15 @@ float4 main(PS_IN input) : SV_TARGET
 	float2 specular = speculars.Sample(samplerState, input.texcoord).xy;
 	//------------------------------------
 
-	float3 lightDir = { 1.0f, -1.0f, 0.0f };
+	//float3 lightDir = { 1.0f, -1.0f, 0.0f };
 
 	//float3 lightPos = { 500.0f, 1000.0f, 500.0f };
 	//float3 lightVec = lightPos - position;
-	float3 lightVec = -lightDir;
+	float3 lightVec = -lightDir.xyz;
 
 	// ---- SPECULAR CALCULATIONS ---------
-	float3 reflectedLightVec = 2 * normal * dot(-normal, lightDir);
-	float3 reflection = normalize(lightDir + reflectedLightVec);
+	float3 reflectedLightVec = 2 * normal * dot(-normal, lightDir.xyz);
+	float3 reflection = normalize(lightDir.xyz + reflectedLightVec);
 	float3 pointToCamera = normalize(camPos.xyz - position);
 
 	float specularReflection = saturate(specular.x * pow(saturate(dot(reflection, pointToCamera)), specular.y));

@@ -25,12 +25,13 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->transformBuffer = nullptr;
 	this->camPosBuffer = nullptr;
 
+	this->lightDir = XMVectorSet(1.0f, -1.0f, 0.0f, 0.0f);
+
 	this->Initialize();	
 
 	this->WVP.world = XMMatrixIdentity();
 	this->WVP.view = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
 	this->WVP.proj = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 20000.0f);
-	this->lightDir = XMVectorSet(1.0f, -1.0f, 0.0f, 0.0f);
 
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
 	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
@@ -404,6 +405,7 @@ void Deferred::LightPass()
 	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);	
 	
 	//Setting the camPosBuffer to the pixel shader.
+
 	this->direct3D.getDevCon()->PSSetConstantBuffers(0, 1, &this->camPosBuffer);
 	this->direct3D.getDevCon()->PSSetConstantBuffers(1, 1, &this->lightDirBuffer);
 
@@ -592,17 +594,15 @@ void Deferred::CreateCamPosBuffer()
 
 void Deferred::CreateLightDirBuffer()
 {
-	D3D11_BUFFER_DESC bufDesc{};
+	D3D11_BUFFER_DESC bufDesc = {};
 	bufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bufDesc.ByteWidth = sizeof(XMVECTOR);
-	bufDesc.CPUAccessFlags = 0;
-	bufDesc.MiscFlags = 0;
 	bufDesc.Usage = D3D11_USAGE_IMMUTABLE;
 
-	D3D11_SUBRESOURCE_DATA subData{};
+	D3D11_SUBRESOURCE_DATA subData;
 	subData.pSysMem = &this->lightDir;
 
-	HRESULT hr = this->direct3D.getDevice()->CreateBuffer(&bufDesc, &subData, &lightDirBuffer);
+	HRESULT hr = this->direct3D.getDevice()->CreateBuffer(&bufDesc, &subData, &this->lightDirBuffer);
 	if (FAILED(hr))
 	{
 		MessageBoxA(NULL, "Error creating lightDirBuffer.", NULL, MB_OK);
