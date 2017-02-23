@@ -45,15 +45,7 @@ float4 main(PS_IN input) : SV_TARGET
 
 	if (dot(normalize(lightDir), normal) <= 0.0f)
 		specularReflection = saturate(specular.x * pow(saturate(dot(reflection, pointToCamera)), specular.y));
-
-
-
 	//-------------------------------------
-
-
-
-
-
 
 	float4 ambient = { 0.10f, 0.10f, 0.10f, 0.0f };
 	float brightness =  saturate(dot(normalize(lightVec), normal));

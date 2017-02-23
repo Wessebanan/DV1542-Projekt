@@ -27,8 +27,9 @@ struct Object
 Object Terrain;
 Object Cube;
 Object Bear;
+Object Sphere;
 
-Object Spheres[10];
+XMMATRIX SphereWorldMatrices[10];
 
 bool shadowsMapped = false;
 
@@ -43,7 +44,7 @@ void RenderDeferred(Deferred* def)
 		def->DrawShadow(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world);
 		for (int i = 0; i < 10; i++)
 		{
-			def->DrawShadow(Spheres[i].vertexBuffer, Spheres[i].indexBuffer, Spheres[i].numIndices, Spheres[i].world);
+			def->DrawShadow(Sphere.vertexBuffer, Sphere.indexBuffer, Sphere.numIndices, SphereWorldMatrices[i]);
 		}
 		shadowsMapped = true;
 	}
@@ -57,7 +58,7 @@ void RenderDeferred(Deferred* def)
 	def->Draw(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world, BEAR);
 	for (int i = 0; i < 10; i++)
 	{
-		def->Draw(Spheres[i].vertexBuffer, Spheres[i].indexBuffer, Spheres[i].numIndices, Spheres[i].world, SPHERE);
+		def->Draw(Sphere.vertexBuffer, Sphere.indexBuffer, Sphere.numIndices, SphereWorldMatrices[i], SPHERE);
 	}
 	def->LightPass();
 }
@@ -209,11 +210,11 @@ void CreateObjects(Deferred* def)
 	//Create spheres
 	float translationX = 100;
 	float translationZ = 50;
+	CreateObjectBuffers(def, &Sphere, "sphere.obj");
+	Sphere.numIndices = 2280;
 	for (int i = 0; i < 10; i++)
 	{
-		CreateObjectBuffers(def, &Spheres[i], "sphere.obj");
-		Spheres[i].numIndices = 2280;
-		Spheres[i].world = XMMatrixScaling(30, 30, 30) * XMMatrixTranslation(translationX, 120, 500 + translationZ * (i+1));
+		SphereWorldMatrices[i] = XMMatrixScaling(30, 30, 30) * XMMatrixTranslation(translationX, 120, 500 + translationZ * (i+1));
 		translationZ *= -1;
 		translationX += 100;
 	}

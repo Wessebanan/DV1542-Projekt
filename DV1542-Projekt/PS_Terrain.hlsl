@@ -105,7 +105,7 @@ PS_OUT main(PS_IN input)
 		);
 
 	//Sampling and decompressing the normal in tangent space
-	float3 normalTS = normalMap.Sample(samplerState, input.TexCoord / 100.0f).xyz;
+	float3 normalTS = normalMap.Sample(samplerState, input.TexCoord / 102.4f).xyz;
 	normalTS = normalize((normalTS * 2.0f) - 1.0f);
 	//Transforming the normal to world space using tangent frame and setting to output
 	output.normal = normalize(float4(mul(normalTS, TBN), 0.0f));
