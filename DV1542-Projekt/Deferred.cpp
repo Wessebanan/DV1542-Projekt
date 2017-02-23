@@ -318,7 +318,7 @@ bool Deferred::Initialize()
 void Deferred::InitialGeometryBinds()
 {
 	//Unbinding the textures from input to render to them again.
-	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->unbindingSRVs);
+	this->direct3D.getDevCon()->PSSetShaderResources(0, BUFFER_COUNT, this->unbindingSRVs);
 
 	//Setting the g-buffer textures as render targets.
 	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);
@@ -400,7 +400,10 @@ void Deferred::LightPass()
 
 	//Setting the same sampler as the geometry pass, binding the g-buffer textures as shader resources. VS gets transformbuffer.	
 	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);				
-	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);
+	this->direct3D.getDevCon()->PSSetShaderResources(0, BUFFER_COUNT, this->shaderResourceViews);
+
+	//Setting the shadow map depth buffer as a shader resource to the pixel shader.
+	this->direct3D.getDevCon()->PSSetShaderResources(BUFFER_COUNT, 1, this->shadowmap.GetSRV());
 
 	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);	
 	

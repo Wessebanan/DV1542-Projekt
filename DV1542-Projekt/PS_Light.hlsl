@@ -3,6 +3,8 @@ Texture2D normals : register(t0);
 Texture2D diffuses : register(t1);
 Texture2D speculars : register(t2);
 Texture2D positions : register(t3);
+Texture2D lightPositions : register (t4);
+Texture2D shadowMap : register (t5);
 
 cbuffer camPosBuffer : register (b0)
 {
@@ -27,6 +29,7 @@ float4 main(PS_IN input) : SV_TARGET
 	float3 position = positions.Sample(samplerState, input.texcoord).xyz;
 	float4 color = diffuses.Sample(samplerState, input.texcoord);
 	float2 specular = speculars.Sample(samplerState, input.texcoord).xy;
+
 	//------------------------------------
 
 	//float3 lightDir = { 1.0f, -1.0f, 0.0f };
