@@ -81,7 +81,7 @@ Material* loadMTL(const char* filePath) {
 }
 
 
-bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <unsigned int> &indices, TEX_COORD_TYPE texType = DIRECTX) {
+bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <unsigned int> &indices, Material* objectMaterial, TEX_COORD_TYPE texType = DIRECTX) {
 	// This function reads obj files of format
 	// v 1 1 1
 	// vt 1 1 
@@ -93,6 +93,7 @@ bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <
 	std::vector <XMFLOAT3> tempVerts;
 	std::vector <XMFLOAT2> tempTexCoords;
 	std::vector <XMFLOAT3> tempNormals;
+	Material* mtl = nullptr;
 
 	FILE* file;
 	fopen_s(&file, filePath, "r"); // Open the file to be able to read from it
@@ -108,7 +109,12 @@ bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <
 			readingFile = false;
 		}
 		else {
-			if (strcmp(lineHeader, "v") == 0) { // Current line to read is vertex info
+			if (strcmp(lineHeader, "mtllib") == 0) {
+				char filePathMtl[128];
+				fscanf(file, "%s\n", &filePathMtl);
+				mtl = loadMTL(filePathMtl);
+			}
+			else if (strcmp(lineHeader, "v") == 0) { // Current line to read is vertex info
 				XMFLOAT3 vertex;
 				fscanf_s(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
 				tempVerts.push_back(vertex);
