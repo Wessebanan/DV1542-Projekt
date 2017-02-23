@@ -419,40 +419,40 @@ void Deferred::SetHeightMapTexture(std::wstring filepath, unsigned int width, un
 	// Loads the heightmap into the noiseGenerator and saved the data for use in the Camera
 	this->playerCamera.SetTerrainData(noise1.loadHeightmap(filepath, width, height), width, height);
 
-	ID3D11ShaderResourceView* gTextureView = nullptr;
-	ID3D11SamplerState* gSamplerState = nullptr;
+	//ID3D11ShaderResourceView* gTextureView = nullptr;
+	//ID3D11SamplerState* gSamplerState = nullptr;
 
-	D3D11_SHADER_RESOURCE_VIEW_DESC resourceViewDesc;
-	ZeroMemory(&resourceViewDesc, sizeof(resourceViewDesc));
+	//D3D11_SHADER_RESOURCE_VIEW_DESC resourceViewDesc;
+	//ZeroMemory(&resourceViewDesc, sizeof(resourceViewDesc));
 
-	resourceViewDesc.Format = noise1.getTextureDesc().Format;
-	resourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-	resourceViewDesc.Texture2D.MipLevels = noise1.getTextureDesc().MipLevels;
-	resourceViewDesc.Texture2D.MostDetailedMip = 0;
-	HRESULT hr = this->direct3D.getDevice()->CreateShaderResourceView(noise1.getTexture(), &resourceViewDesc, &gTextureView);
-	if (!SUCCEEDED(hr)) {
-		MessageBox(NULL, L"Something went wrong trying to create the Shader Resource View.", NULL, MB_ICONEXCLAMATION);
-	}
+	//resourceViewDesc.Format = noise1.getTextureDesc().Format;
+	//resourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	//resourceViewDesc.Texture2D.MipLevels = noise1.getTextureDesc().MipLevels;
+	//resourceViewDesc.Texture2D.MostDetailedMip = 0;
+	//HRESULT hr = this->direct3D.getDevice()->CreateShaderResourceView(noise1.getTexture(), &resourceViewDesc, &gTextureView);
+	//if (!SUCCEEDED(hr)) {
+	//	MessageBox(NULL, L"Something went wrong trying to create the Shader Resource View.", NULL, MB_ICONEXCLAMATION);
+	//}
 
-	D3D11_SAMPLER_DESC samplerDesc = {};
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-	samplerDesc.MaxAnisotropy = 1;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	//D3D11_SAMPLER_DESC samplerDesc = {};
+	//samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+	//samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
+	//samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
+	//samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+	//samplerDesc.MaxAnisotropy = 1;
+	//samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
+	//samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-	hr = this->direct3D.getDevice()->CreateSamplerState(&samplerDesc, &gSamplerState);
-	if (!SUCCEEDED(hr)) {
-		MessageBox(NULL, L"Something went wrong trying to create the Sampler State", NULL, MB_ICONEXCLAMATION);
-	}
+	//hr = this->direct3D.getDevice()->CreateSamplerState(&samplerDesc, &gSamplerState);
+	//if (!SUCCEEDED(hr)) {
+	//	MessageBox(NULL, L"Something went wrong trying to create the Sampler State", NULL, MB_ICONEXCLAMATION);
+	//}
 
-	this->direct3D.getDevCon()->VSSetShaderResources(0, 1, &gTextureView);
-	this->direct3D.getDevCon()->VSSetSamplers(0, 1, &gSamplerState);
+	//this->direct3D.getDevCon()->VSSetShaderResources(0, 1, &gTextureView);
+	//this->direct3D.getDevCon()->VSSetSamplers(0, 1, &gSamplerState);
 
-	gTextureView->Release();
-	gSamplerState->Release();
+	//gTextureView->Release();
+	//gSamplerState->Release();
 	
 }
 
