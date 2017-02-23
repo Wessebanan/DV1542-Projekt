@@ -4,16 +4,15 @@ Texture2D dirtTex : register (t1);
 Texture2D rockTex : register (t2);
 Texture2D normalMap : register (t3);
 
-
-
 struct PS_IN
 {
 	float4 Pos : SV_POSITION;
 	float3 Nor : NORMAL;
-	float3 WPos : POSITION;
+	float3 WPos : POSITION0;
 	float2 TexCoord : TEXCOORD;
 	float3 Tangent : TANGENT;
 	float3 Bitangent : BINORMAL;
+	float4 lightPos : POSITION1;
 };
 
 struct PS_OUT
@@ -22,6 +21,7 @@ struct PS_OUT
 	float4 diffuse : SV_Target1;
 	float4 specular : SV_Target2;
 	float4 position : SV_Target3;
+	float4 lightPos : SV_Target4;
 };
 
 PS_OUT main(PS_IN input)
@@ -80,22 +80,12 @@ PS_OUT main(PS_IN input)
 		specPow = rockSpecPower;
 		specIntensity = rockSpecIntensity;
 	}
-	
-
-	////float3 lightVec = input.WPos - lightPos; // Vector from light to point (Vector I)
-	//float3 reflectedLightVec = 2 * input.Nor * dot(-input.Nor, lightDir); // (Vector V)
-	//float3 reflection = normalize(lightDir + reflectedLightVec); // (Vector R)
-	//float3 pointToCamera = normalize(camPos.xyz - input.WPos);
-
-	//float specularReflection = specIntensity * pow(saturate(dot(reflection, pointToCamera)),specPow);
-
-	//output.specular.x = specularReflection;
-
 
 	output.specular.x = specIntensity;
 	output.specular.y = specPow;
 
 	output.position = float4(input.WPos, 1);
+	output.lightPos = input.lightPos;
 
 	float3x3 TBN = float3x3
 		(

@@ -22,7 +22,7 @@ struct GS_OUT
 	float2 TexCoord : TEXCOORD;
 	float3 Tangent : TANGENT;
 	float3 Bitangent : BINORMAL;
-	float3 lightPos : POSITION1;
+	float4 lightPos : POSITION1;
 };
 
 [maxvertexcount(3)]
@@ -62,7 +62,7 @@ void main(triangle GS_IN input[3], inout TriangleStream< GS_OUT > output)
 		element.TexCoord = input[i].TexCoord;
 		element.Tangent = normalize(mul(world, float4(tangent, 0.0f)).xyz);
 		element.Bitangent = normalize(mul(world, float4(bitangent, 0.0f)).xyz);
-		element.lightPos = mul(lightWvp, input[i].Pos).xyz;
+		element.lightPos = mul(lightWvp, input[i].Pos);
 		output.Append(element);
 	}
 };

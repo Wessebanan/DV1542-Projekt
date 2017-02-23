@@ -36,18 +36,14 @@ bool shadowsMapped = false;
 void RenderDeferred(Deferred* def) 
 {
 	//-------Shadow map--------
-	if (!shadowsMapped)
+	def->GetShadowmap()->BindShadowPass();
+	def->DrawShadow(Terrain.vertexBuffer, Terrain.indexBuffer, Terrain.numIndices, Terrain.world);
+	def->DrawShadow(Cube.vertexBuffer, Cube.indexBuffer, Cube.numIndices, Cube.world);
+	def->DrawShadow(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world);
+	for (int i = 0; i < 10; i++)
 	{
-		def->GetShadowmap()->BindShadowPass();
-		def->DrawShadow(Terrain.vertexBuffer, Terrain.indexBuffer, Terrain.numIndices, Terrain.world);
-		def->DrawShadow(Cube.vertexBuffer, Cube.indexBuffer, Cube.numIndices, Cube.world);
-		def->DrawShadow(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world);
-		for (int i = 0; i < 10; i++)
-		{
-			def->DrawShadow(Sphere.vertexBuffer, Sphere.indexBuffer, Sphere.numIndices, SphereWorldMatrices[i]);
-		}
-		shadowsMapped = true;
-	}
+		def->DrawShadow(Sphere.vertexBuffer, Sphere.indexBuffer, Sphere.numIndices, SphereWorldMatrices[i]);
+	}	
 	//-------------------------
 
 	def->InitialGeometryBinds();

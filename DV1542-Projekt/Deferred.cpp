@@ -318,7 +318,7 @@ bool Deferred::Initialize()
 void Deferred::InitialGeometryBinds()
 {
 	//Unbinding the textures from input to render to them again.
-	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->unbindingSRVs);
+	this->direct3D.getDevCon()->PSSetShaderResources(0, BUFFER_COUNT, this->unbindingSRVs);
 
 	//Setting the g-buffer textures as render targets.
 	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);
@@ -328,6 +328,7 @@ void Deferred::InitialGeometryBinds()
 	XMVector4Normalize(normalizedLightDir);
 	float clearColor2[] = { -XMVectorGetX(normalizedLightDir), -XMVectorGetY(normalizedLightDir), -XMVectorGetZ(normalizedLightDir) };
 	
+	//Clearing with a vector pointing towards the light direction to avoid shading of the background.
 	this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[0], clearColor2);
 	
 	for (int i = 1; i < BUFFER_COUNT; i++)
@@ -400,7 +401,10 @@ void Deferred::LightPass()
 
 	//Setting the same sampler as the geometry pass, binding the g-buffer textures as shader resources. VS gets transformbuffer.	
 	this->direct3D.getDevCon()->PSSetSamplers(0, 1, &this->samplerState);				
-	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->shaderResourceViews);
+	this->direct3D.getDevCon()->PSSetShaderResources(0, BUFFER_COUNT, this->shaderResourceViews);
+
+	//Setting the shadow map depth buffer as a shader resource to the pixel shader.
+	this->direct3D.getDevCon()->PSSetShaderResources(BUFFER_COUNT, 1, this->shadowmap.GetSRV());
 
 	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);	
 	

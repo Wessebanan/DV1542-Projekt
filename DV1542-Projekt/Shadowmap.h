@@ -36,7 +36,7 @@ public:
 	Shadowmap();
 	~Shadowmap();
 
-	ID3D11ShaderResourceView* GetSRV();
+	ID3D11ShaderResourceView** GetSRV();
 	XMMATRIX getLightView();
 	XMMATRIX getLightProj();
 

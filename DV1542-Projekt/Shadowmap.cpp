@@ -21,9 +21,9 @@ Shadowmap::~Shadowmap()
 		this->depthStencilView->Release();
 }
 
-ID3D11ShaderResourceView * Shadowmap::GetSRV()
+ID3D11ShaderResourceView ** Shadowmap::GetSRV()
 {
-	return this->depthMapSRV;
+	return &this->depthMapSRV;
 }
 
 XMMATRIX Shadowmap::getLightView()
