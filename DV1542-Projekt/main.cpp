@@ -63,9 +63,11 @@ void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, TE
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
-	Material objectMaterial;
-	bool result = loadOBJ(filePath, vertices, indices, &objectMaterial, texType);
-
+	Material* objectMaterial = nullptr;
+	bool result = loadOBJ(filePath, vertices, indices, objectMaterial, texType);
+	if (objectMaterial != nullptr) {
+		delete objectMaterial;
+	}
 	D3D11_BUFFER_DESC vertexBufferDesc = {};
 	vertexBufferDesc.ByteWidth = sizeof(Vertex) * vertices.size();
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
