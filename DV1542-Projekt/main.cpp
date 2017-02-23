@@ -28,13 +28,25 @@ Object Terrain;
 Object Cube;
 Object Bear;
 
+Object Spheres[10];
+
+bool shadowsMapped = false;
+
 void RenderDeferred(Deferred* def) 
 {
 	//-------Shadow map--------
-	/*def->GetShadowmap()->BindShadowPass();
-	def->DrawShadow(Terrain.vertexBuffer, Terrain.indexBuffer, Terrain.numIndices, Terrain.world);
-	def->DrawShadow(Cube.vertexBuffer, Cube.indexBuffer, Cube.numIndices, Cube.world);
-	def->DrawShadow(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world);*/
+	/*if (!shadowsMapped)
+	{*/
+		def->GetShadowmap()->BindShadowPass();
+		def->DrawShadow(Terrain.vertexBuffer, Terrain.indexBuffer, Terrain.numIndices, Terrain.world);
+		def->DrawShadow(Cube.vertexBuffer, Cube.indexBuffer, Cube.numIndices, Cube.world);
+		def->DrawShadow(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world);
+		for (int i = 0; i < 10; i++)
+		{
+			def->DrawShadow(Spheres[i].vertexBuffer, Spheres[i].indexBuffer, Spheres[i].numIndices, Spheres[i].world);
+		}
+		shadowsMapped = true;
+	/*}*/
 	//-------------------------
 
 	def->InitialGeometryBinds();
@@ -43,6 +55,10 @@ void RenderDeferred(Deferred* def)
 	def->BindGenericObject();
 	def->Draw(Cube.vertexBuffer, Cube.indexBuffer, Cube.numIndices, Cube.world, CUBE);
 	def->Draw(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world, BEAR);
+	for (int i = 0; i < 10; i++)
+	{
+		def->Draw(Spheres[i].vertexBuffer, Spheres[i].indexBuffer, Spheres[i].numIndices, Spheres[i].world, SPHERE);
+	}
 	def->LightPass();
 }
 
@@ -179,7 +195,19 @@ void CreateObjects(Deferred* def)
 	CreateObjectBuffers(def, &Bear, "bear.obj", OPENGL);
 	Bear.numIndices = 3912;
 	srand(GetFrameTime());
-	Bear.world = /*XMMatrixRotationRollPitchYaw(0.34f, 1.47f, 2.01f) * */XMMatrixTranslation(300, 20, 300) ;
+	Bear.world = /*XMMatrixRotationRollPitchYaw(0.34f, 1.47f, 2.01f) * */XMMatrixTranslation(300, 20, 300);
+
+	//Create spheres
+	float translationX = 100;
+	float translationZ = 50;
+	for (int i = 0; i < 10; i++)
+	{
+		CreateObjectBuffers(def, &Spheres[i], "sphere.obj");
+		Spheres[i].numIndices = 2280;
+		Spheres[i].world = XMMatrixScaling(30, 30, 30) * XMMatrixTranslation(translationX, 120, 500 + translationZ * (i+1));
+		translationZ *= -1;
+		translationX += 100;
+	}
 }
 
 int WINAPI WinMain(HINSTANCE hInstance,
@@ -234,6 +262,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		DIMouse->Unacquire();
 		DirectInput->Release();
 		DestroyWindow(def.GetWindowHandle());
+
 	}
 	// return this part of the WM_QUIT message to Windows
 	return (int)msg.wParam;
