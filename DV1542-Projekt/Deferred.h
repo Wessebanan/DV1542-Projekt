@@ -17,7 +17,8 @@ enum OBJECT_TYPE
 {
 	TERRAIN = 0,
 	CUBE = 1,
-	BEAR = 2
+	BEAR = 2,
+	SPHERE = 3
 };
 
 class Deferred 
@@ -57,6 +58,7 @@ private:
 	ID3D11Texture2D* rockTexture = nullptr;
 	ID3D11Texture2D* brickTexture = nullptr;
 	ID3D11Texture2D* bearTexture = nullptr;
+	ID3D11Texture2D* sphereTexture = nullptr;
 
 	//grass: 0, dirt: 1, dirt: 2, normal: 3 (for terrain).
 	ID3D11ShaderResourceView* textureSRVs[TEXTURE_COUNT];
@@ -66,6 +68,7 @@ private:
 	ID3D11ShaderResourceView* rockSRV = nullptr;
 	ID3D11ShaderResourceView* brickSRV = nullptr;
 	ID3D11ShaderResourceView* bearSRV = nullptr;
+	ID3D11ShaderResourceView* sphereSRV = nullptr;
 
 	ID3D11Texture2D* TerrainNormalMap = nullptr;
 	ID3D11ShaderResourceView* TerrainNormalSRV = nullptr;

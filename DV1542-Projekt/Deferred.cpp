@@ -317,12 +317,14 @@ bool Deferred::Initialize()
 void Deferred::InitialGeometryBinds()
 {
 	//Unbinding the textures from input to render to them again.
-	
 	this->direct3D.getDevCon()->PSSetShaderResources(0, 4, this->unbindingSRVs);
+
+	//Setting the g-buffer textures as render targets.
+	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);
 
 	float clearColor[] = { 135.0f / 255.0f,206.0f / 255.0f,250.0f / 255.0f,0 };
 	XMVECTOR normalizedLightDir = this->lightDir;
-	XMVector3Normalize(normalizedLightDir);
+	XMVector4Normalize(normalizedLightDir);
 	float clearColor2[] = { -XMVectorGetX(normalizedLightDir), -XMVectorGetY(normalizedLightDir), -XMVectorGetZ(normalizedLightDir) };
 	
 	this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[0], clearColor2);
@@ -334,11 +336,7 @@ void Deferred::InitialGeometryBinds()
 	this->direct3D.getDevCon()->ClearDepthStencilView(this->depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
-	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-	//Setting the g-buffer textures as render targets.
-	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);
-	
+	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);	
 
 	//Setting the matrices to the transformBuffer with the relevant changes.
 	D3D11_MAPPED_SUBRESOURCE transformDataPtr;
@@ -491,6 +489,12 @@ void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int
 			this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);
 			break;
 		}
+		case SPHERE:
+		{
+			this->direct3D.getDevCon()->PSSetShaderResources(0, 1, &this->sphereSRV);
+			this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);
+			break;
+		}
 		}
 
 		this->direct3D.getDevCon()->IASetVertexBuffers(0, 1, &vertexBuffer, &vertexSize, &offset);
@@ -575,6 +579,11 @@ void Deferred::CreateTextures()
 	{
 		MessageBoxA(NULL, "Error creating bear texture", NULL, MB_OK);
 	}
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"coolTex.dds", NULL, &this->sphereSRV);
+	if (FAILED(hr))
+	{
+		MessageBoxA(NULL, "Error creating sphere texture", NULL, MB_OK);
+	}
 }
 
 void Deferred::CreateCamPosBuffer()
@@ -623,3 +632,6 @@ Shadowmap* Deferred::GetShadowmap()
 {
 	return &this->shadowmap;
 }
+
+
+
