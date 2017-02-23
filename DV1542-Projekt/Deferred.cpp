@@ -27,7 +27,10 @@ Deferred::Deferred(HINSTANCE hInstance) :
 
 	this->lightDir = XMVectorSet(1.0f, -1.0f, 0.0f, 0.0f);
 
-	this->Initialize();	
+	if (!this->Initialize())
+	{
+		MessageBoxA(NULL, "Error initializing deferred", NULL, MB_OK);
+	}
 	this->shadowmap.Initialize(&this->direct3D, &this->viewPort, this->window.GetHeight(), this->window.GetWidth(), this->lightDir, this->vertexLayout);
 
 	this->WVP.world = XMMatrixIdentity();
@@ -417,6 +420,9 @@ void Deferred::LightPass()
 	this->direct3D.getDevCon()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP);
 	this->direct3D.getDevCon()->Draw(4, 0);
 	this->direct3D.getSwapChain()->Present(1, 0);
+
+	//Unbinding the depthbuffer SRV from PS for future shadow mapping
+	this->direct3D.getDevCon()->PSSetShaderResources(BUFFER_COUNT, 1, &this->unbindingSRVs[0]);
 }
 
 void Deferred::SetHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height) 
