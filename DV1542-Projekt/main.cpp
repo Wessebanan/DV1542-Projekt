@@ -85,12 +85,19 @@ void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, TE
 
 void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer)
 {
-	int rows = 1000;
-	int columns = 1000;
+	int rows = 1024;
+	int columns = 1024;
 
 	//Texcoords:
 	float u = 0.0f;
-	float v = (float)columns/10;
+	float v = (float)columns / 10;
+
+	NoiseGenerator noise1(def->GetDevicePointer(), 1024, 1024);
+	float* heightmapData;
+	heightmapData = noise1.loadHeightmap(L"TestMap9.RAW", 1024, 1024);
+	float test1 = heightmapData[0];
+	float test2 = heightmapData[1000];
+	float test3 = heightmapData[1025];
 
 	Vertex* vertices = new Vertex[rows*columns];
 	unsigned long vertexIncrementer = 0;
@@ -100,7 +107,7 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 		{
 			vertices[vertexIncrementer] = 
 			{ 
-				(float)j, -20.0f, (float)i, 
+				(float)j,-20.0f + 100.0f * heightmapData[i*rows + j], (float)i, 
 				0.0f, 1.0f, 0.0f, 
 				u, v 
 			};
@@ -110,6 +117,8 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 		u = 0;
 		v -= 0.1f;
 	}
+
+	delete[] heightmapData;
 	
 	D3D11_BUFFER_DESC terrainBufferDesc = {};
 	terrainBufferDesc.ByteWidth = sizeof(Vertex) * rows * columns;
