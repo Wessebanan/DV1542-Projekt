@@ -328,6 +328,7 @@ void Deferred::InitialGeometryBinds()
 	XMVector4Normalize(normalizedLightDir);
 	float clearColor2[] = { -XMVectorGetX(normalizedLightDir), -XMVectorGetY(normalizedLightDir), -XMVectorGetZ(normalizedLightDir) };
 	
+	//Clearing with a vector pointing towards the light direction to avoid shading of the background.
 	this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[0], clearColor2);
 	
 	for (int i = 1; i < BUFFER_COUNT; i++)

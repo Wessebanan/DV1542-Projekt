@@ -4,9 +4,10 @@ Texture2D objectTex : register (t0);
 struct VS_OUT
 {
 	float4 Pos : SV_POSITION;
-	float3 WPos : POSITION;
+	float3 WPos : POSITION0;
 	float3 Normal : NORMAL;
 	float2 TexCoord : TEXCOORD;
+	float4 lightPos : POSITION1;
 };
 
 struct PS_OUT
@@ -15,6 +16,7 @@ struct PS_OUT
 	float4 diffuse : SV_Target1;
 	float4 specular : SV_Target2;
 	float4 position : SV_Target3;
+	float4 lightPos : SV_Target4;
 };
 
 
@@ -25,5 +27,6 @@ PS_OUT main( VS_OUT input )
 	output.diffuse = objectTex.Sample(samplerState, input.TexCoord);
 	output.specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	output.position = float4(input.WPos, 1.0f);
+	output.lightPos = input.lightPos;
 	return output;
 }
