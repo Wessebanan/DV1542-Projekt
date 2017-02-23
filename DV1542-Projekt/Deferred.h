@@ -119,6 +119,7 @@ public:
 	void CreateLightDirBuffer();
 
 	IDXGISwapChain* GetSwapChain();
+	ID3D11Device* GetDevicePointer();
 
 	Shadowmap* GetShadowmap();
 };

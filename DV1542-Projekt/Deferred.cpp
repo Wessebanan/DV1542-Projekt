@@ -570,7 +570,7 @@ void Deferred::CreateTextures()
 	{
 		MessageBoxA(NULL, "Error creating brick texture", NULL, MB_OK);
 	}
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"bearTex.dds", NULL, &this->bearSRV);
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"raimeBear.dds", NULL, &this->bearSRV);
 	if (FAILED(hr))
 	{
 		MessageBoxA(NULL, "Error creating bear texture", NULL, MB_OK);
@@ -612,6 +612,11 @@ void Deferred::CreateLightDirBuffer()
 IDXGISwapChain * Deferred::GetSwapChain()
 {
 	return this->direct3D.getSwapChain();
+}
+
+ID3D11Device * Deferred::GetDevicePointer()
+{
+	return this->direct3D.getDevice();
 }
 
 Shadowmap* Deferred::GetShadowmap()
