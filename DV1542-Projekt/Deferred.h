@@ -78,6 +78,8 @@ private:
 		XMMATRIX world;
 		XMMATRIX view;
 		XMMATRIX proj;
+		XMMATRIX lightView; //For shadow
+		XMMATRIX lightProj; //mapping.
 	};
 	matrixData WVP;
 

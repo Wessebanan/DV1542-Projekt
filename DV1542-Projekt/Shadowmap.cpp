@@ -26,6 +26,16 @@ ID3D11ShaderResourceView * Shadowmap::GetSRV()
 	return this->depthMapSRV;
 }
 
+XMMATRIX Shadowmap::getLightView()
+{
+	return this->WVP.view;
+}
+
+XMMATRIX Shadowmap::getLightProj()
+{
+	return this->WVP.proj;
+}
+
 void Shadowmap::Initialize(D3D* direct3D, D3D11_VIEWPORT* vp, int height, int width, XMVECTOR lightDir, ID3D11InputLayout* inputLayout)
 {
 	this->device = direct3D->getDevice();

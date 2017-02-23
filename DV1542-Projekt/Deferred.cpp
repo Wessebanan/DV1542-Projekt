@@ -28,15 +28,16 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->lightDir = XMVectorSet(1.0f, -1.0f, 0.0f, 0.0f);
 
 	this->Initialize();	
+	this->shadowmap.Initialize(&this->direct3D, &this->viewPort, this->window.GetHeight(), this->window.GetWidth(), this->lightDir, this->vertexLayout);
 
 	this->WVP.world = XMMatrixIdentity();
 	this->WVP.view = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
 	this->WVP.proj = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 20000.0f);
+	this->WVP.lightView = this->shadowmap.getLightView();
+	this->WVP.lightProj = this->shadowmap.getLightProj();
 
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
 	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
-
-	this->shadowmap.Initialize(&this->direct3D, &this->viewPort, this->window.GetHeight(), this->window.GetWidth(), this->lightDir, this->vertexLayout);
 }
 
 Deferred::~Deferred()
@@ -329,7 +330,8 @@ void Deferred::InitialGeometryBinds()
 	
 	this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[0], clearColor2);
 	
-	for (int i = 1; i < BUFFER_COUNT; i++) {
+	for (int i = 1; i < BUFFER_COUNT; i++)
+	{
 		this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[i], clearColor);
 	}
 

@@ -125,7 +125,7 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 			vertices[vertexIncrementer] = 
 			{ 
 				(float)j,-20.0f + 100.0f * heightmapData[i*rows + j], (float)i, 
-				0.0f, 1.0f, 0.0f, 
+				0.0f, 0.0f, 0.0f, 
 				u, v 
 			};
 			vertexIncrementer++;
@@ -136,22 +136,6 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 	}
 
 	delete[] heightmapData;
-	
-	D3D11_BUFFER_DESC terrainBufferDesc = {};
-	terrainBufferDesc.ByteWidth = sizeof(Vertex) * rows * columns;
-	terrainBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	terrainBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-
-	D3D11_SUBRESOURCE_DATA terrainData = {};
-	terrainData.pSysMem = vertices;
-
-
-	if (FAILED(def->CreateBuffer(&terrainBufferDesc, &terrainData, &Terrain.vertexBuffer)))
-	{
-		MessageBoxA(NULL, "Error creating terrain buffer.", NULL, MB_OK);
-		exit(-1);
-	}
-
 
 	DWORD* indices = new DWORD[6 * (rows-1) * (columns-1)]; // 6 per quad
 	unsigned long indexIncrementer = 0;
@@ -168,6 +152,21 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 
 		}
 	}
+
+	for (int i = 0; i < 6 * 999 * 999; i += 3)
+	{
+		XMVECTOR edge1 = XMVectorSet(vertices[indices[i + 1]].x - vertices[indices[i]].x, vertices[indices[i + 1]].y - vertices[indices[i]].y, vertices[indices[i + 1]].z - vertices[indices[i]].z, 0.0f);
+		XMVECTOR edge2 = XMVectorSet(vertices[indices[i + 2]].x - vertices[indices[i]].x, vertices[indices[i + 2]].y - vertices[indices[i]].y, vertices[indices[i + 2]].z - vertices[indices[i]].z, 0.0f);
+		XMVECTOR faceNormal = XMVector3Cross(edge1, edge2);
+		XMVector3Normalize(faceNormal);
+		for (int j = 0; j < 3; j++)
+		{
+			vertices[indices[i + j]].norX = XMVectorGetX(faceNormal);
+			vertices[indices[i + j]].norY = XMVectorGetY(faceNormal);
+			vertices[indices[i + j]].norZ = XMVectorGetZ(faceNormal);
+		}
+	}
+
 	D3D11_BUFFER_DESC indexBufferDesc = {};
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	indexBufferDesc.ByteWidth = sizeof(DWORD) * (6 * (rows - 1) * (columns - 1));
@@ -177,8 +176,6 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 
 	D3D11_SUBRESOURCE_DATA indexData;
 	indexData.pSysMem = indices;
-
-	delete[] vertices;
 	
 	if (FAILED(def->CreateBuffer(&indexBufferDesc, &indexData, &Terrain.indexBuffer)))
 	{
@@ -186,6 +183,20 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 		exit(-1);
 	}
 
+	D3D11_BUFFER_DESC terrainBufferDesc = {};
+	terrainBufferDesc.ByteWidth = sizeof(Vertex) * rows * columns;
+	terrainBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+	terrainBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+
+	D3D11_SUBRESOURCE_DATA terrainData = {};
+	terrainData.pSysMem = vertices;
+
+	if (FAILED(def->CreateBuffer(&terrainBufferDesc, &terrainData, &Terrain.vertexBuffer)))
+	{
+		MessageBoxA(NULL, "Error creating terrain buffer.", NULL, MB_OK);
+		exit(-1);
+	}
+	delete[] vertices;
 	delete[] indices;
 }
 
@@ -205,7 +216,7 @@ void CreateObjects(Deferred* def)
 	CreateObjectBuffers(def, &Bear, "bear.obj", OPENGL);
 	Bear.numIndices = 3912;
 	srand(GetFrameTime());
-	Bear.world = /*XMMatrixRotationRollPitchYaw(0.34f, 1.47f, 2.01f) * */XMMatrixTranslation(300, 20, 300);
+	Bear.world = XMMatrixTranslation(160, -20, 180);
 
 	//Create spheres
 	float translationX = 100;
