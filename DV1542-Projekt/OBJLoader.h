@@ -3,6 +3,7 @@
 #include <DirectXMath.h>
 #include <d3d11.h>
 #include <d3dcompiler.h>
+#include <string>
 
 struct Vertex
 {
@@ -11,12 +12,73 @@ struct Vertex
 	float u, v;
 };
 
+struct Material {
+	float Kdr, Kdg, Kdb;
+	float Ksr, Ksg, Ksb;
+	float Kar, Kag, Kab;
+	float Ns;
+	std::string textureFilePath;
+};
+
 enum TEX_COORD_TYPE {
 	DIRECTX = 0,
 	OPENGL = 1
 };
 
 using namespace DirectX;
+
+
+Material* loadMTL(const char* filePath) {
+	// This is a very basic implementation of a material file reader which reads ONE (1) material
+	// from a .mtl file and uses it for the entire obj
+	// Usage limited due to time constraints
+
+	Material* newMat = new Material {0, 0, 0,
+								     0, 0, 0,
+					                 0, 0, 0,
+					                 0,
+					                 std::string("")};
+	FILE* file;
+	bool materialFound = false;
+	fopen_s(&file, filePath, "r"); // Open file to read
+	if (file == NULL) {
+		MessageBox(NULL, L"Could not open file while loading MTL", NULL, MB_ICONEXCLAMATION);
+	}
+	bool readingFile = true;
+	while (readingFile) {
+		char lineHeader[128]; // Not good, but works
+		int result = fscanf(file, "%s", &lineHeader);
+		if (result == EOF) {
+			readingFile = false; // End of file has been reached
+		}
+		else {
+			if (strcmp(lineHeader, "newmtl") == 0) {
+				if (!materialFound) {
+					materialFound = true;
+				}
+				else {
+					readingFile = false; // We have already read a material, ignore the rest of the file
+				}
+			}
+			else if (strcmp(lineHeader, "Kd") == 0) {
+				fscanf_s(file, "%f %f %f\n", newMat->Kdr, newMat->Kdg, newMat->Kdb);
+			}
+			else if (strcmp(lineHeader, "Ks") == 0) {
+				fscanf_s(file, "%f %f %f\n", newMat->Ksr, newMat->Ksg, newMat->Ksb);
+			}
+			else if (strcmp(lineHeader, "Ka") == 0) {
+				fscanf_s(file, "%f %f %f\n", newMat->Kar, newMat->Kag, newMat->Kab);
+			}
+			else if (strcmp(lineHeader, "Ns") == 0) {
+				fscanf_s(file, "%f\n", newMat->Ns);
+			}
+			else if (strcmp(lineHeader, "map_Kd") == 0) {
+				fscanf_s(file, "%s", newMat->textureFilePath);
+			}
+		}
+	}
+	return newMat;
+}
 
 
 bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <unsigned int> &indices, TEX_COORD_TYPE texType = DIRECTX) {

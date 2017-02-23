@@ -221,7 +221,7 @@ void CreateObjects(Deferred* def)
 	Sphere.numIndices = 2280;
 	for (int i = 0; i < 10; i++)
 	{
-		SphereWorldMatrices[i] = XMMatrixScaling(30, 30, 30) * XMMatrixTranslation(translationX, 120, 500 + translationZ * (i+1));
+		SphereWorldMatrices[i] = XMMatrixScaling(60, 60, 60) * XMMatrixTranslation(translationX, 120, 500 + translationZ * (i+1));
 		translationZ *= -1;
 		translationX += 100;
 	}
