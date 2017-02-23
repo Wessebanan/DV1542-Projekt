@@ -67,7 +67,8 @@ void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, TE
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
-	bool result = loadOBJ(filePath, vertices, indices, texType);
+	Material objectMaterial;
+	bool result = loadOBJ(filePath, vertices, indices, &objectMaterial, texType);
 
 	D3D11_BUFFER_DESC vertexBufferDesc = {};
 	vertexBufferDesc.ByteWidth = sizeof(Vertex) * vertices.size();

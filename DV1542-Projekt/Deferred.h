@@ -6,6 +6,7 @@
 #include "Camera.h"
 #include "D3D.h"
 #include <DDSTextureLoader.h>
+#include "OBJLoader.h"
 #include "Shadowmap.h"
 
 using namespace DirectX;
@@ -59,6 +60,10 @@ private:
 	ID3D11Texture2D* brickTexture = nullptr;
 	ID3D11Texture2D* bearTexture = nullptr;
 	ID3D11Texture2D* sphereTexture = nullptr;
+
+	
+
+
 
 	//grass: 0, dirt: 1, dirt: 2, normal: 3 (for terrain).
 	ID3D11ShaderResourceView* textureSRVs[TEXTURE_COUNT];

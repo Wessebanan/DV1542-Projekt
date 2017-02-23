@@ -550,6 +550,7 @@ HWND Deferred::GetWindowHandle()
 
 void Deferred::CreateTextures()
 {
+
 	HRESULT hr;
 	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"grassTex.dds", NULL, &this->grassSRV);
 	if (FAILED(hr))
