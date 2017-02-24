@@ -305,7 +305,7 @@ bool Deferred::Initialize()
 	this->CreateCamPosBuffer();
 	this->CreateLightDirBuffer();
 
-	this->CreateTextures();
+	this->CreateTerrainTextures();
 
 	this->textureSRVs[0] = this->grassSRV;
 	this->textureSRVs[1] = this->dirtSRV;
@@ -550,7 +550,7 @@ HWND Deferred::GetWindowHandle()
 	return this->window.GetWindow();
 }
 
-void Deferred::CreateTextures()
+void Deferred::CreateTerrainTextures()
 {
 
 	HRESULT hr;
@@ -574,20 +574,34 @@ void Deferred::CreateTextures()
 	{
 		MessageBoxA(NULL, "Error creating normal map.", NULL, MB_OK);
 	}
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"brickTex.dds", NULL, &this->brickSRV);
-	if (FAILED(hr))	
+}
+
+void Deferred::CreateObjectTexture(Material mat, OBJECT_TYPE type) {
+
+	HRESULT hr;
+	switch (type)
 	{
-		MessageBoxA(NULL, "Error creating brick texture", NULL, MB_OK);
+	case CUBE: {
+		hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), (const wchar_t*)mat.textureFilePath, NULL, &this->brickSRV);
+		if (FAILED(hr))
+		{
+			MessageBoxA(NULL, "Error creating cube texture", NULL, MB_OK);
+		}
 	}
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"bearTex.dds", NULL, &this->bearSRV);
-	if (FAILED(hr))
-	{
-		MessageBoxA(NULL, "Error creating bear texture", NULL, MB_OK);
+	case BEAR: {
+		hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), (const wchar_t*)mat.textureFilePath, NULL, &this->bearSRV);
+		if (FAILED(hr))
+		{
+			MessageBoxA(NULL, "Error creating bear texture", NULL, MB_OK);
+		}
 	}
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"coolTex.dds", NULL, &this->sphereSRV);
-	if (FAILED(hr))
-	{
-		MessageBoxA(NULL, "Error creating sphere texture", NULL, MB_OK);
+	case SPHERE: {
+		hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), (const wchar_t*)mat.textureFilePath, NULL, &this->sphereSRV);
+		if (FAILED(hr))
+		{
+			MessageBoxA(NULL, "Error creating sphere texture", NULL, MB_OK);
+		}
+	}
 	}
 }
 

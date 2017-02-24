@@ -7,6 +7,7 @@
 #include "D3D.h"
 #include <DDSTextureLoader.h>
 #include "Shadowmap.h"
+#include "OBJLoader.h"
 
 using namespace DirectX;
 const int BUFFER_COUNT = 5;
@@ -20,6 +21,7 @@ enum OBJECT_TYPE
 	BEAR = 2,
 	SPHERE = 3
 };
+
 
 class Deferred 
 {
@@ -119,7 +121,8 @@ public:
 
 	HWND GetWindowHandle();
 
-	void CreateTextures();
+	void CreateTerrainTextures();
+	void CreateObjectTexture(Material mat, OBJECT_TYPE type);
 
 	void CreateCamPosBuffer();
 	void CreateLightDirBuffer();
