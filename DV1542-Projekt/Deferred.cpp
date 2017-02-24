@@ -579,30 +579,36 @@ void Deferred::CreateTerrainTextures()
 void Deferred::CreateObjectTexture(Material mat, OBJECT_TYPE type) {
 
 	HRESULT hr;
+
+	const size_t size = strlen(mat.textureFilePath) + 1;
+	wchar_t* wcharFilePath = new wchar_t[size];
+	mbstowcs(wcharFilePath, mat.textureFilePath, size);
+
 	switch (type)
 	{
 	case CUBE: {
-		hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), (const wchar_t*)mat.textureFilePath, NULL, &this->brickSRV);
+		hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), wcharFilePath, NULL, &this->brickSRV);
 		if (FAILED(hr))
 		{
 			MessageBoxA(NULL, "Error creating cube texture", NULL, MB_OK);
 		}
 	}
 	case BEAR: {
-		hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), (const wchar_t*)mat.textureFilePath, NULL, &this->bearSRV);
+		hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), wcharFilePath, NULL, &this->bearSRV);
 		if (FAILED(hr))
 		{
 			MessageBoxA(NULL, "Error creating bear texture", NULL, MB_OK);
 		}
 	}
 	case SPHERE: {
-		hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), (const wchar_t*)mat.textureFilePath, NULL, &this->sphereSRV);
+		hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), wcharFilePath, NULL, &this->sphereSRV);
 		if (FAILED(hr))
 		{
 			MessageBoxA(NULL, "Error creating sphere texture", NULL, MB_OK);
 		}
 	}
 	}
+	delete[] wcharFilePath;
 }
 
 void Deferred::CreateCamPosBuffer()
