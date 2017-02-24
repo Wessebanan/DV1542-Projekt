@@ -10,10 +10,10 @@ newmtl bear
 	Ns 4
 	d 1
 	illum 2
-	Kd 0.588235 0.588235 0.588235
+	Kd 0.988235 0.588235 0.588235
 	Ks 0.153 0.153 0.153
 	Ka 0.588235 0.588235 0.588235
-	map_Kd bear.dds
+	map_Kd bearTex.dds
 
 
 newmtl default

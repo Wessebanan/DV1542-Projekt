@@ -6,12 +6,13 @@
 #include "InputHandler.h"
 #include "NoiseGenerator.h"
 #include "Timer.h"
+#include "OBJLoader.h"
 #include "Deferred.h"
 #include <string>
 #include <fstream>
 #include <crtdbg.h>
-#include "OBJLoader.h"
 #include <DDSTextureLoader.h>
+
 
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
@@ -22,6 +23,7 @@ struct Object
 	ID3D11Buffer* vertexBuffer;
 	ID3D11Buffer* indexBuffer;
 	unsigned int numIndices;
+	OBJECT_TYPE objectType;
 	XMMATRIX world;
 };
 Object Terrain;
@@ -59,15 +61,20 @@ void RenderDeferred(Deferred* def)
 	def->LightPass();
 }
 
-void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, TEX_COORD_TYPE texType = DIRECTX)
+void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, OBJECT_TYPE objectType, TEX_COORD_TYPE texType = DIRECTX)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
+
 	Material* objectMaterial = nullptr;
+
 	bool result = loadOBJ(filePath, vertices, indices, objectMaterial, texType);
-	if (objectMaterial != nullptr) {
-		delete objectMaterial;
-	}
+
+	def->CreateObjectTexture(objectMaterial, objectType);
+
+
+	
+
 	D3D11_BUFFER_DESC vertexBufferDesc = {};
 	vertexBufferDesc.ByteWidth = sizeof(Vertex) * vertices.size();
 	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
@@ -207,12 +214,12 @@ void CreateObjects(Deferred* def)
 	Terrain.world = XMMatrixIdentity();
 
 	//Create cube object
-	CreateObjectBuffers(def, &Cube, "cube_green_phong_12_tris_TRIANGULATED.obj", OPENGL);
+	CreateObjectBuffers(def, &Cube, "cube_green_phong_12_tris_TRIANGULATED.obj", CUBE, OPENGL);
 	Cube.numIndices = 36; 
 	Cube.world = XMMatrixRotationRollPitchYaw(0.34f, 1.47f, 2.01f) * XMMatrixScaling(50.0f, 50.0f, 50.0f) * XMMatrixTranslation(500, 30, 500);
 
 	//Create bear object
-	CreateObjectBuffers(def, &Bear, "bear.obj", OPENGL);
+	CreateObjectBuffers(def, &Bear, "bear.obj", BEAR, OPENGL);
 	Bear.numIndices = 3912;
 	srand(GetFrameTime());
 	Bear.world = XMMatrixTranslation(160, -20, 180);
@@ -220,7 +227,7 @@ void CreateObjects(Deferred* def)
 	//Create spheres
 	float translationX = 100;
 	float translationZ = 50;
-	CreateObjectBuffers(def, &Sphere, "sphere.obj");
+	CreateObjectBuffers(def, &Sphere, "sphere.obj", SPHERE);
 	Sphere.numIndices = 2280;
 	for (int i = 0; i < 10; i++)
 	{

@@ -66,6 +66,16 @@ Deferred::~Deferred()
 	{
 		this->transformBuffer->Release();
 	}
+
+	if (this->cubeMaterial != nullptr) {
+		delete this->cubeMaterial;
+	}
+	if (this->bearMaterial != nullptr) {
+		delete this->bearMaterial;
+	}
+	if (this->sphereMaterial != nullptr) {
+		delete this->sphereMaterial;
+	}
 }
 
 void Deferred::CreateShaders()
@@ -302,10 +312,11 @@ bool Deferred::Initialize()
 	this->CreateShaders();
 
 	this->CreateTransformBuffer();
+	this->CreateMaterialBuffer();
 	this->CreateCamPosBuffer();
 	this->CreateLightDirBuffer();
 
-	this->CreateTextures();
+	this->CreateTerrainTextures();
 
 	this->textureSRVs[0] = this->grassSRV;
 	this->textureSRVs[1] = this->dirtSRV;
@@ -473,6 +484,26 @@ void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int
 		memcpy(transformDataPtr.pData, &this->WVP, sizeof(matrixData));
 		this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);
 
+		D3D11_MAPPED_SUBRESOURCE materialDataPtr;
+		Material* currentMat = this->cubeMaterial; // TODO: Add default material to class, cubeMaterial used as placeholder
+		switch (type) {
+		case CUBE: {
+			currentMat = this->cubeMaterial;
+			break;
+		}
+		case BEAR: {
+			currentMat = this->bearMaterial;
+			break;
+		}
+		case SPHERE: {
+			currentMat = this->sphereMaterial;
+			break;
+		}
+		}
+		this->direct3D.getDevCon()->Map(this->materialBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &materialDataPtr);
+		memcpy(materialDataPtr.pData, currentMat, sizeof(Material));
+		this->direct3D.getDevCon()->Unmap(this->materialBuffer, 0);
+
 		switch (type)
 		{
 		case TERRAIN:
@@ -485,18 +516,21 @@ void Deferred::Draw(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, int
 		{
 			this->direct3D.getDevCon()->PSSetShaderResources(0, 1, &this->brickSRV);
 			this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);
+			this->direct3D.getDevCon()->PSSetConstantBuffers(0, 1, &this->materialBuffer);
 			break;
 		}
 		case BEAR:
 		{
 			this->direct3D.getDevCon()->PSSetShaderResources(0, 1, &this->bearSRV);
 			this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);
+			this->direct3D.getDevCon()->PSSetConstantBuffers(0, 1, &this->materialBuffer);
 			break;
 		}
 		case SPHERE:
 		{
 			this->direct3D.getDevCon()->PSSetShaderResources(0, 1, &this->sphereSRV);
 			this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);
+			this->direct3D.getDevCon()->PSSetConstantBuffers(0, 1, &this->materialBuffer);
 			break;
 		}
 		}
@@ -535,6 +569,20 @@ void Deferred::CreateTransformBuffer()
 	}
 }
 
+void Deferred::CreateMaterialBuffer() {
+
+	D3D11_BUFFER_DESC materialDesc = {};
+	materialDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+	materialDesc.ByteWidth = sizeof(Material);
+	materialDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+	materialDesc.Usage = D3D11_USAGE_DYNAMIC;
+
+	if (FAILED(this->direct3D.getDevice()->CreateBuffer(&materialDesc, nullptr, &this->materialBuffer))) {
+		MessageBoxA(NULL, "Error creating material buffer.", NULL, MB_OK);
+		exit(-1);
+	}
+}
+
 Camera * Deferred::GetCameraPointer()
 {
 	return &this->playerCamera;
@@ -550,7 +598,7 @@ HWND Deferred::GetWindowHandle()
 	return this->window.GetWindow();
 }
 
-void Deferred::CreateTextures()
+void Deferred::CreateTerrainTextures()
 {
 
 	HRESULT hr;
@@ -574,21 +622,47 @@ void Deferred::CreateTextures()
 	{
 		MessageBoxA(NULL, "Error creating normal map.", NULL, MB_OK);
 	}
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"brickTex.dds", NULL, &this->brickSRV);
-	if (FAILED(hr))	
+}
+
+void Deferred::CreateObjectTexture(Material* mat, OBJECT_TYPE type) {
+
+	HRESULT hr;
+
+	const size_t size = strlen(mat->textureFilePath) + 1;
+	wchar_t* wcharFilePath = new wchar_t[size];
+	mbstowcs(wcharFilePath, mat->textureFilePath, size);
+
+	switch (type)
 	{
-		MessageBoxA(NULL, "Error creating brick texture", NULL, MB_OK);
+	case CUBE: {
+		hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), wcharFilePath, NULL, &this->brickSRV);
+		this->cubeMaterial = mat;
+		if (FAILED(hr))
+		{
+			MessageBoxA(NULL, "Error creating cube texture", NULL, MB_OK);
+		}
+		break;
 	}
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"bearTex.dds", NULL, &this->bearSRV);
-	if (FAILED(hr))
-	{
-		MessageBoxA(NULL, "Error creating bear texture", NULL, MB_OK);
+	case BEAR: {
+		hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), wcharFilePath, NULL, &this->bearSRV);
+		this->bearMaterial = mat;
+		if (FAILED(hr))
+		{
+			MessageBoxA(NULL, "Error creating bear texture", NULL, MB_OK);
+		}
+		break;
 	}
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"coolTex.dds", NULL, &this->sphereSRV);
-	if (FAILED(hr))
-	{
-		MessageBoxA(NULL, "Error creating sphere texture", NULL, MB_OK);
+	case SPHERE: {
+		hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), wcharFilePath, NULL, &this->sphereSRV);
+		this->sphereMaterial = mat;
+		if (FAILED(hr))
+		{
+			MessageBoxA(NULL, "Error creating sphere texture", NULL, MB_OK);
+		}
+		break;
 	}
+	}
+	delete[] wcharFilePath;
 }
 
 void Deferred::CreateCamPosBuffer()

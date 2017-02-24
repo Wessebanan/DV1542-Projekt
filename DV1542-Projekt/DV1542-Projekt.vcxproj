@@ -156,6 +156,7 @@
     <ClCompile Include="Deferred.cpp" />
     <ClCompile Include="NoiseGenerator.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="OBJLoader.cpp" />
     <ClCompile Include="Shadowmap.cpp" />
     <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Window.cpp" />
