@@ -55,6 +55,7 @@ private:
 
 	ID3D11SamplerState* samplerState;
 	ID3D11Buffer* transformBuffer;
+	ID3D11Buffer* materialBuffer;
 
 	ID3D11Texture2D* grassTexture = nullptr;
 	ID3D11Texture2D* dirtTexture = nullptr;
@@ -62,6 +63,11 @@ private:
 	ID3D11Texture2D* brickTexture = nullptr;
 	ID3D11Texture2D* bearTexture = nullptr;
 	ID3D11Texture2D* sphereTexture = nullptr;
+
+	Material* cubeMaterial = nullptr;
+	Material* bearMaterial = nullptr;
+	Material* sphereMaterial = nullptr;
+
 
 	//grass: 0, dirt: 1, rock: 2 (for terrain).
 	ID3D11ShaderResourceView* textureSRVs[TEXTURE_COUNT];
@@ -85,6 +91,7 @@ private:
 		XMMATRIX lightProj; //mapping.
 	};
 	matrixData WVP;
+
 
 	Camera playerCamera;
 
@@ -114,6 +121,7 @@ public:
 	void DrawShadow(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, XMMATRIX world);
 
 	void CreateTransformBuffer();
+	void CreateMaterialBuffer();
 
 	Camera* GetCameraPointer();
 
@@ -122,7 +130,7 @@ public:
 	HWND GetWindowHandle();
 
 	void CreateTerrainTextures();
-	void CreateObjectTexture(Material mat, OBJECT_TYPE type);
+	void CreateObjectTexture(Material* mat, OBJECT_TYPE type);
 
 	void CreateCamPosBuffer();
 	void CreateLightDirBuffer();

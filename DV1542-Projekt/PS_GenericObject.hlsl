@@ -1,6 +1,14 @@
 SamplerState samplerState : register (s0);
 Texture2D objectTex : register (t0);
 
+cbuffer MATERIAL_BUFFER : register(b0)
+{
+	float Kdr, Kdg, Kdb;
+	float Ksr, Ksg, Ksb;
+	float Kar, Kag, Kab;
+	float Ns;
+}
+
 struct VS_OUT
 {
 	float4 Pos : SV_POSITION;
@@ -23,9 +31,12 @@ struct PS_OUT
 PS_OUT main( VS_OUT input ) 
 {
 	PS_OUT output = (PS_OUT)0;
+	float4 diffuseMaterial = float4(Kdr, Kdg, Kdb, 1.0f);
+	float4 specularMaterial = float4(Ksr, Ksg, Ksb, Ns);
+	
 	output.normal = float4(input.Normal, 0.0f);		
-	output.diffuse = objectTex.Sample(samplerState, input.TexCoord);
-	output.specular = float4(0.0f, 0.0f, 0.0f, 0.0f);
+	output.diffuse = diffuseMaterial * objectTex.Sample(samplerState, input.TexCoord);
+	output.specular = specularMaterial;
 	output.position = float4(input.WPos, 1.0f);
 	output.lightPos = input.lightPos;
 	return output;

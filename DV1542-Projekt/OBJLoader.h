@@ -18,7 +18,7 @@ struct Material {
 	float Ksr, Ksg, Ksb;
 	float Kar, Kag, Kab;
 	float Ns;
-	char textureFilePath[128];
+	char textureFilePath[136];
 };
 
 enum TEX_COORD_TYPE {

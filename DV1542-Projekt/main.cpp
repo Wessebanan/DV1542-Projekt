@@ -70,10 +70,8 @@ void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, OB
 
 	bool result = loadOBJ(filePath, vertices, indices, objectMaterial, texType);
 
-	def->CreateObjectTexture(*objectMaterial, objectType);
-	if (objectMaterial != nullptr) {
-		delete objectMaterial;
-	}
+	def->CreateObjectTexture(objectMaterial, objectType);
+
 
 	
 
