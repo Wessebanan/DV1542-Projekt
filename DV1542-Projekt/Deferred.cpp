@@ -81,9 +81,7 @@ void Deferred::CreateShaders()
 		0,						
 		0,						
 		&pVS,					
-		nullptr					
-								
-								
+		nullptr										
 	);
 
 	this->direct3D.getDevice()->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &this->vertexShaderTerrain);
@@ -108,9 +106,7 @@ void Deferred::CreateShaders()
 		0,			
 		0,			
 		&pPS,		
-		nullptr		
-					
-					
+		nullptr			
 	);
 
 	this->direct3D.getDevice()->CreatePixelShader(pPS->GetBufferPointer(), pPS->GetBufferSize(), nullptr, &this->pixelShaderTerrain);	
@@ -331,7 +327,7 @@ void Deferred::InitialGeometryBinds()
 	XMVector4Normalize(normalizedLightDir);
 	float clearColor2[] = { -XMVectorGetX(normalizedLightDir), -XMVectorGetY(normalizedLightDir), -XMVectorGetZ(normalizedLightDir) };
 	
-	//Clearing with a vector pointing towards the light direction to avoid shading of the background.
+	//Clearing the normal g-buffer with a vector pointing towards the light direction to avoid shading of the background.
 	this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[0], clearColor2);
 	
 	for (int i = 1; i < BUFFER_COUNT; i++)
@@ -347,29 +343,22 @@ void Deferred::InitialGeometryBinds()
 	//Setting the matrices to the transformBuffer with the relevant changes.
 	D3D11_MAPPED_SUBRESOURCE transformDataPtr;
 	this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &transformDataPtr);
-
 	this->WVP.view = this->playerCamera.GetViewMatrix();
-
 	memcpy(transformDataPtr.pData, &this->WVP, sizeof(matrixData));
-
 	this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);
 
 	//Same process as for transformBuffer but for the camera position.
 	D3D11_MAPPED_SUBRESOURCE camPosDataPtr;
 	this->direct3D.getDevCon()->Map(this->camPosBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &camPosDataPtr);
-
 	this->camPos = this->playerCamera.GetCamPosition();
-
 	memcpy(camPosDataPtr.pData, &this->camPos, sizeof(XMVECTOR));
-
 	this->direct3D.getDevCon()->Unmap(this->camPosBuffer, 0);
-
-	this->direct3D.getDevCon()->PSSetConstantBuffers(0, 1, &this->lightDirBuffer);
+	//this->direct3D.getDevCon()->PSSetConstantBuffers(0, 1, &this->lightDirBuffer);
 }
 
 void Deferred::BindTerrain()
 {
-	//Setting the correct shaders for the terrain.
+	//Setting the correct shaders for the terrain geometry pass.
 	this->direct3D.getDevCon()->VSSetShader(this->vertexShaderTerrain, nullptr, 0);
 	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderTerrain, nullptr, 0);
 	this->direct3D.getDevCon()->GSSetShader(this->geometryShaderTerrain, nullptr, 0);
@@ -392,7 +381,11 @@ void Deferred::BindGenericObject()
 
 void Deferred::LightPass()
 {
-	float clearColor[] = { 135.0f / 255.0f,206.0f / 255.0f,250.0f / 255.0f,0 };
+	float clearColor[] = { 0, 0, 0, 0 };
+
+	//Unbinding the g-buffer textures from OM.
+	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->unbindingRTVs, nullptr);
+
 	//Setting the back buffer as the sole render target.
 	this->direct3D.getDevCon()->OMSetRenderTargets(1, this->direct3D.getBackBufferRTV(), this->depthStencilView);
 	this->direct3D.getDevCon()->ClearRenderTargetView(*this->direct3D.getBackBufferRTV(), clearColor);
@@ -411,8 +404,7 @@ void Deferred::LightPass()
 
 	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);	
 	
-	//Setting the camPosBuffer to the pixel shader.
-
+	//Setting the camPosBuffer and lightDirBuffer to the pixel shader.
 	this->direct3D.getDevCon()->PSSetConstantBuffers(0, 1, &this->camPosBuffer);
 	this->direct3D.getDevCon()->PSSetConstantBuffers(1, 1, &this->lightDirBuffer);
 

@@ -1,9 +1,11 @@
 SamplerState samplerState : register(s0);
+//G-buffer textures as input.
 Texture2D normals : register(t0);
 Texture2D diffuses : register(t1);
 Texture2D speculars : register(t2);
 Texture2D positions : register(t3);
 Texture2D lightPositions : register(t4);
+//----------------------------
 Texture2D shadowMap : register(t5);
 
 cbuffer camPosBuffer : register (b0)
@@ -33,10 +35,6 @@ float4 main(PS_IN input) : SV_TARGET
 	float depth = shadowMap.Sample(samplerState, input.texcoord);
 	//------------------------------------
 
-	//float3 lightDir = { 1.0f, -1.0f, 0.0f };
-
-	//float3 lightPos = { 500.0f, 1000.0f, 500.0f };
-	//float3 lightVec = lightPos - position;
 	float3 lightVec = -lightDir.xyz;
 
 	// ---- SPECULAR CALCULATIONS ---------
@@ -53,9 +51,6 @@ float4 main(PS_IN input) : SV_TARGET
 
 	float4 ambient = { 0.10f, 0.10f, 0.10f, 0.0f };
 	float brightness =  saturate(dot(normalize(lightVec), normal));
-
-	//float specularPart =  1.0f * dot(normals.Sample(samplerState, input.texcoord).xyz, speculars.Sample(samplerState, input.texcoord).xyz);
-	/*float specularPart = speculars.Sample(samplerState, input.texcoord).x;*/
 
 	brightness = saturate(brightness + specularReflection);
 	float4 test = { 1.0f, 1.0f, 1.0f, 1.0f };

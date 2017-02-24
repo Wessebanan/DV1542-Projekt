@@ -16,18 +16,17 @@ struct PS_IN
 };
 
 struct PS_OUT
-{
+{	//G-buffer textures as output.
 	float4 normal : SV_Target0;
 	float4 diffuse : SV_Target1;
 	float4 specular : SV_Target2;
 	float4 position : SV_Target3;
 	float4 lightPos : SV_Target4;
-};
+};	//----------------------------
 
 PS_OUT main(PS_IN input)
 {
 	PS_OUT output = (PS_OUT)0;
-
 
 	float higherTexIntensity = 0.0f;
 	float lowerTexIntensity = 0.0f;
@@ -44,16 +43,21 @@ PS_OUT main(PS_IN input)
 	float rockSpecPower = 7.0f;
 	float rockSpecIntensity = 1.0f;
 
+	//Determining which texture should be sampled based on the height (y).
 	if (input.WPos.y < 10.0f)
 	{
 		output.diffuse = dirtTex.Sample(samplerState, input.TexCoord);
 		specPow = dirtSpecPower;
 		specIntensity = dirtSpecIntensity;
 	}
+	//Blending of the textures if the position is between two values.
 	else if (input.WPos.y < 20.0f)
 	{
+		//higherTexIntensity: How much color from the standard texture above the upper limit of the blending to be used.
+		//lowerTexIntensity: Takes the rest of the color from the lower texture (adds up to 1).
 		higherTexIntensity = (input.WPos.y - 10.0f) / 10;
 		lowerTexIntensity = 1 - higherTexIntensity;
+
 		output.diffuse = dirtTex.Sample(samplerState, input.TexCoord) * lowerTexIntensity
 			+ grassTex.Sample(samplerState, input.TexCoord) * higherTexIntensity;
 		specPow = dirtSpecPower * lowerTexIntensity + grassSpecPower * higherTexIntensity;
@@ -69,6 +73,7 @@ PS_OUT main(PS_IN input)
 	{
 		higherTexIntensity = (input.WPos.y - 45.0f) / 10;
 		lowerTexIntensity = 1 - higherTexIntensity;
+
 		output.diffuse = grassTex.Sample(samplerState, input.TexCoord) * lowerTexIntensity
 			+ rockTex.Sample(samplerState, input.TexCoord) * higherTexIntensity;
 		specPow = grassSpecPower * lowerTexIntensity + rockSpecPower * higherTexIntensity;
@@ -87,6 +92,7 @@ PS_OUT main(PS_IN input)
 	output.position = float4(input.WPos, 1);
 	output.lightPos = input.lightPos;
 
+	//The TBN matrix is constructed for coverting the sampled normal (in tangent space) to world space.
 	float3x3 TBN = float3x3
 		(
 			input.Tangent,
@@ -94,10 +100,11 @@ PS_OUT main(PS_IN input)
 			input.Nor
 		);
 
-	//Sampling and decompressing the normal in tangent space
+	//Sampling and decompressing the normal in tangent space.
 	float3 normalTS = normalMap.Sample(samplerState, input.TexCoord / 102.4f).xyz;
 	normalTS = normalize((normalTS * 2.0f) - 1.0f);
-	//Transforming the normal to world space using tangent frame and setting to output
+
+	//Transforming the normal to world space with the TBN matrix and setting to output
 	output.normal = normalize(float4(mul(normalTS, TBN), 0.0f));
 
 	return output;

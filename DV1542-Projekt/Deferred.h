@@ -34,6 +34,7 @@ private:
 	ID3D11ShaderResourceView* shaderResourceViews[BUFFER_COUNT];
 
 	ID3D11ShaderResourceView* unbindingSRVs[BUFFER_COUNT] = { NULL };
+	ID3D11RenderTargetView* unbindingRTVs[BUFFER_COUNT] = { NULL };
 
 	D3D11_VIEWPORT viewPort;
 	ID3D11DepthStencilView* depthStencilView;

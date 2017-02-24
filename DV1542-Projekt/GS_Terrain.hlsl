@@ -28,30 +28,25 @@ struct GS_OUT
 [maxvertexcount(3)]
 void main(triangle GS_IN input[3], inout TriangleStream< GS_OUT > output)
 {
-	float3 v0 = input[0].Pos.xyz;
-	float3 v1 = input[1].Pos.xyz;
-	float3 v2 = input[2].Pos.xyz;
+	//The distance between the positions of the vertices.
+	float3 dPos1 = input[1].Pos.xyz - input[0].Pos.xyz;
+	float3 dPos2 = input[2].Pos.xyz - input[0].Pos.xyz;
 
-	float2 uv0 = input[0].TexCoord;
-	float2 uv1 = input[1].TexCoord;
-	float2 uv2 = input[2].TexCoord;
+	//The distance between the texcoords of the vertices
+	float2 dUV1 = input[1].TexCoord - input[0].TexCoord;
+	float2 dUV2 = input[2].TexCoord - input[0].TexCoord;
 
-	float3 deltaPos1 = v1 - v0;
-	float3 deltaPos2 = v2 - v0;
-
-	float2 deltaUV1 = uv1 - uv0;
-	float2 deltaUV2 = uv2 - uv0;
-
-	float r = 1.0f / (deltaUV1.x * deltaUV2.y - deltaUV1.y * deltaUV2.x);
-
-	float3 tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;
-	float3 bitangent = (deltaPos2 * deltaUV1.y - deltaPos1 * deltaUV2.y) * r;
+	//Calculating the tangent and bitangent.
+	float r = 1.0f / (dUV1.x * dUV2.y - dUV1.y * dUV2.x);
+	float3 tangent = (dPos1 * dUV2.y - dPos2 * dUV1.y) * r;
+	float3 bitangent = (dPos2 * dUV1.y - dPos1 * dUV2.y) * r;
+	//--------------------------------------
 
 	matrix wvp = mul(proj, mul(view, world));
 	matrix lightWvp = mul(lightProj, mul(lightView, world));
 
-	//The normal is shared between the three veritces of the triangle.
-	float3 normal = mul(world, float4(input[0].Normal, 0.0f)).xyz;
+	//The face normal is shared between the three veritces of the triangle.
+	float3 normal = normalize(mul(world, float4(input[0].Normal, 0.0f)).xyz);
 
 	for (uint i = 0; i < 3; i++)
 	{
@@ -62,6 +57,7 @@ void main(triangle GS_IN input[3], inout TriangleStream< GS_OUT > output)
 		element.TexCoord = input[i].TexCoord;
 		element.Tangent = normalize(mul(world, float4(tangent, 0.0f)).xyz);
 		element.Bitangent = normalize(mul(world, float4(bitangent, 0.0f)).xyz);
+		//The position from the light's point of view.
 		element.lightPos = mul(lightWvp, input[i].Pos);
 		output.Append(element);
 	}

@@ -117,9 +117,10 @@ void Shadowmap::SwitchWorldMatrix(XMMATRIX world)
 
 void Shadowmap::CreateTransformationMatrices()
 {
+	XMVECTOR focusPos = XMVectorSet(512.0f, 20.0f, 512.0f, 1.0f);
 	this->WVP.world = XMMatrixIdentity();
-	this->WVP.view = XMMatrixLookAtLH(-400.0f * this->lightDir + XMVectorSet(500.0f, 20.0f, 500.0f, 1.0f), XMVectorSet(500.0f, 20.0f, 500.0f, 0.0f), XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
-	this->WVP.proj = XMMatrixOrthographicLH(1100.0f, 1000.0f, 1.0f, 1500.0f);
+	this->WVP.view = XMMatrixLookAtLH(-400.0f * this->lightDir + focusPos, focusPos, XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f));
+	this->WVP.proj = XMMatrixOrthographicLH(1050.0f, 1050.0f, 1.0f, 1500.0f);
 }
 
 void Shadowmap::CreateShaders()
