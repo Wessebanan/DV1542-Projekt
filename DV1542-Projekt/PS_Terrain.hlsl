@@ -4,19 +4,15 @@ Texture2D dirtTex : register (t1);
 Texture2D rockTex : register (t2);
 Texture2D normalMap : register (t3);
 
-cbuffer camPosBuffer : register (b0)
-{
-	float4 camPos;
-};
-
 struct PS_IN
 {
 	float4 Pos : SV_POSITION;
 	float3 Nor : NORMAL;
-	float3 WPos : POSITION;
+	float3 WPos : POSITION0;
 	float2 TexCoord : TEXCOORD;
 	float3 Tangent : TANGENT;
 	float3 Bitangent : BINORMAL;
+	float4 lightPos : POSITION1;
 };
 
 struct PS_OUT
@@ -25,15 +21,13 @@ struct PS_OUT
 	float4 diffuse : SV_Target1;
 	float4 specular : SV_Target2;
 	float4 position : SV_Target3;
+	float4 lightPos : SV_Target4;
 };
 
 PS_OUT main(PS_IN input)
 {
 	PS_OUT output = (PS_OUT)0;
 
-	float3 lightPos = { 500.0f, 1000.0f, 500.0f };
-
-	float3 lightDir = { 1.0f, -1.0f, 1.0f };
 
 	float higherTexIntensity = 0.0f;
 	float lowerTexIntensity = 0.0f;
@@ -43,9 +37,11 @@ PS_OUT main(PS_IN input)
 
 	float dirtSpecPower = 1.0f;
 	float dirtSpecIntensity = 0.0f;
-	float grassSpecPower = 10.0f;
-	float grassSpecIntensity = 0.5f;
-	float rockSpecPower = 32.0f;
+
+	float grassSpecPower = 1.0f;
+	float grassSpecIntensity = 0.7f;
+
+	float rockSpecPower = 7.0f;
 	float rockSpecIntensity = 1.0f;
 
 	if (input.WPos.y < 10.0f)
@@ -84,17 +80,12 @@ PS_OUT main(PS_IN input)
 		specPow = rockSpecPower;
 		specIntensity = rockSpecIntensity;
 	}
-	
 
-	float3 lightVec = input.WPos - lightPos; // Vector from light to point (Vector I)
-	float3 reflectedLightVec = 2 * input.Nor * dot(-input.Nor, lightVec); // (Vector V)
-	float3 reflection = normalize(lightVec + reflectedLightVec); // (Vector R)
-	float3 pointToCamera = normalize(camPos.xyz - input.WPos);
+	output.specular.x = specIntensity;
+	output.specular.y = specPow;
 
-	float specularReflection = specIntensity * pow(saturate(dot(reflection, pointToCamera)),specPow);
-
-	output.specular.x = specularReflection;
 	output.position = float4(input.WPos, 1);
+	output.lightPos = input.lightPos;
 
 	float3x3 TBN = float3x3
 		(
@@ -104,7 +95,7 @@ PS_OUT main(PS_IN input)
 		);
 
 	//Sampling and decompressing the normal in tangent space
-	float3 normalTS = normalMap.Sample(samplerState, input.TexCoord / 100.0f).xyz;
+	float3 normalTS = normalMap.Sample(samplerState, input.TexCoord / 102.4f).xyz;
 	normalTS = normalize((normalTS * 2.0f) - 1.0f);
 	//Transforming the normal to world space using tangent frame and setting to output
 	output.normal = normalize(float4(mul(normalTS, TBN), 0.0f));

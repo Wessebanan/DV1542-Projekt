@@ -6,8 +6,10 @@
 #include "Camera.h"
 #include "D3D.h"
 #include <DDSTextureLoader.h>
+#include "Shadowmap.h"
+
 using namespace DirectX;
-const int BUFFER_COUNT = 4;
+const int BUFFER_COUNT = 5;
 
 const int TEXTURE_COUNT = 3;
 
@@ -15,7 +17,8 @@ enum OBJECT_TYPE
 {
 	TERRAIN = 0,
 	CUBE = 1,
-	BEAR = 2
+	BEAR = 2,
+	SPHERE = 3
 };
 
 class Deferred 
@@ -23,8 +26,9 @@ class Deferred
 private:
 	Window window;
 	D3D direct3D;
+	Shadowmap shadowmap;
 
-	// 0: normals, 1: diffuse, 2: specular, 3: position
+	// 0: normals, 1: diffuses, 2: speculars, 3: positions, 4: light positions
 	ID3D11Texture2D* textures[BUFFER_COUNT];
 	ID3D11RenderTargetView* renderTargetViews[BUFFER_COUNT];
 	ID3D11ShaderResourceView* shaderResourceViews[BUFFER_COUNT];
@@ -36,6 +40,7 @@ private:
 	ID3D11Texture2D* depthStencilBuffer;
 
 	ID3D11InputLayout* vertexLayout;
+
 	ID3D11VertexShader* vertexShaderTerrain;
 	ID3D11VertexShader* vertexShaderLight;
 	ID3D11GeometryShader* geometryShaderTerrain;
@@ -53,8 +58,9 @@ private:
 	ID3D11Texture2D* rockTexture = nullptr;
 	ID3D11Texture2D* brickTexture = nullptr;
 	ID3D11Texture2D* bearTexture = nullptr;
+	ID3D11Texture2D* sphereTexture = nullptr;
 
-	//grass: 1, dirt: 2, dirt: 3 (for terrain).
+	//grass: 0, dirt: 1, rock: 2 (for terrain).
 	ID3D11ShaderResourceView* textureSRVs[TEXTURE_COUNT];
 
 	ID3D11ShaderResourceView* grassSRV = nullptr;
@@ -62,6 +68,7 @@ private:
 	ID3D11ShaderResourceView* rockSRV = nullptr;
 	ID3D11ShaderResourceView* brickSRV = nullptr;
 	ID3D11ShaderResourceView* bearSRV = nullptr;
+	ID3D11ShaderResourceView* sphereSRV = nullptr;
 
 	ID3D11Texture2D* TerrainNormalMap = nullptr;
 	ID3D11ShaderResourceView* TerrainNormalSRV = nullptr;
@@ -71,17 +78,18 @@ private:
 		XMMATRIX world;
 		XMMATRIX view;
 		XMMATRIX proj;
+		XMMATRIX lightView; //For shadow
+		XMMATRIX lightProj; //mapping.
 	};
 	matrixData WVP;
 
 	Camera playerCamera;
 
 	ID3D11Buffer* camPosBuffer;
+	ID3D11Buffer* lightDirBuffer;
 
 	XMVECTOR camPos;
-
-	bool nulled = false; //To only null the SRs in PSL once.
-	bool set = false; //To only set RTs once.
+	XMVECTOR lightDir; //Istället för att hårdkoda på flera ställen.
 
 public:
 	Deferred(HINSTANCE hInstance);
@@ -100,6 +108,7 @@ public:
 	void SetHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height);
 
 	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, XMMATRIX world, OBJECT_TYPE type);
+	void DrawShadow(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, XMMATRIX world);
 
 	void CreateTransformBuffer();
 
@@ -112,6 +121,10 @@ public:
 	void CreateTextures();
 
 	void CreateCamPosBuffer();
+	void CreateLightDirBuffer();
 
 	IDXGISwapChain* GetSwapChain();
+	ID3D11Device* GetDevicePointer();
+
+	Shadowmap* GetShadowmap();
 };

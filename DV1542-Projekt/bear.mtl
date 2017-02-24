@@ -6,6 +6,16 @@
 #
 # Bounding box of geometry = (-4.71417,0.381019,-20.1426) to (5.52928,20.0957,8.69794).
 
+newmtl bear
+	Ns 4
+	d 1
+	illum 2
+	Kd 0.588235 0.588235 0.588235
+	Ks 0.153 0.153 0.153
+	Ka 0.588235 0.588235 0.588235
+	map_Kd bear.dds
+
+
 newmtl default
 	Ns 32
 	d 1
@@ -14,14 +24,7 @@ newmtl default
 	Ks 0.7 0.7 0.7
 	Ka 0.3 0.3 0.3
 
-newmtl bear
-	Ns 4
-	d 1
-	illum 2
-	Kd 0.588235 0.588235 0.588235
-	Ks 0.153 0.153 0.153
-	Ka 0.588235 0.588235 0.588235
-	map_Kd bear.tga
+
 
 newmtl teeths
 	Ns 3
@@ -30,6 +33,6 @@ newmtl teeths
 	Kd 0.588235 0.588235 0.588235
 	Ks 0 0 0
 	Ka 0.588235 0.588235 0.588235
-	map_Kd bear teeth.tga
-	map_d bear teeth alpha.tga
+	map_Kd bear teeth.dds
+	map_d bear teeth alpha.dds
 

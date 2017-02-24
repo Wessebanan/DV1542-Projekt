@@ -3,6 +3,7 @@
 #include <DirectXMath.h>
 #include <d3d11.h>
 #include <d3dcompiler.h>
+#include <string>
 
 struct Vertex
 {
@@ -11,10 +12,76 @@ struct Vertex
 	float u, v;
 };
 
+struct Material {
+	float Kdr, Kdg, Kdb;
+	float Ksr, Ksg, Ksb;
+	float Kar, Kag, Kab;
+	float Ns;
+	char textureFilePath[128];
+};
+
+enum TEX_COORD_TYPE {
+	DIRECTX = 0,
+	OPENGL = 1
+};
+
 using namespace DirectX;
 
 
-bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <unsigned int> &indices) {
+Material* loadMTL(const char* filePath) {
+	// This is a very basic implementation of a material file reader which reads ONE (1) material
+	// from a .mtl file and uses it for the entire obj
+	// Usage limited due to time constraints
+
+	Material* newMat = new Material {0, 0, 0,
+								     0, 0, 0,
+					                 0, 0, 0,
+					                 0,
+					                 "\0"};
+	FILE* file;
+	bool materialFound = false;
+	fopen_s(&file, filePath, "r"); // Open file to read
+	if (file == NULL) {
+		MessageBox(NULL, L"Could not open file while loading MTL", NULL, MB_ICONEXCLAMATION);
+	}
+	bool readingFile = true;
+	while (readingFile) {
+		char lineHeader[128]; // Not good, but works
+		int result = fscanf(file, "%s", &lineHeader);
+		if (result == EOF) {
+			readingFile = false; // End of file has been reached
+		}
+		else {
+			if (strcmp(lineHeader, "newmtl") == 0) {
+				if (!materialFound) {
+					materialFound = true;
+				}
+				else {
+					readingFile = false; // We have already read a material, ignore the rest of the file
+				}
+			}
+			else if (strcmp(lineHeader, "Kd") == 0) {
+				fscanf_s(file, "%f %f %f\n", &newMat->Kdr, &newMat->Kdg, &newMat->Kdb);
+			}
+			else if (strcmp(lineHeader, "Ks") == 0) {
+				fscanf_s(file, "%f %f %f\n", &newMat->Ksr, &newMat->Ksg, &newMat->Ksb);
+			}
+			else if (strcmp(lineHeader, "Ka") == 0) {
+				fscanf_s(file, "%f %f %f\n", &newMat->Kar, &newMat->Kag, &newMat->Kab);
+			}
+			else if (strcmp(lineHeader, "Ns") == 0) {
+				fscanf_s(file, "%f\n", &newMat->Ns);
+			}
+			else if (strcmp(lineHeader, "map_Kd") == 0) {
+				fscanf(file, "%s\n", &newMat->textureFilePath);
+			}
+		}
+	}
+	return newMat;
+}
+
+
+bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <unsigned int> &indices, Material* &objectMaterial, TEX_COORD_TYPE texType = DIRECTX) {
 	// This function reads obj files of format
 	// v 1 1 1
 	// vt 1 1 
@@ -26,6 +93,7 @@ bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <
 	std::vector <XMFLOAT3> tempVerts;
 	std::vector <XMFLOAT2> tempTexCoords;
 	std::vector <XMFLOAT3> tempNormals;
+	
 
 	FILE* file;
 	fopen_s(&file, filePath, "r"); // Open the file to be able to read from it
@@ -41,7 +109,12 @@ bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <
 			readingFile = false;
 		}
 		else {
-			if (strcmp(lineHeader, "v") == 0) { // Current line to read is vertex info
+			if (strcmp(lineHeader, "mtllib") == 0) {
+				char filePathMtl[128];
+				fscanf(file, "%s\n", &filePathMtl);
+				objectMaterial = loadMTL(filePathMtl);
+			}
+			else if (strcmp(lineHeader, "v") == 0) { // Current line to read is vertex info
 				XMFLOAT3 vertex;
 				fscanf_s(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
 				tempVerts.push_back(vertex);
@@ -82,11 +155,20 @@ bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <
 
 	}
 	for (int i = 0; i < vertexIndices.size(); i++) {
-		Vertex newVert = { tempVerts[vertexIndices[i] - 1].x, tempVerts[vertexIndices[i] - 1].y, tempVerts[vertexIndices[i] - 1].z,
-							tempNormals[normalIndices[i] - 1].x, tempNormals[normalIndices[i] - 1].y, tempNormals[normalIndices[i] - 1].z,
-							tempTexCoords[texCoordIndices[i] - 1].x, tempTexCoords[texCoordIndices[i] - 1].y };
+		Vertex newVert;
+		if (texType == DIRECTX) {
+			newVert = { tempVerts[vertexIndices[i] - 1].x, tempVerts[vertexIndices[i] - 1].y, tempVerts[vertexIndices[i] - 1].z,
+								tempNormals[normalIndices[i] - 1].x, tempNormals[normalIndices[i] - 1].y, tempNormals[normalIndices[i] - 1].z,
+								tempTexCoords[texCoordIndices[i] - 1].x, tempTexCoords[texCoordIndices[i] - 1].y };
+		}
+		else {
+			newVert = { tempVerts[vertexIndices[i] - 1].x, tempVerts[vertexIndices[i] - 1].y, tempVerts[vertexIndices[i] - 1].z,
+				tempNormals[normalIndices[i] - 1].x, tempNormals[normalIndices[i] - 1].y, tempNormals[normalIndices[i] - 1].z,
+				tempTexCoords[texCoordIndices[i] - 1].x, 1 - tempTexCoords[texCoordIndices[i] - 1].y };
+		}
 		vertices.push_back(newVert);
 		indices.push_back(i);
 	}
+
 	return true;
 }
