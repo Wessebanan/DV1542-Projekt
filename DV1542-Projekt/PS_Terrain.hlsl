@@ -38,10 +38,10 @@ PS_OUT main(PS_IN input)
 	float dirtSpecIntensity = 0.0f;
 
 	float grassSpecPower = 1.0f;
-	float grassSpecIntensity = 0.7f;
+	float grassSpecIntensity = 0.3f;
 
 	float rockSpecPower = 7.0f;
-	float rockSpecIntensity = 1.0f;
+	float rockSpecIntensity = 0.75f;
 
 	//Determining which texture should be sampled based on the height (y).
 	if (input.WPos.y < 10.0f)
@@ -86,8 +86,8 @@ PS_OUT main(PS_IN input)
 		specIntensity = rockSpecIntensity;
 	}
 
-	output.specular.x = specIntensity;
-	output.specular.y = specPow;
+	output.specular.xyz = specIntensity * output.diffuse.xyz;
+	output.specular.w = specPow;
 
 	output.position = float4(input.WPos, 1);
 	output.lightPos = input.lightPos;
