@@ -30,7 +30,7 @@ float4 main(PS_IN input) : SV_TARGET
 	float3 normal = normals.Sample(samplerState, input.texcoord).xyz;
 	float3 position = positions.Sample(samplerState, input.texcoord).xyz;
 	float4 color = diffuses.Sample(samplerState, input.texcoord);
-	float2 specular = speculars.Sample(samplerState, input.texcoord).xy;
+	float4 specular = speculars.Sample(samplerState, input.texcoord);
 	float4 lightPos = lightPositions.Sample(samplerState, input.texcoord);
 	float depth = shadowMap.Sample(samplerState, input.texcoord);
 	//------------------------------------
@@ -45,15 +45,19 @@ float4 main(PS_IN input) : SV_TARGET
 	float specularReflection = 0.0f;
 	
 
-	if (dot(normalize(lightDir), normal) <= 0.0f)
-		specularReflection = saturate(specular.x * pow(saturate(dot(reflection, pointToCamera)), specular.y));
+	if (dot(normalize(lightDir), normal) <= 0.0f) {
+		specularReflection = saturate(specular.x * pow(saturate(dot(reflection, pointToCamera)), specular.w));
+	}
 	//-------------------------------------
 
 	float4 ambient = { 0.10f, 0.10f, 0.10f, 0.0f };
 	float brightness =  saturate(dot(normalize(lightVec), normal));
 
-	brightness = saturate(brightness + specularReflection);
-	float4 test = { 1.0f, 1.0f, 1.0f, 1.0f };
+	brightness = saturate(brightness);
 
-	return saturate(color * saturate(brightness + ambient));
+
+	return saturate(color * saturate(brightness + ambient) + specularReflection);
+
+	// return saturate(specularReflection); // Used for testing purposes
+	// return float4(pointToCamera, 1.0f); // Used for testing purposes
 }
