@@ -13,7 +13,6 @@
 #include <crtdbg.h>
 #include <DDSTextureLoader.h>
 
-
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 using namespace DirectX;
@@ -70,10 +69,7 @@ void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, OB
 
 	bool result = loadOBJ(filePath, vertices, indices, objectMaterial, texType);
 
-	def->CreateObjectTexture(objectMaterial, objectType);
-
-
-	
+	def->CreateObjectTexture(objectMaterial, objectType);	
 
 	D3D11_BUFFER_DESC vertexBufferDesc = {};
 	vertexBufferDesc.ByteWidth = sizeof(Vertex) * vertices.size();
@@ -221,7 +217,6 @@ void CreateObjects(Deferred* def)
 	//Create bear object
 	CreateObjectBuffers(def, &Bear, "bear.obj", BEAR, OPENGL);
 	Bear.numIndices = 3912;
-	srand(GetFrameTime());
 	Bear.world = XMMatrixTranslation(160, -20, 180);
 
 	//Create spheres
@@ -290,6 +285,15 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		DirectInput->Release();
 		DestroyWindow(def.GetWindowHandle());
 
+		Bear.indexBuffer->Release();
+		Sphere.indexBuffer->Release();
+		Cube.indexBuffer->Release();
+		Terrain.indexBuffer->Release();
+
+		Bear.vertexBuffer->Release();
+		Cube.vertexBuffer->Release();
+		Sphere.vertexBuffer->Release();
+		Terrain.vertexBuffer->Release();
 	}
 	// return this part of the WM_QUIT message to Windows
 	return (int)msg.wParam;

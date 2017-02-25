@@ -53,19 +53,31 @@ Deferred::~Deferred()
 	}
 	this->depthStencilBuffer->Release();
 	this->depthStencilView->Release();
+
 	this->vertexLayout->Release();
+
 	this->vertexShaderTerrain->Release();
 	this->vertexShaderLight->Release();
 	this->geometryShaderTerrain->Release();
 	this->pixelShaderTerrain->Release();
 	this->pixelShaderLight->Release();
 	this->vertexShaderGenericObject->Release();
+	this->pixelShaderGenericObject->Release();
+
 	this->samplerState->Release();
 	
 	if (this->transformBuffer != nullptr)
 	{
 		this->transformBuffer->Release();
 	}
+
+	if (this->materialBuffer != nullptr)
+	{
+		this->materialBuffer->Release();
+	}
+
+	this->camPosBuffer->Release();
+	this->lightDirBuffer->Release();
 
 	if (this->cubeMaterial != nullptr) {
 		delete this->cubeMaterial;
@@ -76,6 +88,14 @@ Deferred::~Deferred()
 	if (this->sphereMaterial != nullptr) {
 		delete this->sphereMaterial;
 	}
+
+	this->grassSRV->Release();
+	this->dirtSRV->Release();
+	this->rockSRV->Release();
+	this->brickSRV->Release();
+	this->bearSRV->Release();
+	this->sphereSRV->Release();
+	this->TerrainNormalSRV->Release();
 }
 
 void Deferred::CreateShaders()

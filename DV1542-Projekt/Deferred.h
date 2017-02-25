@@ -10,7 +10,7 @@
 #include "OBJLoader.h"
 
 using namespace DirectX;
-const int BUFFER_COUNT = 5;
+const int BUFFER_COUNT = 6;
 
 const int TEXTURE_COUNT = 3;
 
@@ -57,13 +57,6 @@ private:
 	ID3D11Buffer* transformBuffer;
 	ID3D11Buffer* materialBuffer;
 
-	ID3D11Texture2D* grassTexture = nullptr;
-	ID3D11Texture2D* dirtTexture = nullptr;
-	ID3D11Texture2D* rockTexture = nullptr;
-	ID3D11Texture2D* brickTexture = nullptr;
-	ID3D11Texture2D* bearTexture = nullptr;
-	ID3D11Texture2D* sphereTexture = nullptr;
-
 	Material* cubeMaterial = nullptr;
 	Material* bearMaterial = nullptr;
 	Material* sphereMaterial = nullptr;
@@ -78,8 +71,6 @@ private:
 	ID3D11ShaderResourceView* brickSRV = nullptr;
 	ID3D11ShaderResourceView* bearSRV = nullptr;
 	ID3D11ShaderResourceView* sphereSRV = nullptr;
-
-	ID3D11Texture2D* TerrainNormalMap = nullptr;
 	ID3D11ShaderResourceView* TerrainNormalSRV = nullptr;
 
 	struct matrixData

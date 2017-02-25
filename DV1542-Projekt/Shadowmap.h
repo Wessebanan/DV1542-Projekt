@@ -16,7 +16,6 @@ private:
 	ID3D11Texture2D* depthStencilBuffer = nullptr;
 
 	ID3D11VertexShader* VS_Shadow = nullptr;
-	ID3D11PixelShader* PS_Shadow = nullptr;
 
 	ID3D11InputLayout* inputLayout = nullptr;
 
@@ -43,6 +42,6 @@ public:
 	void Initialize(D3D* direct3D, D3D11_VIEWPORT* vp, int height, int width, XMVECTOR lightDir, ID3D11InputLayout* inputLayout);
 	void SwitchWorldMatrix(XMMATRIX world);
 	void CreateTransformationMatrices();
-	void CreateShaders();
+	void CreateShader();
 	void BindShadowPass();
 };

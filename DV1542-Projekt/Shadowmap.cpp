@@ -9,8 +9,6 @@ Shadowmap::~Shadowmap()
 {
 	if(this->VS_Shadow != nullptr)
 		this->VS_Shadow->Release();
-	if(this->PS_Shadow != nullptr)
-		this->PS_Shadow->Release();
 	if(this->transformBuffer != nullptr)
 		this->transformBuffer->Release();
 	if(this->depthMapSRV != nullptr)
@@ -101,7 +99,7 @@ void Shadowmap::Initialize(D3D* direct3D, D3D11_VIEWPORT* vp, int height, int wi
 	{
 		MessageBoxA(NULL, "Error creating transformbuffer.", NULL, MB_OK);
 	}
-	this->CreateShaders();
+	this->CreateShader();
 }
 
 void Shadowmap::SwitchWorldMatrix(XMMATRIX world)
@@ -123,7 +121,7 @@ void Shadowmap::CreateTransformationMatrices()
 	this->WVP.proj = XMMatrixOrthographicLH(1050.0f, 1050.0f, 1.0f, 1500.0f);
 }
 
-void Shadowmap::CreateShaders()
+void Shadowmap::CreateShader()
 {
 	HRESULT hr;
 	ID3D10Blob* pVS = nullptr;
@@ -146,28 +144,6 @@ void Shadowmap::CreateShaders()
 	
 	this->device->CreateVertexShader(pVS->GetBufferPointer(), pVS->GetBufferSize(), nullptr, &this->VS_Shadow);
 	pVS->Release();
-	
-	ID3D10Blob* pPS = nullptr;
-	hr = D3DCompileFromFile(
-		L"PS_Shadow.hlsl",
-		nullptr,
-		nullptr,
-		"main",
-		"ps_5_0",
-		0,
-		0,
-		&pPS,
-		nullptr
-		);
-
-	if (FAILED(hr))
-	{
-		MessageBoxA(NULL, "ERROR COMPILING VS_SHADOW", NULL, MB_OK);
-		exit(-1);
-	}
-		
-	this->device->CreatePixelShader(pPS->GetBufferPointer(), pPS->GetBufferSize(), nullptr, &this->PS_Shadow);
-	pPS->Release();
 }
 
 void Shadowmap::BindShadowPass()

@@ -52,7 +52,6 @@
     <FxCompile Include="GS_Terrain.hlsl" />
     <FxCompile Include="VS_GenericObject.hlsl" />
     <FxCompile Include="PS_GenericObject.hlsl" />
-    <FxCompile Include="PS_Shadow.hlsl" />
     <FxCompile Include="VS_Shadow.hlsl" />
   </ItemGroup>
   <ItemGroup>
