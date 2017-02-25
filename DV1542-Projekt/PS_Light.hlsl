@@ -55,6 +55,7 @@ float4 main(PS_IN input) : SV_TARGET
 
 	brightness = saturate(brightness);
 
+
 	return saturate(color * saturate(brightness + ambient) + specularReflection);
 
 	// return saturate(specularReflection); // Used for testing purposes
