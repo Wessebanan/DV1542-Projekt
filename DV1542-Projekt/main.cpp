@@ -75,7 +75,7 @@ void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, OB
 	def->CreateObjectTexture(objectMaterial, objectType);	
 
 	D3D11_BUFFER_DESC vertexBufferDesc = {};
-	vertexBufferDesc.ByteWidth	= sizeof(Vertex) * vertices.size();
+	vertexBufferDesc.ByteWidth	= (UINT)(sizeof(Vertex) * vertices.size());
 	vertexBufferDesc.BindFlags	= D3D11_BIND_VERTEX_BUFFER;
 	vertexBufferDesc.Usage		= D3D11_USAGE_DEFAULT;
 
@@ -89,7 +89,7 @@ void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, OB
 
 	D3D11_BUFFER_DESC indexBufferDesc = {};
 	indexBufferDesc.Usage			= D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth		= sizeof(unsigned int) * indices.size();
+	indexBufferDesc.ByteWidth		= (UINT)(sizeof(unsigned int) * indices.size());
 	indexBufferDesc.BindFlags		= D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags	= 0;
 	indexBufferDesc.MiscFlags		= 0;

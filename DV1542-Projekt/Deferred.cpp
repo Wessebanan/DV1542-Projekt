@@ -304,8 +304,8 @@ bool Deferred::Initialize()
 	}	
 	
 	// Creating the viewport.
-	this->viewPort.Width	= this->window.GetWidth();
-	this->viewPort.Height	= this->window.GetHeight();
+	this->viewPort.Width	= (float)this->window.GetWidth();
+	this->viewPort.Height	= (float)this->window.GetHeight();
 	this->viewPort.MinDepth = 0.0f;
 	this->viewPort.MaxDepth = 1.0f;
 	this->viewPort.TopLeftX = 0;
@@ -697,7 +697,7 @@ void Deferred::CreateLightDirBuffer()
 	};
 	lightDirBufferStruct LDBS;
 	LDBS.lightDir = this->lightDir;
-	LDBS.shadowDimensions = XMVectorSet(this->shadowMapWidth, this->shadowMapHeight, 0.0f, 0.0f);
+	LDBS.shadowDimensions = XMVectorSet((float)this->shadowMapWidth, (float)this->shadowMapHeight, 0.0f, 0.0f);
 
 	D3D11_BUFFER_DESC bufDesc = {};
 	bufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
