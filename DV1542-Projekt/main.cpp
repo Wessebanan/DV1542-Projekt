@@ -90,7 +90,6 @@ void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, OB
 	D3D11_BUFFER_DESC indexBufferDesc = {};
 	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 	indexBufferDesc.ByteWidth = sizeof(unsigned int) * indices.size();
-	unsigned int test1 = indices.size();
 	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	indexBufferDesc.CPUAccessFlags = 0;
 	indexBufferDesc.MiscFlags = 0;
@@ -117,9 +116,6 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 	NoiseGenerator noise1(def->GetDevicePointer(), 1024, 1024);
 	float* heightmapData;
 	heightmapData = noise1.loadHeightmap(L"TestMap9.RAW", 1024, 1024);
-	float test1 = heightmapData[0];
-	float test2 = heightmapData[1000];
-	float test3 = heightmapData[1025];
 
 	Vertex* vertices = new Vertex[rows*columns];
 	unsigned long vertexIncrementer = 0;
