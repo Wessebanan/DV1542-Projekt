@@ -8,12 +8,14 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->direct3D.Initialize(this->window.GetWindow());
 
 	this->lightDir = XMVectorSet(1.0f, -1.0f, 0.0f, 0.0f);
+	this->shadowMapHeight	= 8192;
+	this->shadowMapWidth	= 8192;
 
 	if (!this->Initialize())
 	{
 		MessageBoxA(NULL, "Error initializing deferred", NULL, MB_OK);
 	}
-	this->shadowmap.Initialize(&this->direct3D, &this->viewPort, this->window.GetHeight(), this->window.GetWidth(), this->lightDir, this->vertexLayout);
+	this->shadowmap.Initialize(&this->direct3D, &this->viewPort, this->shadowMapHeight, this->shadowMapWidth, this->lightDir, this->vertexLayout);
 
 	this->WVP.world = XMMatrixIdentity();
 	this->WVP.view = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
@@ -369,7 +371,8 @@ void Deferred::InitialGeometryBinds()
 	this->camPos = this->playerCamera.GetCamPosition();
 	memcpy(camPosDataPtr.pData, &this->camPos, sizeof(XMVECTOR));
 	this->direct3D.getDevCon()->Unmap(this->camPosBuffer, 0);
-	//this->direct3D.getDevCon()->PSSetConstantBuffers(0, 1, &this->lightDirBuffer);
+	
+	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
 }
 
 void Deferred::BindTerrain()
@@ -687,13 +690,22 @@ void Deferred::CreateCamPosBuffer()
 
 void Deferred::CreateLightDirBuffer()
 {
+	struct lightDirBufferStruct
+	{
+		XMVECTOR lightDir;
+		XMVECTOR shadowDimensions;
+	};
+	lightDirBufferStruct LDBS;
+	LDBS.lightDir = this->lightDir;
+	LDBS.shadowDimensions = XMVectorSet(this->shadowMapWidth, this->shadowMapHeight, 0.0f, 0.0f);
+
 	D3D11_BUFFER_DESC bufDesc = {};
 	bufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufDesc.ByteWidth = sizeof(XMVECTOR);
+	bufDesc.ByteWidth = sizeof(lightDirBufferStruct);
 	bufDesc.Usage = D3D11_USAGE_IMMUTABLE;
 
 	D3D11_SUBRESOURCE_DATA subData;
-	subData.pSysMem = &this->lightDir;
+	subData.pSysMem = &LDBS;
 
 	HRESULT hr = this->direct3D.getDevice()->CreateBuffer(&bufDesc, &subData, &this->lightDirBuffer);
 	if (FAILED(hr))

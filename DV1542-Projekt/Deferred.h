@@ -28,7 +28,10 @@ class Deferred
 private:
 	Window window;
 	D3D direct3D;
+
 	Shadowmap shadowmap;
+	int shadowMapWidth;
+	int shadowMapHeight;
 
 	// 0: normals, 1: diffuses, 2: speculars, 3: positions, 4: light positions
 	ID3D11Texture2D* textures[BUFFER_COUNT] = { nullptr };
@@ -97,8 +100,7 @@ private:
 	ID3D11Buffer* lightDirBuffer = nullptr;
 
 	XMVECTOR camPos;
-	XMVECTOR lightDir; //Istället för att hårdkoda på flera ställen.
-
+	XMVECTOR lightDir;
 public:
 	Deferred(HINSTANCE hInstance);
 	~Deferred();

@@ -38,11 +38,18 @@ void Shadowmap::Initialize(D3D* direct3D, D3D11_VIEWPORT* vp, int height, int wi
 {
 	this->device = direct3D->getDevice();
 	this->devCon = direct3D->getDevCon();
-	this->viewPort = *vp;
+	/*this->viewPort = *vp;*/
 	this->lightDir = lightDir;
 	this->inputLayout = inputLayout;
 
 	HRESULT hr;
+
+	this->viewPort.Height	= height;
+	this->viewPort.Width	= width;
+	this->viewPort.MinDepth = 0.0f;
+	this->viewPort.MaxDepth = 1.0f;
+	this->viewPort.TopLeftX = 0;
+	this->viewPort.TopLeftY = 0; 
 
 	D3D11_TEXTURE2D_DESC dsDesc{};
 	dsDesc.Height = height;

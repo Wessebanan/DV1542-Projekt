@@ -16,6 +16,7 @@ cbuffer camPosBuffer : register (b0)
 cbuffer lightDirBuffer : register (b1)
 {
 	float4 lightDir;
+	float4 shadowDimensions; //x: width, y: height. z,w: padding.
 };
 
 struct PS_IN
@@ -42,17 +43,22 @@ float4 main(PS_IN input) : SV_TARGET
 	float2 smTex = float2(0.5f * lightPos.x + 0.5f, -0.5f * lightPos.y + 0.5f);
 	float depth = lightPos.z / lightPos.w;
 
-	float dx = 1.0f / 1280.0f;
-	float dy = 1.0f / 720.0f;
+	float dx = 1.0f / shadowDimensions.x;
+	float dy = 1.0f / shadowDimensions.y;
 
 	//Multisampling for antialiasing, 0 if in shadow and 1 if not.
-	float s0 = (shadowMap.Sample(samplerState, smTex)					.x	+ epsilon < depth) ? 0.0f : 1.0f;
-	float s1 = (shadowMap.Sample(samplerState, smTex + float2(dx, 0.0f)).x	+ epsilon < depth) ? 0.0f : 1.0f;
-	float s2 = (shadowMap.Sample(samplerState, smTex + float2(0.0f, dy)).x	+ epsilon < depth) ? 0.0f : 1.0f;
-	float s3 = (shadowMap.Sample(samplerState, smTex + float2(dx, dy))	.x	+ epsilon < depth) ? 0.0f : 1.0f;
+	float s0 = (shadowMap.Sample(samplerState, smTex					).x	+ epsilon < depth) ? 0.0f : 1.0f;
+	float s1 = (shadowMap.Sample(samplerState, smTex + float2(dx, 0.0f)	).x + epsilon < depth) ? 0.0f : 1.0f;
+	float s2 = (shadowMap.Sample(samplerState, smTex + float2(0.0f, dy)	).x	+ epsilon < depth) ? 0.0f : 1.0f;
+	float s3 = (shadowMap.Sample(samplerState, smTex + float2(dx, dy)	).x	+ epsilon < depth) ? 0.0f : 1.0f;
+	float s4 = (shadowMap.Sample(samplerState, smTex + float2(-dx, -dy)	).x	+ epsilon < depth) ? 0.0f : 1.0f;
+	float s5 = (shadowMap.Sample(samplerState, smTex + float2(dx, -dy)	).x	+ epsilon < depth) ? 0.0f : 1.0f;
+	float s6 = (shadowMap.Sample(samplerState, smTex + float2(-dx, dy)	).x	+ epsilon < depth) ? 0.0f : 1.0f;
+	float s7 = (shadowMap.Sample(samplerState, smTex + float2(-dx, 0.0f)).x + epsilon < depth) ? 0.0f : 1.0f;
+	float s8 = (shadowMap.Sample(samplerState, smTex + float2(0.0f, -dy)).x + epsilon < depth) ? 0.0f : 1.0f;
 
 	//Averaging the results.
-	float shadowCoeff = (s0 + s1 + s2 + s3) / 4;
+	float shadowCoeff = (s0 + s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8) / 9;
 	//----------------------------------
 
 	// ---- SPECULAR CALCULATIONS ---------
