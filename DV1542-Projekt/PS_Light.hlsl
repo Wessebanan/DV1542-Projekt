@@ -37,7 +37,7 @@ float4 main(PS_IN input) : SV_TARGET
 	float3 lightVec = -lightDir.xyz;
 
 	//--------Shadow stuff----------
-	float epsilon = 0.005f;
+	float epsilon = 0.001f;
 
 	//Converting lightPos.xy to proper texcoords.
 	float2 smTex = float2(0.5f * lightPos.x + 0.5f, -0.5f * lightPos.y + 0.5f);
