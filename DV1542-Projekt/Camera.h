@@ -15,6 +15,8 @@ private:
 	XMVECTOR camRight;
 	XMMATRIX viewMatrix;
 
+	XMVECTOR camLookAt;
+
 	float* terrainData;
 	unsigned int terrainWidth;
 	unsigned int terrainHeight;
@@ -34,4 +36,5 @@ public:
 	XMMATRIX GetViewMatrix();
 	XMVECTOR GetCamPosition();
 
+	XMVECTOR GetViewDir();
 };

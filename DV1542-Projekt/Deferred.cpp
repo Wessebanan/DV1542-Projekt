@@ -335,15 +335,19 @@ void Deferred::InitialGeometryBinds()
 	//Setting the g-buffer textures as render targets.
 	this->direct3D.getDevCon()->OMSetRenderTargets(BUFFER_COUNT, this->renderTargetViews, this->depthStencilView);
 
-	float clearColor[] = { 135.0f / 255.0f,206.0f / 255.0f,250.0f / 255.0f,0 };
 	XMVECTOR normalizedLightDir = this->lightDir;
 	XMVector4Normalize(normalizedLightDir);
-	float clearColor2[] = { -XMVectorGetX(normalizedLightDir), -XMVectorGetY(normalizedLightDir), -XMVectorGetZ(normalizedLightDir) };
-	
+
+	float normalClearColor[] = { -XMVectorGetX(normalizedLightDir), -XMVectorGetY(normalizedLightDir), -XMVectorGetZ(normalizedLightDir) };
+	float diffuseClearColor[] = { 135.0f / 255.0f,206.0f / 255.0f,250.0f / 255.0f,0 };
+	float clearColor[] = { 0, 0, 0, 0 };
+
 	//Clearing the normal g-buffer with a vector pointing towards the light direction to avoid shading of the background.
-	this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[0], clearColor2);
-	
-	for (int i = 1; i < BUFFER_COUNT; i++)
+	this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[0], normalClearColor);
+	//Clearing the diffuse color g-buffer with a sky blue color.
+	this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[1], diffuseClearColor);
+	//Clearing the rest of the g-buffers with a black color.
+	for (int i = 2; i < BUFFER_COUNT; i++)
 	{
 		this->direct3D.getDevCon()->ClearRenderTargetView(this->renderTargetViews[i], clearColor);
 	}
@@ -357,6 +361,7 @@ void Deferred::InitialGeometryBinds()
 	D3D11_MAPPED_SUBRESOURCE transformDataPtr;
 	this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &transformDataPtr);
 	this->WVP.view = this->playerCamera.GetViewMatrix();
+	this->WVP.viewDir = this->playerCamera.GetViewDir();
 	memcpy(transformDataPtr.pData, &this->WVP, sizeof(matrixData));
 	this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);
 

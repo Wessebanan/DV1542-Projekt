@@ -87,6 +87,7 @@ private:
 		XMMATRIX proj;
 		XMMATRIX lightView; //For shadow
 		XMMATRIX lightProj; //mapping.
+		XMVECTOR viewDir; //For GS bf culling.
 	};
 	matrixData WVP;
 

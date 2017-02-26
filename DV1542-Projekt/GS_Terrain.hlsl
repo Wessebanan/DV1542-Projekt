@@ -5,6 +5,7 @@ cbuffer TRANSFORM_BUFFER : register(b0)
 	matrix proj;
 	matrix lightView;
 	matrix lightProj;
+	float4 viewDir;
 }
 
 struct GS_IN
@@ -28,6 +29,9 @@ struct GS_OUT
 [maxvertexcount(3)]
 void main(triangle GS_IN input[3], inout TriangleStream< GS_OUT > output)
 {
+	//The face normal is shared between the three veritces of the triangle.
+	float3 normal = normalize(mul(world, float4(input[0].Normal, 0.0f)).xyz);
+
 	//The distance between the positions of the vertices.
 	float3 dPos1 = input[1].Pos.xyz - input[0].Pos.xyz;
 	float3 dPos2 = input[2].Pos.xyz - input[0].Pos.xyz;
@@ -44,10 +48,7 @@ void main(triangle GS_IN input[3], inout TriangleStream< GS_OUT > output)
 
 	matrix wvp = mul(proj, mul(view, world));
 	matrix lightWvp = mul(lightProj, mul(lightView, world));
-
-	//The face normal is shared between the three veritces of the triangle.
-	float3 normal = normalize(mul(world, float4(input[0].Normal, 0.0f)).xyz);
-
+	
 	for (uint i = 0; i < 3; i++)
 	{
 		GS_OUT element;

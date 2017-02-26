@@ -8,6 +8,8 @@ Camera::Camera() {
 	this->camForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
 	this->camRight = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 
+	this->camLookAt = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
+
 	this->terrainData = nullptr;
 	this->terrainWidth = 0;
 	this->terrainHeight = 0;
@@ -25,8 +27,8 @@ Camera::~Camera()
 
 XMMATRIX Camera::UpdateCamera(float leftRight, float backForward, float upDown, float pitch, float yaw, bool* isJumping, float* totalHeightOfJump) {
 		XMMATRIX camRotationMatrix = XMMatrixRotationRollPitchYaw(pitch, yaw, 0);
-		XMVECTOR camLookAt = XMVector3TransformCoord(this->defaultForward, camRotationMatrix);
-		camLookAt = XMVector3Normalize(camLookAt);
+		this->camLookAt = XMVector3TransformCoord(this->defaultForward, camRotationMatrix);
+		this->camLookAt = XMVector3Normalize(this->camLookAt);
 	
 		XMMATRIX rotateYTempMatrix = XMMatrixRotationY(yaw);
 	
@@ -81,9 +83,9 @@ XMMATRIX Camera::UpdateCamera(float leftRight, float backForward, float upDown, 
 			this->camPosition = XMVectorSetY(this->camPosition, this->CalculateHeight(XMVectorGetX(camPosition), XMVectorGetZ(camPosition)));
 		}
 
-		camLookAt = camPosition + camLookAt;
+		this->camLookAt += camPosition;
 		
-		this->viewMatrix = XMMatrixLookAtLH(camPosition, camLookAt, camUp);
+		this->viewMatrix = XMMatrixLookAtLH(camPosition, this->camLookAt, camUp);
 		return this->viewMatrix;
 }
 
@@ -131,5 +133,10 @@ XMMATRIX Camera::GetViewMatrix()
 XMVECTOR Camera::GetCamPosition()
 {
 	return this->camPosition;
+}
+
+XMVECTOR Camera::GetViewDir()
+{
+	return XMVector3Normalize(this->camLookAt - this->camPosition);
 }
 
