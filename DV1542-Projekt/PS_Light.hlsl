@@ -36,7 +36,7 @@ float4 main(PS_IN input) : SV_TARGET
 	float3 lightVec = -lightDir.xyz;
 
 	//--------Shadow stuff----------
-	float epsilon = 0.001f;
+	float epsilon = 0.05f;
 	lightPos.xy /= lightPos.w;
 	float2 smTex = float2(0.5f * lightPos.x + 0.5f, -0.5f * lightPos.y + 0.5f);
 	float depth = lightPos.z / lightPos.w;
