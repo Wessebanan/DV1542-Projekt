@@ -2,16 +2,16 @@
 
 Camera::Camera() {
 	this->defaultForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	this->defaultRight = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
-	this->camPosition = XMVectorSet(0.0f, 100.0f, 0.0f, 0.0f);
-	this->camUp = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-	this->camForward = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
-	this->camRight = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	this->defaultRight	 = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
+	this->camPosition	 = XMVectorSet(0.0f, 100.0f, 0.0f, 0.0f);
+	this->camUp			 = XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
+	this->camForward	 = XMVectorSet(0.0f, 0.0f, 1.0f, 0.0f);
+	this->camRight		 = XMVectorSet(1.0f, 0.0f, 0.0f, 0.0f);
 
 	this->camLookAt = XMVectorSet(0.0f, 0.0f, 0.0f, 0.0f);
 
-	this->terrainData = nullptr;
-	this->terrainWidth = 0;
+	this->terrainData	= nullptr;
+	this->terrainWidth	= 0;
 	this->terrainHeight = 0;
 
 	this->viewMatrix = XMMatrixLookAtLH(this->camPosition, this->defaultForward, this->camUp);
@@ -93,8 +93,8 @@ void Camera::SetTerrainData(float* dataArray, unsigned int width, unsigned int h
 	if (this->terrainData != nullptr) {
 		delete[] this->terrainData;
 	}
-	this->terrainData = dataArray;
-	this->terrainWidth = width;
+	this->terrainData	= dataArray;
+	this->terrainWidth	= width;
 	this->terrainHeight = height;
 }
 
@@ -115,8 +115,8 @@ float Camera::CalculateHeight(float newXPos, float newZPos) {
 	}
 	double upperZPos = lowerZPos + 1;
 
-	double bottomLeftValue = this->terrainData[(int)lowerXPos + (int)lowerZPos * this->terrainWidth];
-	double topLeftValue = this->terrainData[(int)upperXPos + (int)lowerZPos * this->terrainWidth];
+	double bottomLeftValue	= this->terrainData[(int)lowerXPos + (int)lowerZPos * this->terrainWidth];
+	double topLeftValue		= this->terrainData[(int)upperXPos + (int)lowerZPos * this->terrainWidth];
 	double bottomRightValue = this->terrainData[(int)lowerXPos + (int)upperZPos * this->terrainWidth];
 
 	double lerpX = 100.0f * bottomLeftValue + lerpValueX * (topLeftValue - bottomLeftValue);

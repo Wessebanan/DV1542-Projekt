@@ -41,7 +41,7 @@ float4 main(PS_IN input) : SV_TARGET
 
 	//Converting lightPos.xy to proper texcoords.
 	float2 smTex = float2(0.5f * lightPos.x + 0.5f, -0.5f * lightPos.y + 0.5f);
-	float depth = lightPos.z / lightPos.w;
+	float depth = lightPos.z;
 
 	float dx = 1.0f / shadowDimensions.x;
 	float dy = 1.0f / shadowDimensions.y;
@@ -57,8 +57,8 @@ float4 main(PS_IN input) : SV_TARGET
 	float s7 = (shadowMap.Sample(samplerState, smTex + float2(-dx, 0.0f)).x + epsilon < depth) ? 0.0f : 1.0f;
 	float s8 = (shadowMap.Sample(samplerState, smTex + float2(0.0f, -dy)).x + epsilon < depth) ? 0.0f : 1.0f;
 
-	//Averaging the results.
-	float shadowCoeff = (s0 + s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8) / 9;
+	//Averaging the results to blur the edges of the shadow.
+	float shadowCoeff = (s0 + s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8) / 9.0f;
 	//----------------------------------
 
 	// ---- SPECULAR CALCULATIONS ---------

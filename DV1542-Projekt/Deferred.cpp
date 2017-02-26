@@ -8,18 +8,18 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->direct3D.Initialize(this->window.GetWindow());
 
 	this->lightDir = XMVectorSet(1.0f, -1.0f, 0.0f, 0.0f);
-	this->shadowMapHeight	= 8192;
-	this->shadowMapWidth	= 8192;
+	this->shadowMapHeight = 8192;
+	this->shadowMapWidth  = 8192;
 
 	if (!this->Initialize())
 	{
 		MessageBoxA(NULL, "Error initializing deferred", NULL, MB_OK);
 	}
-	this->shadowmap.Initialize(&this->direct3D, &this->viewPort, this->shadowMapHeight, this->shadowMapWidth, this->lightDir, this->vertexLayout);
+	this->shadowmap.Initialize(&this->direct3D, this->shadowMapHeight, this->shadowMapWidth, this->lightDir, this->vertexLayout);
 
 	this->WVP.world = XMMatrixIdentity();
-	this->WVP.view = XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
-	this->WVP.proj = XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 20000.0f);
+	this->WVP.view	= XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
+	this->WVP.proj	= XMMatrixPerspectiveFovLH(XM_PI*0.45f, 4.0f / 3.0f, 0.1f, 2000.0f);
 	this->WVP.lightView = this->shadowmap.getLightView();
 	this->WVP.lightProj = this->shadowmap.getLightProj();
 
@@ -565,10 +565,10 @@ void Deferred::DrawShadow(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffe
 void Deferred::CreateTransformBuffer()
 {
 	D3D11_BUFFER_DESC WVPdesc = {};
-	WVPdesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	WVPdesc.ByteWidth = sizeof(matrixData);
-	WVPdesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	WVPdesc.Usage = D3D11_USAGE_DYNAMIC;
+	WVPdesc.BindFlags		= D3D11_BIND_CONSTANT_BUFFER;
+	WVPdesc.ByteWidth		= sizeof(matrixData);
+	WVPdesc.CPUAccessFlags	= D3D11_CPU_ACCESS_WRITE;
+	WVPdesc.Usage			= D3D11_USAGE_DYNAMIC;
 
 	if (FAILED(this->direct3D.getDevice()->CreateBuffer(&WVPdesc, nullptr, &this->transformBuffer)))
 	{
@@ -580,10 +580,10 @@ void Deferred::CreateTransformBuffer()
 void Deferred::CreateMaterialBuffer() {
 
 	D3D11_BUFFER_DESC materialDesc = {};
-	materialDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	materialDesc.ByteWidth = sizeof(Material);
+	materialDesc.BindFlags		= D3D11_BIND_CONSTANT_BUFFER;
+	materialDesc.ByteWidth		= sizeof(Material);
 	materialDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	materialDesc.Usage = D3D11_USAGE_DYNAMIC;
+	materialDesc.Usage			= D3D11_USAGE_DYNAMIC;
 
 	if (FAILED(this->direct3D.getDevice()->CreateBuffer(&materialDesc, nullptr, &this->materialBuffer))) {
 		MessageBoxA(NULL, "Error creating material buffer.", NULL, MB_OK);
@@ -676,10 +676,10 @@ void Deferred::CreateObjectTexture(Material* mat, OBJECT_TYPE type) {
 void Deferred::CreateCamPosBuffer()
 {
 	D3D11_BUFFER_DESC bufDesc = {};
-	bufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufDesc.ByteWidth = sizeof(XMVECTOR);
-	bufDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-	bufDesc.Usage = D3D11_USAGE_DYNAMIC;
+	bufDesc.BindFlags		= D3D11_BIND_CONSTANT_BUFFER;
+	bufDesc.ByteWidth		= sizeof(XMVECTOR);
+	bufDesc.CPUAccessFlags	= D3D11_CPU_ACCESS_WRITE;
+	bufDesc.Usage			= D3D11_USAGE_DYNAMIC;
 
 	if (FAILED(this->direct3D.getDevice()->CreateBuffer(&bufDesc, nullptr, &this->camPosBuffer)))
 	{
@@ -702,7 +702,7 @@ void Deferred::CreateLightDirBuffer()
 	D3D11_BUFFER_DESC bufDesc = {};
 	bufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
 	bufDesc.ByteWidth = sizeof(lightDirBufferStruct);
-	bufDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	bufDesc.Usage	  = D3D11_USAGE_IMMUTABLE;
 
 	D3D11_SUBRESOURCE_DATA subData;
 	subData.pSysMem = &LDBS;

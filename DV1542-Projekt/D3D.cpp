@@ -2,10 +2,6 @@
 
 D3D::D3D()
 {
-	/*this->backBufferRTV = nullptr;
-	this->devCon = nullptr;
-	this->device = nullptr;
-	this->swapChain = nullptr;*/
 }
 
 D3D::~D3D()
@@ -65,14 +61,14 @@ bool D3D::Initialize(HWND window)
 	ZeroMemory(&scd, sizeof(DXGI_SWAP_CHAIN_DESC));
 
 	// fill the swap chain description struct
-	scd.BufferCount = 1;                                    // one back buffer
-	scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;     // use 32-bit color
-	scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;      // how swap chain is to be used
-	scd.OutputWindow = window;                           // the window to be used
-	scd.SampleDesc.Count = 1;                               // how many multisamples
-	scd.Windowed = TRUE;                                    // windowed/full-screen mode
-	scd.BufferDesc.RefreshRate.Denominator = 120;
-	scd.BufferDesc.RefreshRate.Numerator = 1;
+	scd.BufferCount							= 1;                                 
+	scd.BufferDesc.Format					= DXGI_FORMAT_R8G8B8A8_UNORM;  
+	scd.BufferUsage							= DXGI_USAGE_RENDER_TARGET_OUTPUT;  
+	scd.OutputWindow						= window;                           
+	scd.SampleDesc.Count					= 1;                            
+	scd.Windowed							= TRUE;                                 
+	scd.BufferDesc.RefreshRate.Denominator  = 120;
+	scd.BufferDesc.RefreshRate.Numerator	= 1;
 	// create a device, device context and swap chain using the information in the scd struct
 	HRESULT hr = D3D11CreateDeviceAndSwapChain(NULL,
 		D3D_DRIVER_TYPE_HARDWARE,

@@ -75,9 +75,9 @@ void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, OB
 	def->CreateObjectTexture(objectMaterial, objectType);	
 
 	D3D11_BUFFER_DESC vertexBufferDesc = {};
-	vertexBufferDesc.ByteWidth = sizeof(Vertex) * vertices.size();
-	vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	vertexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	vertexBufferDesc.ByteWidth	= sizeof(Vertex) * vertices.size();
+	vertexBufferDesc.BindFlags	= D3D11_BIND_VERTEX_BUFFER;
+	vertexBufferDesc.Usage		= D3D11_USAGE_DEFAULT;
 
 	D3D11_SUBRESOURCE_DATA objectData = {};
 	objectData.pSysMem = vertices.data();
@@ -88,11 +88,11 @@ void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, OB
 	}
 
 	D3D11_BUFFER_DESC indexBufferDesc = {};
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(unsigned int) * indices.size();
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.Usage			= D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth		= sizeof(unsigned int) * indices.size();
+	indexBufferDesc.BindFlags		= D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags	= 0;
+	indexBufferDesc.MiscFlags		= 0;
 
 	D3D11_SUBRESOURCE_DATA indexData;
 	indexData.pSysMem = indices.data();
@@ -169,11 +169,11 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 	}
 
 	D3D11_BUFFER_DESC indexBufferDesc = {};
-	indexBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	indexBufferDesc.ByteWidth = sizeof(DWORD) * (6 * (rows - 1) * (columns - 1));
-	indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
-	indexBufferDesc.CPUAccessFlags = 0;
-	indexBufferDesc.MiscFlags = 0;
+	indexBufferDesc.Usage			= D3D11_USAGE_DEFAULT;
+	indexBufferDesc.ByteWidth		= sizeof(DWORD) * (6 * (rows - 1) * (columns - 1));
+	indexBufferDesc.BindFlags		= D3D11_BIND_INDEX_BUFFER;
+	indexBufferDesc.CPUAccessFlags	= 0;
+	indexBufferDesc.MiscFlags		= 0;
 
 	D3D11_SUBRESOURCE_DATA indexData;
 	indexData.pSysMem = indices;
@@ -185,9 +185,9 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 	}
 
 	D3D11_BUFFER_DESC terrainBufferDesc = {};
-	terrainBufferDesc.ByteWidth = sizeof(Vertex) * rows * columns;
-	terrainBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-	terrainBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+	terrainBufferDesc.ByteWidth	= sizeof(Vertex) * rows * columns;
+	terrainBufferDesc.BindFlags	= D3D11_BIND_VERTEX_BUFFER;
+	terrainBufferDesc.Usage		= D3D11_USAGE_DEFAULT;
 
 	D3D11_SUBRESOURCE_DATA terrainData = {};
 	terrainData.pSysMem = vertices;

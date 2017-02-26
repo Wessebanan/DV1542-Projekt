@@ -4,7 +4,7 @@
 #include <fstream>
 NoiseGenerator::NoiseGenerator(ID3D11Device* device, int width, int height)
 {
-	this->width = width;
+	this->width	 = width;
 	this->height = height;
 	this->noiseTextureDesc.Width = this->width;
 	this->noiseTextureDesc.Height = this->height;

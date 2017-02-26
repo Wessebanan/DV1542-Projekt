@@ -34,54 +34,46 @@ private:
 	int shadowMapHeight;
 
 	// 0: normals, 1: diffuses, 2: speculars, 3: positions, 4: light positions
-	ID3D11Texture2D* textures[BUFFER_COUNT] = { nullptr };
-	ID3D11RenderTargetView* renderTargetViews[BUFFER_COUNT] = { nullptr };
+	ID3D11Texture2D* textures[BUFFER_COUNT]						= { nullptr };
+	ID3D11RenderTargetView* renderTargetViews[BUFFER_COUNT]		= { nullptr };
 	ID3D11ShaderResourceView* shaderResourceViews[BUFFER_COUNT] = { nullptr };
 
 	ID3D11ShaderResourceView* unbindingSRVs[BUFFER_COUNT] = { NULL };
-	ID3D11RenderTargetView* unbindingRTVs[BUFFER_COUNT] = { NULL };
+	ID3D11RenderTargetView* unbindingRTVs[BUFFER_COUNT]	  = { NULL };
 
 	D3D11_VIEWPORT viewPort;
 	ID3D11DepthStencilView* depthStencilView = nullptr;
-	ID3D11Texture2D* depthStencilBuffer = nullptr;
+	ID3D11Texture2D* depthStencilBuffer		 = nullptr;
 
 	ID3D11InputLayout* vertexLayout = nullptr;
 
-	ID3D11VertexShader* vertexShaderTerrain = nullptr;
-	ID3D11VertexShader* vertexShaderLight = nullptr;
+	ID3D11VertexShader* vertexShaderTerrain		= nullptr;
+	ID3D11VertexShader* vertexShaderLight		= nullptr;
 	ID3D11GeometryShader* geometryShaderTerrain = nullptr;
-	ID3D11PixelShader* pixelShaderTerrain = nullptr;
-	ID3D11PixelShader* pixelShaderLight = nullptr;
+	ID3D11PixelShader* pixelShaderTerrain		= nullptr;
+	ID3D11PixelShader* pixelShaderLight			= nullptr;
 
 	ID3D11VertexShader* vertexShaderGenericObject = nullptr;
-	ID3D11PixelShader* pixelShaderGenericObject = nullptr;
+	ID3D11PixelShader* pixelShaderGenericObject	  = nullptr;
 
 	ID3D11SamplerState* samplerState = nullptr;
-	ID3D11Buffer* transformBuffer = nullptr;
-	ID3D11Buffer* materialBuffer = nullptr;
+	ID3D11Buffer* transformBuffer	 = nullptr;
+	ID3D11Buffer* materialBuffer	 = nullptr;
 
-	Material* cubeMaterial = nullptr;
-	Material* bearMaterial = nullptr;
+	Material* cubeMaterial	 = nullptr;
+	Material* bearMaterial	 = nullptr;
 	Material* sphereMaterial = nullptr;
-
-	ID3D11Texture2D* grassTexture = nullptr;
-	ID3D11Texture2D* dirtTexture = nullptr;
-	ID3D11Texture2D* rockTexture = nullptr;
-	ID3D11Texture2D* brickTexture = nullptr;
-	ID3D11Texture2D* bearTexture = nullptr;
-	ID3D11Texture2D* sphereTexture = nullptr;
-	ID3D11Texture2D* TerrainNormalMap = nullptr;
 
 	//grass: 0, dirt: 1, rock: 2 (for terrain).
 	ID3D11ShaderResourceView* textureSRVs[TEXTURE_COUNT] = { nullptr };
 
-	ID3D11ShaderResourceView* grassSRV = nullptr;
-	ID3D11ShaderResourceView* dirtSRV = nullptr;
-	ID3D11ShaderResourceView* rockSRV = nullptr;
-	ID3D11ShaderResourceView* brickSRV = nullptr;
-	ID3D11ShaderResourceView* bearSRV = nullptr;
-	ID3D11ShaderResourceView* sphereSRV = nullptr;
-	ID3D11ShaderResourceView* TerrainNormalSRV = nullptr;
+	ID3D11ShaderResourceView* grassSRV			= nullptr;
+	ID3D11ShaderResourceView* dirtSRV			= nullptr;
+	ID3D11ShaderResourceView* rockSRV			= nullptr;
+	ID3D11ShaderResourceView* brickSRV			= nullptr;
+	ID3D11ShaderResourceView* bearSRV			= nullptr;
+	ID3D11ShaderResourceView* sphereSRV			= nullptr;
+	ID3D11ShaderResourceView* TerrainNormalSRV  = nullptr;
 
 	struct matrixData
 	{
@@ -96,7 +88,7 @@ private:
 
 	Camera playerCamera;
 
-	ID3D11Buffer* camPosBuffer = nullptr;
+	ID3D11Buffer* camPosBuffer	 = nullptr;
 	ID3D11Buffer* lightDirBuffer = nullptr;
 
 	XMVECTOR camPos;

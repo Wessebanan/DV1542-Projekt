@@ -3,11 +3,11 @@
 Window::Window(HINSTANCE instance) :
 	hInstance(instance)
 {
-	this->window = nullptr;
+	this->window	= nullptr;
 	this->hInstance = GetModuleHandle(0);
-	this->title = L"DV1542 - Projekt - Robin W Rikard M";
-	this->width = 1280;
-	this->height = 720;
+	this->title		= L"DV1542 - Projekt - Robin W Rikard M";
+	this->width		= 1280;
+	this->height	= 720;
 }
 
 Window::~Window()
@@ -43,11 +43,11 @@ bool Window::Initialize()
 	ZeroMemory(&wc, sizeof(WNDCLASSEX));
 
 	// fill in the struct with the needed information
-	wc.cbSize = sizeof(WNDCLASSEX);
-	wc.style = CS_HREDRAW | CS_VREDRAW;
-	wc.lpfnWndProc = this->WindowProc;
-	wc.hInstance = this->hInstance;
-	wc.hCursor = LoadCursor(NULL, IDC_CROSS);
+	wc.cbSize		 = sizeof(WNDCLASSEX);
+	wc.style		 = CS_HREDRAW | CS_VREDRAW;
+	wc.lpfnWndProc	 = this->WindowProc;
+	wc.hInstance	 = this->hInstance;
+	wc.hCursor		 = LoadCursor(NULL, IDC_CROSS);
 	wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
 	wc.lpszClassName = L"WindowClass1";
 
