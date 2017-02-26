@@ -30,18 +30,21 @@ Object Cube;
 Object Bear;
 Object Sphere;
 
-XMMATRIX SphereWorldMatrices[10];
+XMMATRIX SphereWorldMatrices[11];
 
-bool shadowsMapped = false;
+float rotationAngle = 0.0f;
 
 void RenderDeferred(Deferred* def) 
 {
+	SphereWorldMatrices[10] = XMMatrixScaling(30, 30, 30) * XMMatrixTranslation(100, 0, 0) * XMMatrixRotationY(rotationAngle) * XMMatrixTranslation(500, 100, 500);
+	rotationAngle += 0.005f;
+
 	//-------Shadow map--------
 	def->GetShadowmap()->BindShadowPass();
 	def->DrawShadow(Terrain.vertexBuffer, Terrain.indexBuffer, Terrain.numIndices, Terrain.world);
 	def->DrawShadow(Cube.vertexBuffer, Cube.indexBuffer, Cube.numIndices, Cube.world);
 	def->DrawShadow(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world);
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 11; i++)
 	{
 		def->DrawShadow(Sphere.vertexBuffer, Sphere.indexBuffer, Sphere.numIndices, SphereWorldMatrices[i]);
 	}	
@@ -53,7 +56,7 @@ void RenderDeferred(Deferred* def)
 	def->BindGenericObject();
 	def->Draw(Cube.vertexBuffer, Cube.indexBuffer, Cube.numIndices, Cube.world, CUBE);
 	def->Draw(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world, BEAR);
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < 11; i++)
 	{
 		def->Draw(Sphere.vertexBuffer, Sphere.indexBuffer, Sphere.numIndices, SphereWorldMatrices[i], SPHERE);
 	}

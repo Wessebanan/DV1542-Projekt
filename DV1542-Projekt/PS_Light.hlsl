@@ -32,20 +32,33 @@ float4 main(PS_IN input) : SV_TARGET
 	float4 color = diffuses.Sample(samplerState, input.texcoord);
 	float4 specular = speculars.Sample(samplerState, input.texcoord);
 	float4 lightPos = lightPositions.Sample(samplerState, input.texcoord);
-	float depth = shadowMap.Sample(samplerState, input.texcoord);
 	//------------------------------------
-
 	float3 lightVec = -lightDir.xyz;
+
+	//--------Shadow stuff----------
+	bool inShadow = false;
+
+	lightPos.xy /= lightPos.w;
+
+	float2 smTex = float2(0.5f * lightPos.x + 0.5f, -0.5f * lightPos.y + 0.5f);
+
+	float depth = lightPos.z / lightPos.w;
+	float smDepth = shadowMap.Sample(samplerState, smTex).x;
+
+	if (smDepth + 0.001f < depth)
+	{
+		inShadow = true;
+	}
+	//----------------------------------
 
 	// ---- SPECULAR CALCULATIONS ---------
 	float3 reflectedLightVec = 2 * normal * dot(-normal, lightDir.xyz);
 	float3 reflection = normalize(lightDir.xyz + reflectedLightVec);
 	float3 pointToCamera = normalize(camPos.xyz - position);
 
-	float specularReflection = 0.0f;
-	
+	float specularReflection = 0.0f;	
 
-	if (dot(normalize(lightDir), normal) <= 0.0f) {
+	if (dot(normalize(lightDir.xyz), normal) <= 0.0f) {
 		specularReflection = saturate(specular.x * pow(saturate(dot(reflection, pointToCamera)), specular.w));
 	}
 	//-------------------------------------
@@ -55,9 +68,22 @@ float4 main(PS_IN input) : SV_TARGET
 
 	brightness = saturate(brightness);
 
+	if (inShadow)
+	{
+		brightness = 0;
+	}
+
+	//Check if sky.
+	if (normal.x < -0.9f && 
+		normal.x > -1.1f && 
+		normal.y < 1.1f &&
+		normal.y > 0.9f)
+	{
+		brightness = 1;
+	}
 
 	return saturate(color * saturate(brightness + ambient) + specularReflection);
-
+	
 	// return saturate(specularReflection); // Used for testing purposes
 	// return float4(pointToCamera, 1.0f); // Used for testing purposes
 }

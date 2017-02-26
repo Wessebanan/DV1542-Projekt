@@ -1,29 +1,11 @@
 #include "Deferred.h"
 #include "NoiseGenerator.h"
-//#include <DirectXTex.h>
 
 Deferred::Deferred(HINSTANCE hInstance) :
 	window(hInstance)
 {	
 	this->window.Initialize();
 	this->direct3D.Initialize(this->window.GetWindow());
-
-	for (int i = 0; i < BUFFER_COUNT; i++) 
-	{
-		this->textures[i] = nullptr;
-		this->renderTargetViews[i] = nullptr;
-		this->shaderResourceViews[i] = nullptr;
-	}
-	this->depthStencilBuffer = nullptr;
-	this->depthStencilView = nullptr;
-	this->vertexLayout = nullptr;
-	this->vertexShaderTerrain = nullptr;
-	this->geometryShaderTerrain = nullptr;
-	this->pixelShaderTerrain = nullptr;
-	this->pixelShaderLight = nullptr;
-	this->samplerState = nullptr;
-	this->transformBuffer = nullptr;
-	this->camPosBuffer = nullptr;
 
 	this->lightDir = XMVectorSet(1.0f, -1.0f, 0.0f, 0.0f);
 
