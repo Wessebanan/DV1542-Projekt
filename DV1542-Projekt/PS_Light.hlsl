@@ -27,17 +27,18 @@ struct PS_IN
 float4 main(PS_IN input) : SV_TARGET
 {
 	//-------Information gathering--------
-	float3 normal = normals.Sample(samplerState, input.texcoord).xyz;
-	float3 position = positions.Sample(samplerState, input.texcoord).xyz;
-	float4 color = diffuses.Sample(samplerState, input.texcoord);
-	float4 specular = speculars.Sample(samplerState, input.texcoord);
-	float4 lightPos = lightPositions.Sample(samplerState, input.texcoord);
+	float3 normal = normals.Sample			(samplerState, input.texcoord).xyz;
+	float3 position = positions.Sample		(samplerState, input.texcoord).xyz;
+	float4 color = diffuses.Sample			(samplerState, input.texcoord);
+	float4 specular = speculars.Sample		(samplerState, input.texcoord);
+	float4 lightPos = lightPositions.Sample	(samplerState, input.texcoord);
 	//------------------------------------
 	float3 lightVec = -lightDir.xyz;
 
 	//--------Shadow stuff----------
-	float epsilon = 0.05f;
-	lightPos.xy /= lightPos.w;
+	float epsilon = 0.005f;
+
+	//Converting lightPos.xy to proper texcoords.
 	float2 smTex = float2(0.5f * lightPos.x + 0.5f, -0.5f * lightPos.y + 0.5f);
 	float depth = lightPos.z / lightPos.w;
 
@@ -45,10 +46,10 @@ float4 main(PS_IN input) : SV_TARGET
 	float dy = 1.0f / 720.0f;
 
 	//Multisampling for antialiasing, 0 if in shadow and 1 if not.
-	float s0 = (shadowMap.Sample(samplerState, smTex).x + epsilon < depth) ? 0.0f : 1.0f;
-	float s1 = (shadowMap.Sample(samplerState, smTex + float2(dx, 0.0f)).x + epsilon < depth) ? 0.0f : 1.0f;
-	float s2 = (shadowMap.Sample(samplerState, smTex + float2(0.0f, dy)).x + epsilon < depth) ? 0.0f : 1.0f;
-	float s3 = (shadowMap.Sample(samplerState, smTex + float2(dx, dy)).x + epsilon < depth) ? 0.0f : 1.0f;
+	float s0 = (shadowMap.Sample(samplerState, smTex).x							+ epsilon < depth) ? 0.0f : 1.0f;
+	float s1 = (shadowMap.Sample(samplerState, smTex	+ float2(dx, 0.0f)).x	+ epsilon < depth) ? 0.0f : 1.0f;
+	float s2 = (shadowMap.Sample(samplerState, smTex	+ float2(0.0f, dy)).x	+ epsilon < depth) ? 0.0f : 1.0f;
+	float s3 = (shadowMap.Sample(samplerState, smTex	+ float2(dx, dy)).x		+ epsilon < depth) ? 0.0f : 1.0f;
 
 	//Averaging the results.
 	float shadowCoeff = (s0 + s1 + s2 + s3) / 4;

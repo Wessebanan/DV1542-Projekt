@@ -212,15 +212,13 @@ bool Deferred::Initialize()
 	bool result = true;
 
 	D3D11_SAMPLER_DESC sDesc{};
-	sDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT; //Point sampling for min, mag and mip.
-
-	sDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP; //Doesn't really matter because
-	sDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP; //the range of the texcoords is
-	sDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP; //[0;1] anyway.
-
-	sDesc.MaxAnisotropy = 1;
+	sDesc.Filter		 = D3D11_FILTER_MIN_MAG_MIP_POINT; //Point sampling for min, mag and mip.
+	sDesc.AddressU		 = D3D11_TEXTURE_ADDRESS_WRAP; //Doesn't really matter because
+	sDesc.AddressV		 = D3D11_TEXTURE_ADDRESS_WRAP; //the range of the texcoords is
+	sDesc.AddressW		 = D3D11_TEXTURE_ADDRESS_WRAP; //[0;1] anyway.
+	sDesc.MaxAnisotropy	 = 1;
 	sDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	sDesc.MaxLOD = D3D11_FLOAT32_MAX;
+	sDesc.MaxLOD		 = D3D11_FLOAT32_MAX;
 
 	if (FAILED(this->direct3D.getDevice()->CreateSamplerState(&sDesc, &this->samplerState)))
 	{
@@ -229,16 +227,16 @@ bool Deferred::Initialize()
 
 	// Creating the textures.
 	D3D11_TEXTURE2D_DESC texDesc{};
-	texDesc.Width = this->window.GetWidth();
-	texDesc.Height = this->window.GetHeight();
-	texDesc.MipLevels = 1;
-	texDesc.ArraySize = 1;
-	texDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+	texDesc.Width			 = this->window.GetWidth();
+	texDesc.Height			 = this->window.GetHeight();
+	texDesc.MipLevels		 = 1;
+	texDesc.ArraySize		 = 1;
+	texDesc.Format			 = DXGI_FORMAT_R32G32B32A32_FLOAT;
 	texDesc.SampleDesc.Count = 1;
-	texDesc.Usage = D3D11_USAGE_DEFAULT;
-	texDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
-	texDesc.CPUAccessFlags = 0;
-	texDesc.MiscFlags = 0;
+	texDesc.Usage			 = D3D11_USAGE_DEFAULT;
+	texDesc.BindFlags		 = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+	texDesc.CPUAccessFlags	 = 0;
+	texDesc.MiscFlags		 = 0;
 
 	for (int i = 0; i < BUFFER_COUNT; i++) 
 	{
@@ -250,8 +248,8 @@ bool Deferred::Initialize()
 
 	// Creating the render target views.
 	D3D11_RENDER_TARGET_VIEW_DESC RTviewDesc{};
-	RTviewDesc.Format = texDesc.Format;
-	RTviewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+	RTviewDesc.Format			  = texDesc.Format;
+	RTviewDesc.ViewDimension	  = D3D11_RTV_DIMENSION_TEXTURE2D;
 	RTviewDesc.Texture2D.MipSlice = 0;
 
 	for (int i = 0; i < BUFFER_COUNT; i++) 
@@ -264,10 +262,10 @@ bool Deferred::Initialize()
 
 	// Creating the shader resource views.
 	D3D11_SHADER_RESOURCE_VIEW_DESC SRviewDesc{};
-	SRviewDesc.Format = texDesc.Format;
-	SRviewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	SRviewDesc.Format					 = texDesc.Format;
+	SRviewDesc.ViewDimension			 = D3D11_SRV_DIMENSION_TEXTURE2D;
 	SRviewDesc.Texture2D.MostDetailedMip = 0;
-	SRviewDesc.Texture2D.MipLevels = 1;
+	SRviewDesc.Texture2D.MipLevels		 = 1;
 
 	for (int i = 0; i < BUFFER_COUNT; i++) 
 	{
@@ -279,14 +277,14 @@ bool Deferred::Initialize()
 	
 	// Creating the depth stencil view and the depth stencil buffer.	
 	D3D11_TEXTURE2D_DESC depthBufferDesc{};
-	depthBufferDesc.Width = this->window.GetWidth();
-	depthBufferDesc.Height = this->window.GetHeight();
-	depthBufferDesc.MipLevels = 1;
-	depthBufferDesc.ArraySize = 1;
-	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthBufferDesc.Width			 = this->window.GetWidth();
+	depthBufferDesc.Height			 = this->window.GetHeight();
+	depthBufferDesc.MipLevels		 = 1;
+	depthBufferDesc.ArraySize		 = 1;
+	depthBufferDesc.Format			 = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	depthBufferDesc.SampleDesc.Count = 1;
-	depthBufferDesc.Usage = D3D11_USAGE_DEFAULT;
-	depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	depthBufferDesc.Usage			 = D3D11_USAGE_DEFAULT;
+	depthBufferDesc.BindFlags		 = D3D11_BIND_DEPTH_STENCIL;
 
 	if (FAILED(this->direct3D.getDevice()->CreateTexture2D(&depthBufferDesc, NULL, &this->depthStencilBuffer)))
 	{
@@ -294,8 +292,8 @@ bool Deferred::Initialize()
 	}
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
-	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	depthStencilViewDesc.Format				= DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilViewDesc.ViewDimension		= D3D11_DSV_DIMENSION_TEXTURE2D;
 	depthStencilViewDesc.Texture2D.MipSlice = 0;
 
 	if (FAILED(this->direct3D.getDevice()->CreateDepthStencilView(this->depthStencilBuffer, &depthStencilViewDesc, &this->depthStencilView)))
@@ -304,8 +302,8 @@ bool Deferred::Initialize()
 	}	
 	
 	// Creating the viewport.
-	this->viewPort.Width = this->window.GetWidth();
-	this->viewPort.Height = this->window.GetHeight();
+	this->viewPort.Width	= this->window.GetWidth();
+	this->viewPort.Height	= this->window.GetHeight();
 	this->viewPort.MinDepth = 0.0f;
 	this->viewPort.MaxDepth = 1.0f;
 	this->viewPort.TopLeftX = 0;
