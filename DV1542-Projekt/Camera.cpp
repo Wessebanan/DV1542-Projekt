@@ -135,8 +135,3 @@ XMVECTOR Camera::GetCamPosition()
 	return this->camPosition;
 }
 
-XMVECTOR Camera::GetViewDir()
-{
-	return XMVector3Normalize(this->camLookAt - this->camPosition);
-}
-

@@ -37,7 +37,7 @@ float rotationAngle = 0.0f;
 void RenderDeferred(Deferred* def) 
 {
 	SphereWorldMatrices[10] = XMMatrixScaling(30, 30, 30) * XMMatrixTranslation(100, 0, 0) * XMMatrixRotationY(rotationAngle) * XMMatrixTranslation(500, 100, 500);
-	rotationAngle += 0.005f;
+	rotationAngle += GetFrameTime() * 1000;
 
 	//-------Shadow map drawing--------
 	def->GetShadowmap()->BindShadowPass();

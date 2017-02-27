@@ -80,6 +80,7 @@ Deferred::~Deferred()
 	this->bearSRV->Release();
 	this->sphereSRV->Release();
 	this->TerrainNormalSRV->Release();
+	this->noCull->Release();
 }
 
 void Deferred::CreateShaders()
@@ -324,6 +325,12 @@ bool Deferred::Initialize()
 	this->textureSRVs[1] = this->dirtSRV;
 	this->textureSRVs[2] = this->rockSRV;
 
+	D3D11_RASTERIZER_DESC rDesc{};
+	this->direct3D.getDevice()->CreateRasterizerState(&rDesc, &this->bfCull);
+	rDesc.CullMode = D3D11_CULL_NONE;
+	rDesc.FillMode = D3D11_FILL_SOLID;
+	this->direct3D.getDevice()->CreateRasterizerState(&rDesc, &this->noCull);
+
 	return result;
 }
 
@@ -361,7 +368,7 @@ void Deferred::InitialGeometryBinds()
 	D3D11_MAPPED_SUBRESOURCE transformDataPtr;
 	this->direct3D.getDevCon()->Map(this->transformBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &transformDataPtr);
 	this->WVP.view = this->playerCamera.GetViewMatrix();
-	this->WVP.viewDir = this->playerCamera.GetViewDir();
+	this->WVP.viewDir = this->playerCamera.GetCamPosition();
 	memcpy(transformDataPtr.pData, &this->WVP, sizeof(matrixData));
 	this->direct3D.getDevCon()->Unmap(this->transformBuffer, 0);
 
@@ -387,7 +394,10 @@ void Deferred::BindTerrain()
 	this->direct3D.getDevCon()->VSSetSamplers(0, 1, &this->samplerState);
 
 	//Setting the normal map to the pixel shader.
-	this->direct3D.getDevCon()->PSSetShaderResources(3, 1, &this->TerrainNormalSRV);	
+	this->direct3D.getDevCon()->PSSetShaderResources(3, 1, &this->TerrainNormalSRV);
+
+	//Disabling back face culling for terrain because it is done in GS.
+	this->direct3D.getDevCon()->RSSetState(this->noCull);
 }
 
 void Deferred::BindGenericObject()
@@ -396,6 +406,9 @@ void Deferred::BindGenericObject()
 	this->direct3D.getDevCon()->VSSetShader(this->vertexShaderGenericObject, nullptr, 0);
 	this->direct3D.getDevCon()->PSSetShader(this->pixelShaderGenericObject, nullptr, 0);
 	this->direct3D.getDevCon()->GSSetShader(nullptr, nullptr, 0);
+
+	//Enabling back face culling again because there is no GS.
+	this->direct3D.getDevCon()->RSSetState(this->bfCull);
 }
 
 void Deferred::LightPass()

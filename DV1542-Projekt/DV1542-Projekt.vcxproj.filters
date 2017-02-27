@@ -39,6 +39,9 @@
     <ClCompile Include="OBJLoader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Blurrer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="PixelShader.hlsl" />
@@ -50,6 +53,7 @@
     <FxCompile Include="VS_GenericObject.hlsl" />
     <FxCompile Include="PS_GenericObject.hlsl" />
     <FxCompile Include="VS_Shadow.hlsl" />
+    <FxCompile Include="CS_Blur.hlsl" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Deferred.h">

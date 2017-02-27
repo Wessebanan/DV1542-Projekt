@@ -47,6 +47,9 @@ private:
 
 	ID3D11InputLayout* vertexLayout = nullptr;
 
+	ID3D11RasterizerState* noCull = nullptr;
+	ID3D11RasterizerState* bfCull = nullptr;
+
 	ID3D11VertexShader* vertexShaderTerrain		= nullptr;
 	ID3D11VertexShader* vertexShaderLight		= nullptr;
 	ID3D11GeometryShader* geometryShaderTerrain = nullptr;

@@ -68,11 +68,13 @@ float4 main(PS_IN input) : SV_TARGET
 	float3 reflection = normalize(lightDir.xyz + reflectedLightVec);
 	float3 pointToCamera = normalize(camPos.xyz - position);
 
-	float specularReflection = 0.0f;	
+	float specularReflection = (dot(normalize(lightDir.xyz), normal) <= 0.0f && !inShadow) ? saturate(specular.x * pow(saturate(dot(reflection, pointToCamera)), specular.w)) : 0.0f;
 
-	if (dot(normalize(lightDir.xyz), normal) <= 0.0f && !inShadow) {
+	/*if (dot(normalize(lightDir.xyz), normal) <= 0.0f && !inShadow) {
 		specularReflection = saturate(specular.x * pow(saturate(dot(reflection, pointToCamera)), specular.w));
 	}
+
+	(dot(normalize(lightDir.xyz), normal) <= 0.0f && !inShadow)*/
 	//-------------------------------------
 
 	float4 ambient = { 0.10f, 0.10f, 0.10f, 0.0f };
