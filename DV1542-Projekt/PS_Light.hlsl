@@ -37,7 +37,7 @@ float4 main(PS_IN input) : SV_TARGET
 	float3 lightVec = -lightDir.xyz;
 
 	//--------Shadow stuff----------
-	float epsilon = 0.001f;
+	float epsilon = 0.0005f;	
 
 	//Converting lightPos.xy to proper texcoords.
 	float2 smTex = float2(0.5f * lightPos.x + 0.5f, -0.5f * lightPos.y + 0.5f);
@@ -59,6 +59,8 @@ float4 main(PS_IN input) : SV_TARGET
 
 	//Averaging the results to blur the edges of the shadow.
 	float shadowCoeff = (s0 + s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8) / 9.0f;
+	
+	bool inShadow = (shadowCoeff < epsilon) ? true : false;
 	//----------------------------------
 
 	// ---- SPECULAR CALCULATIONS ---------
@@ -68,7 +70,7 @@ float4 main(PS_IN input) : SV_TARGET
 
 	float specularReflection = 0.0f;	
 
-	if (dot(normalize(lightDir.xyz), normal) <= 0.0f) {
+	if (dot(normalize(lightDir.xyz), normal) <= 0.0f && !inShadow) {
 		specularReflection = saturate(specular.x * pow(saturate(dot(reflection, pointToCamera)), specular.w));
 	}
 	//-------------------------------------

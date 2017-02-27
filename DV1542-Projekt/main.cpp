@@ -39,7 +39,7 @@ void RenderDeferred(Deferred* def)
 	SphereWorldMatrices[10] = XMMatrixScaling(30, 30, 30) * XMMatrixTranslation(100, 0, 0) * XMMatrixRotationY(rotationAngle) * XMMatrixTranslation(500, 100, 500);
 	rotationAngle += 0.005f;
 
-	//-------Shadow map--------
+	//-------Shadow map drawing--------
 	def->GetShadowmap()->BindShadowPass();
 	def->DrawShadow(Terrain.vertexBuffer, Terrain.indexBuffer, Terrain.numIndices, Terrain.world);
 	def->DrawShadow(Cube.vertexBuffer, Cube.indexBuffer, Cube.numIndices, Cube.world);
@@ -50,6 +50,7 @@ void RenderDeferred(Deferred* def)
 	}	
 	//-------------------------
 
+	//Binds shared by terrain and generic object.
 	def->InitialGeometryBinds();
 	def->BindTerrain();
 	def->Draw(Terrain.vertexBuffer, Terrain.indexBuffer, Terrain.numIndices, Terrain.world, TERRAIN);
@@ -60,6 +61,7 @@ void RenderDeferred(Deferred* def)
 	{
 		def->Draw(Sphere.vertexBuffer, Sphere.indexBuffer, Sphere.numIndices, SphereWorldMatrices[i], SPHERE);
 	}
+	//Lightpass contains the final draw call.
 	def->LightPass();
 }
 

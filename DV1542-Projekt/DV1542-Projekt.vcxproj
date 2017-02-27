@@ -158,7 +158,6 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
     <ClCompile Include="Shadowmap.cpp" />
-    <ClCompile Include="SkyBox.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -234,6 +233,7 @@
     </FxCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Blurrer.h" />
     <ClInclude Include="Camera.h" />
     <ClInclude Include="D3D.h" />
     <ClInclude Include="Deferred.h" />
@@ -241,7 +241,6 @@
     <ClInclude Include="NoiseGenerator.h" />
     <ClInclude Include="OBJLoader.h" />
     <ClInclude Include="Shadowmap.h" />
-    <ClInclude Include="SkyBox.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
