@@ -39,6 +39,11 @@ void RenderDeferred(Deferred* def)
 	SphereWorldMatrices[10] = XMMatrixScaling(30, 30, 30)* XMMatrixRotationY(-rotationAngle * 10) * XMMatrixTranslation(100, 0, 0) * XMMatrixRotationY(rotationAngle) * XMMatrixTranslation(500, 100, 500);
 	rotationAngle += GetFrameTime() * 1000;
 
+	if (rotationAngle > 2 * XM_PI)
+	{
+		rotationAngle = 0.0f;
+	}
+
 	//-------Shadow map drawing--------
 	def->GetShadowmap()->BindShadowPass();
 	def->DrawShadow(Terrain.vertexBuffer, Terrain.indexBuffer, Terrain.numIndices, Terrain.world);
