@@ -24,6 +24,11 @@ ID3D11ShaderResourceView ** Shadowmap::GetSRV()
 	return &this->depthMapSRV;
 }
 
+ID3D11Texture2D * Shadowmap::getDepthBuffer()
+{
+	return this->depthStencilBuffer;
+}
+
 XMMATRIX Shadowmap::getLightView()
 {
 	return this->WVP.view;

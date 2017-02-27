@@ -8,12 +8,12 @@
 class Shadowmap
 {
 private:
-	ID3D11Device* device = nullptr;
+	ID3D11Device* device		= nullptr;
 	ID3D11DeviceContext* devCon = nullptr;
 
 	ID3D11DepthStencilView* depthStencilView = nullptr;
-	ID3D11ShaderResourceView* depthMapSRV = nullptr;
-	ID3D11Texture2D* depthStencilBuffer = nullptr;
+	ID3D11ShaderResourceView* depthMapSRV	 = nullptr;
+	ID3D11Texture2D* depthStencilBuffer		 = nullptr;
 
 	ID3D11VertexShader* VS_Shadow = nullptr;
 
@@ -36,6 +36,7 @@ public:
 	~Shadowmap();
 
 	ID3D11ShaderResourceView** GetSRV();
+	ID3D11Texture2D* getDepthBuffer();
 	XMMATRIX getLightView();
 	XMMATRIX getLightProj();
 

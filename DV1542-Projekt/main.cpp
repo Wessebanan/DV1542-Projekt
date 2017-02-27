@@ -37,7 +37,7 @@ float rotationAngle = 0.0f;
 void RenderDeferred(Deferred* def) 
 {
 	SphereWorldMatrices[10] = XMMatrixScaling(30, 30, 30)* XMMatrixRotationY(-rotationAngle * 10) * XMMatrixTranslation(100, 0, 0) * XMMatrixRotationY(rotationAngle) * XMMatrixTranslation(500, 100, 500);
-	rotationAngle += GetFrameTime() * 1000;
+	rotationAngle += .1;
 
 	if (rotationAngle > 2 * XM_PI)
 	{
