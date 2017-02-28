@@ -15,7 +15,8 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	{
 		MessageBoxA(NULL, "Error initializing deferred", NULL, MB_OK);
 	}
-	this->shadowmap.Initialize(&this->direct3D, this->shadowMapHeight, this->shadowMapWidth, this->lightDir, this->vertexLayout);
+	this->shadowmap.Initialize(this->direct3D.getDevice(), this->direct3D.getDevCon(), this->shadowMapHeight, this->shadowMapWidth, this->lightDir, this->vertexLayout);
+	this->blurrer.Initialize(this->direct3D.getDevice(), this->direct3D.getDevCon(), *this->shadowmap.GetSRV(), this->shadowMapHeight, this->shadowMapWidth);
 
 	this->WVP.world = XMMatrixIdentity();
 	this->WVP.view	= XMMatrixLookAtLH(XMVectorSet(0.f, 0.f, -2.f, 0.f), XMVectorSet(0.f, 0.f, 0.f, 0.f), XMVectorSet(0.f, 1.f, 0.f, 0.f));
@@ -216,9 +217,9 @@ bool Deferred::Initialize()
 
 	D3D11_SAMPLER_DESC sDesc{};
 	sDesc.Filter		 = D3D11_FILTER_MIN_MAG_MIP_POINT; //Point sampling for min, mag and mip.
-	sDesc.AddressU		 = D3D11_TEXTURE_ADDRESS_WRAP; //Doesn't really matter because
-	sDesc.AddressV		 = D3D11_TEXTURE_ADDRESS_WRAP; //the range of the texcoords is
-	sDesc.AddressW		 = D3D11_TEXTURE_ADDRESS_WRAP; //[0;1] anyway.
+	sDesc.AddressU		 = D3D11_TEXTURE_ADDRESS_WRAP; //Wrap because we want to 
+	sDesc.AddressV		 = D3D11_TEXTURE_ADDRESS_WRAP; //repeat our seamless
+	sDesc.AddressW		 = D3D11_TEXTURE_ADDRESS_WRAP; //textuers.
 	sDesc.MaxAnisotropy	 = 1;
 	sDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
 	sDesc.MaxLOD		 = D3D11_FLOAT32_MAX;
@@ -326,7 +327,6 @@ bool Deferred::Initialize()
 	this->textureSRVs[2] = this->rockSRV;
 
 	D3D11_RASTERIZER_DESC rDesc{};
-	this->direct3D.getDevice()->CreateRasterizerState(&rDesc, &this->bfCull);
 	rDesc.CullMode = D3D11_CULL_NONE;
 	rDesc.FillMode = D3D11_FILL_SOLID;
 	this->direct3D.getDevice()->CreateRasterizerState(&rDesc, &this->noCull);

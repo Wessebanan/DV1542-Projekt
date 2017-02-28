@@ -40,7 +40,7 @@ public:
 	XMMATRIX getLightView();
 	XMMATRIX getLightProj();
 
-	void Initialize(D3D* direct3D, int height, int width, XMVECTOR lightDir, ID3D11InputLayout* inputLayout);
+	void Initialize(ID3D11Device* device, ID3D11DeviceContext* devCon, int height, int width, XMVECTOR lightDir, ID3D11InputLayout* inputLayout);
 	void SwitchWorldMatrix(XMMATRIX world);
 	void CreateTransformationMatrices();
 	void CreateShader();

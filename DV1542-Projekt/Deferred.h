@@ -8,6 +8,7 @@
 #include <DDSTextureLoader.h>
 #include "Shadowmap.h"
 #include "OBJLoader.h"
+#include "Blurrer.h"
 
 using namespace DirectX;
 const int BUFFER_COUNT = 5;
@@ -32,6 +33,8 @@ private:
 	Shadowmap shadowmap;
 	int shadowMapWidth;
 	int shadowMapHeight;
+
+	Blurrer blurrer;
 
 	// 0: normals, 1: diffuses, 2: speculars, 3: positions, 4: light positions
 	ID3D11Texture2D* textures[BUFFER_COUNT]						= { nullptr };

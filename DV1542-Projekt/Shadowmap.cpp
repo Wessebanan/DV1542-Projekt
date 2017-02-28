@@ -39,10 +39,10 @@ XMMATRIX Shadowmap::getLightProj()
 	return this->WVP.proj;
 }
 
-void Shadowmap::Initialize(D3D* direct3D, int height, int width, XMVECTOR lightDir, ID3D11InputLayout* inputLayout)
+void Shadowmap::Initialize(ID3D11Device* device, ID3D11DeviceContext* devCon, int height, int width, XMVECTOR lightDir, ID3D11InputLayout* inputLayout)
 {
-	this->device		= direct3D->getDevice();
-	this->devCon		= direct3D->getDevCon();
+	this->device		= device;
+	this->devCon		= devCon;
 	this->lightDir		= lightDir;
 	this->inputLayout	= inputLayout;
 
