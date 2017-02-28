@@ -172,3 +172,9 @@ void Shadowmap::BindShadowPass()
 
 	this->devCon->RSSetViewports(1, &this->viewPort);
 }
+
+void Shadowmap::UnbindDSV()
+{
+	ID3D11RenderTargetView* nullRTV = nullptr;
+	this->devCon->OMSetRenderTargets(1, &nullRTV, nullptr);
+}

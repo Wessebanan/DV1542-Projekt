@@ -52,8 +52,11 @@ void RenderDeferred(Deferred* def)
 	for (int i = 0; i < 11; i++)
 	{
 		def->DrawShadow(Sphere.vertexBuffer, Sphere.indexBuffer, Sphere.numIndices, SphereWorldMatrices[i]);
-	}	
+	}
 	//-------------------------
+
+	def->GetShadowmap()->UnbindDSV();
+	def->BlurShadowMap();
 
 	//Binds shared by terrain and generic object.
 	def->InitialGeometryBinds();

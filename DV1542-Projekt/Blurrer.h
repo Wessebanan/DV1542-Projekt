@@ -30,4 +30,6 @@ public:
 	void CreateDimBuffer();
 
 	void Blur();
+
+	ID3D11ShaderResourceView** GetBlurredSM();
 };

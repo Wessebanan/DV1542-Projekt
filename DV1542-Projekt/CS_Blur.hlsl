@@ -8,8 +8,9 @@ cbuffer dimensions : register(b0)
 };
 
 //TODO: något klyftigt med dimensions för numthreads
-[numthreads(1, 1, 1)]
-void main( uint3 DTid : SV_DispatchThreadID )
+[numthreads(32, 32, 1)]
+void main( uint gIndex : SV_GroupIndex,
+		   uint3 dThreadID : SV_DispatchThreadID)
 {
-
+	blurSM[dThreadID.xy] = origSM.Load(dThreadID);
 }

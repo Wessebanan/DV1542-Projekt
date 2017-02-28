@@ -45,4 +45,5 @@ public:
 	void CreateTransformationMatrices();
 	void CreateShader();
 	void BindShadowPass();
+	void UnbindDSV();
 };

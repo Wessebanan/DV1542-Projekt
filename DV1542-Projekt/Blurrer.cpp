@@ -21,15 +21,15 @@ void Blurrer::Initialize(ID3D11Device * device, ID3D11DeviceContext * devCon, ID
 	this->device		= device;
 	this->devCon		= devCon;
 	this->shadowMapSRV	= shadowMap;
-	this->height		= height;
-	this->width			= width;
+	this->height		= 2048;
+	this->width			= 2048;
 
 	this->CreateShader();
 	this->CreateDimBuffer();
 
 	D3D11_TEXTURE2D_DESC TexDesc{};
-	TexDesc.Height			 = height;
-	TexDesc.Width			 = width;
+	TexDesc.Height			 = this->height;
+	TexDesc.Width			 = this->width;
 	TexDesc.ArraySize		 = 1;
 	TexDesc.MipLevels		 = 1;
 	TexDesc.Format			 = DXGI_FORMAT_R32_FLOAT;
@@ -77,7 +77,7 @@ void Blurrer::Initialize(ID3D11Device * device, ID3D11DeviceContext * devCon, ID
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc{};
 	srvDesc.Format					  = TexDesc.Format;
-	srvDesc.ViewDimension			  = D3D10_SRV_DIMENSION_TEXTURE2D;
+	srvDesc.ViewDimension			  = D3D11_SRV_DIMENSION_TEXTURE2D;
 	srvDesc.Texture2D.MostDetailedMip = 0;
 	srvDesc.Texture2D.MipLevels		  = 1;
 
@@ -149,4 +149,15 @@ void Blurrer::Blur()
 	this->devCon->CSSetConstantBuffers(0, 1, &this->dimBuffer);
 
 	//TODO: något klyftigt med dimensions för dispatch.
+	this->devCon->Dispatch(64, 64, 1);
+
+	ID3D11ShaderResourceView* nullSRV	= nullptr;
+	ID3D11UnorderedAccessView* nullUAV	= nullptr;
+	this->devCon->CSSetShaderResources(0, 1, &nullSRV);
+	this->devCon->CSSetUnorderedAccessViews(0, 1, &nullUAV, 0);
+}
+
+ID3D11ShaderResourceView ** Blurrer::GetBlurredSM()
+{
+	return &this->blurredSMSRV;
 }

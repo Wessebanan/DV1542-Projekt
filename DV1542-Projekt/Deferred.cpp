@@ -8,8 +8,8 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->direct3D.Initialize(this->window.GetWindow());
 
 	this->lightDir = XMVectorSet(1.0f, -1.0f, 0.0f, 0.0f);
-	this->shadowMapHeight = 8192;
-	this->shadowMapWidth  = 8192;
+	this->shadowMapHeight = 2048;
+	this->shadowMapWidth  = 2048;
 
 	if (!this->Initialize())
 	{
@@ -432,7 +432,7 @@ void Deferred::LightPass()
 	this->direct3D.getDevCon()->PSSetShaderResources(0, BUFFER_COUNT, this->shaderResourceViews);
 
 	//Setting the shadow map depth buffer as a shader resource to the pixel shader.
-	this->direct3D.getDevCon()->PSSetShaderResources(BUFFER_COUNT, 1, this->shadowmap.GetSRV());
+	this->direct3D.getDevCon()->PSSetShaderResources(BUFFER_COUNT, 1, this->blurrer.GetBlurredSM());
 
 	this->direct3D.getDevCon()->VSSetConstantBuffers(0, 1, &this->transformBuffer);	
 	
@@ -573,6 +573,11 @@ void Deferred::DrawShadow(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffe
 		this->direct3D.getDevCon()->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 		this->direct3D.getDevCon()->DrawIndexed(numIndices, 0, 0);
 	}
+}
+
+void Deferred::BlurShadowMap()
+{
+	this->blurrer.Blur();
 }
 
 void Deferred::CreateTransformBuffer()

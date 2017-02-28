@@ -117,6 +117,7 @@ public:
 
 	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, XMMATRIX world, OBJECT_TYPE type);
 	void DrawShadow(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, XMMATRIX world);
+	void BlurShadowMap();
 
 	void CreateTransformBuffer();
 	void CreateMaterialBuffer();
