@@ -1,9 +1,9 @@
 SamplerState samplerState : register(s0);
 //G-buffer textures as input.
-Texture2D normals : register(t0);
-Texture2D diffuses : register(t1);
-Texture2D speculars : register(t2);
-Texture2D positions : register(t3);
+Texture2D normals		 : register(t0);
+Texture2D diffuses		 : register(t1);
+Texture2D speculars		 : register(t2);
+Texture2D positions		 : register(t3);
 Texture2D lightPositions : register(t4);
 //----------------------------
 Texture2D shadowMap : register(t5);
@@ -21,16 +21,16 @@ cbuffer lightDirBuffer : register (b1)
 
 struct PS_IN
 {
-	float4 pos : SV_POSITION;
+	float4 pos		: SV_POSITION;
 	float2 texcoord : TEXCOORD;
 };
 
 float4 main(PS_IN input) : SV_TARGET
 {
 	//-------Information gathering--------
-	float3 normal = normals.Sample			(samplerState, input.texcoord).xyz;
+	float3 normal	= normals.Sample		(samplerState, input.texcoord).xyz;
 	float3 position = positions.Sample		(samplerState, input.texcoord).xyz;
-	float4 color = diffuses.Sample			(samplerState, input.texcoord);
+	float4 color	= diffuses.Sample		(samplerState, input.texcoord);
 	float4 specular = speculars.Sample		(samplerState, input.texcoord);
 	float4 lightPos = lightPositions.Sample	(samplerState, input.texcoord);
 	//------------------------------------

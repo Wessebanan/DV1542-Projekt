@@ -1,24 +1,24 @@
-SamplerState samplerState : register (s0);
-Texture2D grassTex : register (t0);
-Texture2D dirtTex : register (t1);
-Texture2D rockTex : register (t2);
-Texture2D normalMap : register (t3);
+SamplerState samplerState	: register (s0);
+Texture2D grassTex			: register (t0);
+Texture2D dirtTex			: register (t1);
+Texture2D rockTex			: register (t2);
+Texture2D normalMap			: register (t3);
 
 struct PS_IN
 {
-	float4 Pos : SV_POSITION;
-	float3 Nor : NORMAL;
-	float3 WPos : POSITION0;
-	float2 TexCoord : TEXCOORD;
-	float3 Tangent : TANGENT;
+	float4 Pos		 : SV_POSITION;
+	float3 Nor		 : NORMAL;
+	float3 WPos		 : POSITION0;
+	float2 TexCoord  : TEXCOORD;
+	float3 Tangent	 : TANGENT;
 	float3 Bitangent : BINORMAL;
-	float4 lightPos : POSITION1;
+	float4 lightPos  : POSITION1;
 };
 
 struct PS_OUT
 {	//G-buffer textures as output.
-	float4 normal : SV_Target0;
-	float4 diffuse : SV_Target1;
+	float4 normal	: SV_Target0;
+	float4 diffuse	: SV_Target1;
 	float4 specular : SV_Target2;
 	float4 position : SV_Target3;
 	float4 lightPos : SV_Target4;
