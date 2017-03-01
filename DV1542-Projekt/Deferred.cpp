@@ -8,6 +8,7 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->direct3D.Initialize(this->window.GetWindow());
 
 	this->lightDir = XMVectorSet(1.0f, -1.0f, 0.0f, 0.0f);
+	this->lightPos = XMVectorSet(500.0f, 200.0f, 500.0f, 0.0f);
 	this->shadowMapHeight = 2048;
 	this->shadowMapWidth  = 2048;
 
@@ -710,12 +711,14 @@ void Deferred::CreateLightDirBuffer()
 {
 	struct lightDirBufferStruct
 	{
-		XMVECTOR lightDir;
-		XMVECTOR shadowDimensions;
+		XMVECTOR lightDir; //Directional light.
+		XMVECTOR shadowDimensions; //Dimensions of the shadow map.
+		XMVECTOR lightPos; //Point light.
 	};
 	lightDirBufferStruct LDBS;
 	LDBS.lightDir = this->lightDir;
 	LDBS.shadowDimensions = XMVectorSet((float)this->shadowMapWidth, (float)this->shadowMapHeight, 0.0f, 0.0f);
+	LDBS.lightPos = this->lightPos;
 
 	D3D11_BUFFER_DESC bufDesc = {};
 	bufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;

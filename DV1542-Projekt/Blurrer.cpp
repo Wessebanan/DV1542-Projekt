@@ -8,10 +8,8 @@ Blurrer::~Blurrer()
 {
 	this->blurCS->Release();
 	this->blurredSMTex->Release();
-	this->clampSampler->Release();
 	this->RWtexUAV->Release();
 	this->blurredSMSRV->Release();
-	this->dimBuffer->Release();
 }
 
 void Blurrer::Initialize(ID3D11Device * device, ID3D11DeviceContext * devCon, ID3D11ShaderResourceView* shadowMap, int height, int width)
@@ -21,11 +19,10 @@ void Blurrer::Initialize(ID3D11Device * device, ID3D11DeviceContext * devCon, ID
 	this->device		= device;
 	this->devCon		= devCon;
 	this->shadowMapSRV	= shadowMap;
-	this->height		= 2048;
-	this->width			= 2048;
+	this->height		= height;
+	this->width			= width;
 
 	this->CreateShader();
-	this->CreateDimBuffer();
 
 	D3D11_TEXTURE2D_DESC TexDesc{};
 	TexDesc.Height			 = this->height;
@@ -56,22 +53,6 @@ void Blurrer::Initialize(ID3D11Device * device, ID3D11DeviceContext * devCon, ID
 	if (FAILED(hr))
 	{
 		MessageBoxA(NULL, "Error creating UAV", NULL, MB_OK);
-		exit(-1);
-	}
-
-	D3D11_SAMPLER_DESC sDesc{};
-	sDesc.AddressU		 = D3D11_TEXTURE_ADDRESS_CLAMP; //We want to clamp
-	sDesc.AddressV		 = D3D11_TEXTURE_ADDRESS_CLAMP; //to avoid weird effects
-	sDesc.AddressW		 = D3D11_TEXTURE_ADDRESS_CLAMP; //near the edges.
-	sDesc.Filter		 = D3D11_FILTER_MIN_MAG_MIP_POINT;
-	sDesc.MaxAnisotropy	 = 1;
-	sDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS;
-	sDesc.MaxLOD		 = D3D11_FLOAT32_MAX;
-
-	hr = this->device->CreateSamplerState(&sDesc, &this->clampSampler);
-	if (FAILED(hr))
-	{
-		MessageBoxA(NULL, "Error creating clampsampler", NULL, MB_OK);
 		exit(-1);
 	}
 
@@ -115,44 +96,18 @@ void Blurrer::CreateShader()
 	pCS->Release();
 }
 
-void Blurrer::CreateDimBuffer()
-{
-	struct Dimensions
-	{
-		int height;
-		int width;
-		int padding, padding2;
-	};
-	Dimensions dims = { this->height, this->width };
-
-	D3D11_BUFFER_DESC bufDesc{};
-	bufDesc.Usage	  = D3D11_USAGE_IMMUTABLE;
-	bufDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-	bufDesc.ByteWidth = sizeof(Dimensions);
-
-	D3D11_SUBRESOURCE_DATA data{};
-	data.pSysMem = &dims;
-
-	HRESULT hr = this->device->CreateBuffer(&bufDesc, &data, &this->dimBuffer);
-	if (FAILED(hr))
-	{
-		MessageBoxA(NULL, "Error creating dim buffer", NULL, MB_OK);
-		exit(-1);
-	}
-}
-
 void Blurrer::Blur()
 {
 	this->devCon->CSSetShader(this->blurCS, nullptr, 0);
 	this->devCon->CSSetShaderResources(0, 1, &this->shadowMapSRV);
 	this->devCon->CSSetUnorderedAccessViews(0, 1, &this->RWtexUAV, 0);
-	this->devCon->CSSetConstantBuffers(0, 1, &this->dimBuffer);
 
-	//TODO: något klyftigt med dimensions för dispatch.
-	this->devCon->Dispatch(64, 64, 1);
+	//Requires the texture to be blurred to be at least 16x16.
+	this->devCon->Dispatch(this->height / 16, this->width / 16, 1);
 
 	ID3D11ShaderResourceView* nullSRV	= nullptr;
 	ID3D11UnorderedAccessView* nullUAV	= nullptr;
+	//Unbinding when done to avoid conflicts.
 	this->devCon->CSSetShaderResources(0, 1, &nullSRV);
 	this->devCon->CSSetUnorderedAccessViews(0, 1, &nullUAV, 0);
 }

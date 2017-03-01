@@ -1,12 +1,6 @@
 Texture2D<float> origSM : register (t0);
 RWTexture2D<float> blurSM : register (u0);
 
-cbuffer dimensions : register(b0)
-{
-	int height;
-	int width;
-};
-
 static const float gaussianNumbers[7][7] =
 {	//Calculated in a different program.
 	0.000840725, 0.00301024, 0.00647097, 0.00835139, 0.00647097, 0.00301024, 0.000840725,
@@ -18,11 +12,12 @@ static const float gaussianNumbers[7][7] =
 	0.000840725, 0.00301024, 0.00647097, 0.00835139, 0.00647097, 0.00301024, 0.000840725
 };
 
-//TODO: något klyftigt med dimensions för numthreads
-[numthreads(32, 32, 1)]
+[numthreads(16, 16, 1)]
 void main(uint3 dThreadID : SV_DispatchThreadID)
 {
 	float blurredDepth = 0.0f;
+	//Starting at (-3,-3) and finishing at (3,3)
+	//doing one column at a time.
 	for (int i = -3; i < 4; i++)
 	{
 		for (int j = -3; j < 4; j++)

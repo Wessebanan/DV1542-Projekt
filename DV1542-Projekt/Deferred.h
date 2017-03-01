@@ -99,6 +99,7 @@ private:
 
 	XMVECTOR camPos;
 	XMVECTOR lightDir;
+	XMVECTOR lightPos;
 public:
 	Deferred(HINSTANCE hInstance);
 	~Deferred();
@@ -107,16 +108,23 @@ public:
 
 	bool Initialize();
 
+	//Does the binds which are shared between terrain and generic objects.
 	void InitialGeometryBinds();
+	//Specific binds for terrain.
 	void BindTerrain();
+	//Specific binds for generic obejects.
 	void BindGenericObject();
 
+	//Does needed binds for light pass, includes the final draw call.
 	void LightPass();
 
 	void SetHeightMapTexture(std::wstring filepath, unsigned int width, unsigned int height);
 
+	//Draws one object, intended for the geometry pass.
 	void Draw(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, XMMATRIX world, OBJECT_TYPE type);
+	//Draws the depth of one object from the perspective of the directional light.
 	void DrawShadow(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, int numIndices, XMMATRIX world);
+	//Blurs the shadow map using a compute shader.
 	void BlurShadowMap();
 
 	void CreateTransformBuffer();
@@ -131,6 +139,8 @@ public:
 	void CreateTerrainTextures();
 	void CreateObjectTexture(Material* mat, OBJECT_TYPE type);
 
+	//camPosBuffer and lightDirBuffer are separate 
+	//because camPos changes while the contents of lightDirBuffer do not.
 	void CreateCamPosBuffer();
 	void CreateLightDirBuffer();
 

@@ -37,7 +37,7 @@ float rotationAngle = 0.0f;
 void RenderDeferred(Deferred* def) 
 {
 	SphereWorldMatrices[10] = XMMatrixScaling(30, 30, 30)* XMMatrixRotationY(-rotationAngle * 10) * XMMatrixTranslation(100, 0, 0) * XMMatrixRotationY(rotationAngle) * XMMatrixTranslation(500, 100, 500);
-	rotationAngle += .1;
+	rotationAngle += 0.1f;
 
 	if (rotationAngle > 2 * XM_PI)
 	{
@@ -92,7 +92,7 @@ void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, OB
 	D3D11_SUBRESOURCE_DATA objectData = {};
 	objectData.pSysMem = vertices.data();
 
-	if (FAILED(def->CreateBuffer(&vertexBufferDesc, &objectData, &object->vertexBuffer))) {
+	if (FAILED(def->GetDevicePointer()->CreateBuffer(&vertexBufferDesc, &objectData, &object->vertexBuffer))) {
 		MessageBoxA(NULL, "Error creating vertex buffer for object.", NULL, MB_OK);
 		exit(-1);
 	}
@@ -107,7 +107,7 @@ void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, OB
 	D3D11_SUBRESOURCE_DATA indexData;
 	indexData.pSysMem = indices.data();
 
-	if (FAILED(def->CreateBuffer(&indexBufferDesc, &indexData, &object->indexBuffer)))
+	if (FAILED(def->GetDevicePointer()->CreateBuffer(&indexBufferDesc, &indexData, &object->indexBuffer)))
 	{
 		MessageBoxA(NULL, "Error creating index buffer for object.", NULL, MB_OK);
 		exit(-1);
@@ -188,7 +188,7 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 	D3D11_SUBRESOURCE_DATA indexData;
 	indexData.pSysMem = indices;
 	
-	if (FAILED(def->CreateBuffer(&indexBufferDesc, &indexData, &Terrain.indexBuffer)))
+	if (FAILED(def->GetDevicePointer()->CreateBuffer(&indexBufferDesc, &indexData, &Terrain.indexBuffer)))
 	{
 		MessageBoxA(NULL, "Error creating index buffer for terrain.", NULL, MB_OK);
 		exit(-1);
@@ -202,7 +202,7 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 	D3D11_SUBRESOURCE_DATA terrainData = {};
 	terrainData.pSysMem = vertices;
 
-	if (FAILED(def->CreateBuffer(&terrainBufferDesc, &terrainData, &Terrain.vertexBuffer)))
+	if (FAILED(def->GetDevicePointer()->CreateBuffer(&terrainBufferDesc, &terrainData, &Terrain.vertexBuffer)))
 	{
 		MessageBoxA(NULL, "Error creating terrain buffer.", NULL, MB_OK);
 		exit(-1);
