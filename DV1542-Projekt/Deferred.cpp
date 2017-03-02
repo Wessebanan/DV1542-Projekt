@@ -745,7 +745,7 @@ ID3D11Device * Deferred::GetDevicePointer()
 	return this->direct3D.getDevice();
 }
 
-Shadowmap* Deferred::GetShadowmap()
+Shadowmap * Deferred::GetShadowmap()
 {
 	return &this->shadowmap;
 }

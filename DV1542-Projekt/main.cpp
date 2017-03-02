@@ -30,14 +30,16 @@ Object Cube;
 Object Bear;
 Object Sphere;
 
-XMMATRIX SphereWorldMatrices[11];
+const int numSpheres = 11;
+
+XMMATRIX SphereWorldMatrices[numSpheres];
 
 float rotationAngle = 0.0f;
 
 void RenderDeferred(Deferred* def) 
 {
 	SphereWorldMatrices[10] = XMMatrixScaling(30, 30, 30)* XMMatrixRotationY(-rotationAngle * 10) * XMMatrixTranslation(100, 0, 0) * XMMatrixRotationY(rotationAngle) * XMMatrixTranslation(500, 100, 500);
-	rotationAngle += 0.1f;
+	rotationAngle += 0.01f;
 
 	if (rotationAngle > 2 * XM_PI)
 	{
@@ -49,7 +51,7 @@ void RenderDeferred(Deferred* def)
 	def->DrawShadow(Terrain.vertexBuffer, Terrain.indexBuffer, Terrain.numIndices, Terrain.world);
 	def->DrawShadow(Cube.vertexBuffer, Cube.indexBuffer, Cube.numIndices, Cube.world);
 	def->DrawShadow(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world);
-	for (int i = 0; i < 11; i++)
+	for (int i = 0; i < numSpheres; i++)
 	{
 		def->DrawShadow(Sphere.vertexBuffer, Sphere.indexBuffer, Sphere.numIndices, SphereWorldMatrices[i]);
 	}
@@ -65,7 +67,7 @@ void RenderDeferred(Deferred* def)
 	def->BindGenericObject();
 	def->Draw(Cube.vertexBuffer, Cube.indexBuffer, Cube.numIndices, Cube.world, CUBE);
 	def->Draw(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world, BEAR);
-	for (int i = 0; i < 11; i++)
+	for (int i = 0; i < numSpheres; i++)
 	{
 		def->Draw(Sphere.vertexBuffer, Sphere.indexBuffer, Sphere.numIndices, SphereWorldMatrices[i], SPHERE);
 	}
@@ -164,7 +166,7 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 		}
 	}
 
-	for (int i = 0; i < 6 * 999 * 999; i += 3)
+	for (int i = 0; i < (6 * (rows - 1) * (columns - 1)); i += 3)
 	{
 		XMVECTOR edge1 = XMVectorSet(vertices[indices[i + 1]].x - vertices[indices[i]].x, vertices[indices[i + 1]].y - vertices[indices[i]].y, vertices[indices[i + 1]].z - vertices[indices[i]].z, 0.0f);
 		XMVECTOR edge2 = XMVectorSet(vertices[indices[i + 2]].x - vertices[indices[i]].x, vertices[indices[i + 2]].y - vertices[indices[i]].y, vertices[indices[i + 2]].z - vertices[indices[i]].z, 0.0f);
@@ -215,7 +217,7 @@ void CreateObjects(Deferred* def)
 {
 	//Create terrain object
 	CreateTerrainBuffers(def, Terrain.vertexBuffer, Terrain.indexBuffer);
-	Terrain.numIndices = 6 * 999 * 999;
+	Terrain.numIndices = 6 * 1023 * 1023;
 	Terrain.world = XMMatrixIdentity();
 
 	//Create cube object
@@ -247,6 +249,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 	int nCmdShow)
 {
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//Inside Deferred and its members is
+	//where the magic happens.
 	Deferred def(hInstance);
 	MSG msg;
 
@@ -281,12 +285,8 @@ int WINAPI WinMain(HINSTANCE hInstance,
 					break;
 			}
 			else {
-				DetectInput((float)GetFrameTime(), &def);
-				
-				RenderDeferred(&def); //<-- Funkar!
-
-
-				// WEEEEW GAME CODE HERE LET'S GO
+				DetectInput((float)GetFrameTime(), &def);				
+				RenderDeferred(&def);
 			}
 		}
 		DIKeyboard->Unacquire();
