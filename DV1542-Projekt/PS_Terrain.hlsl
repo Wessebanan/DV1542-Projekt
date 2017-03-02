@@ -100,7 +100,8 @@ PS_OUT main(PS_IN input)
 			input.Nor
 		);
 
-	//Sampling and decompressing the normal in tangent space.
+	//Sampling and decompressing the normal in tangent space. Texcoords divided by 102.4 to
+	//convert from [0;102.4] -> [0;1] since the normal map covers the entire terrain.
 	float3 normalTS = normalMap.Sample(samplerState, input.TexCoord / 102.4f).xyz;
 	normalTS = normalize((normalTS * 2.0f) - 1.0f);
 
