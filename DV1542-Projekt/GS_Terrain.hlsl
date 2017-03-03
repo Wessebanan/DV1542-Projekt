@@ -24,6 +24,7 @@ struct GS_OUT
 	float3 Tangent	 : TANGENT;
 	float3 Bitangent : BINORMAL;
 	float4 lightPos  : POSITION1;
+	float testFloat  : FLOAT;
 };
 
 [maxvertexcount(3)]
@@ -46,10 +47,11 @@ void main(triangle GS_IN input[3], inout TriangleStream< GS_OUT > output)
 	//if the triangle is backfacing.
 	float3 camToPoint = normalize(worldPositions[0] - camPos.xyz);
 	float cosAngle = dot(camToPoint, normal);
+	
 
-	//Using a bias of 0.30 to ensure there are no false negatives.
-	//Needs to be 0.30 because the terrain consists of so many triangles.
-	if (cosAngle - 0.30f < 0.0f) 
+	//Using a bias of 0.25 to ensure there are no false negatives.
+	//Needs to be 0.25 because the terrain consists of so many triangles.
+	if (cosAngle /*- 0.3f */<= 0.0f) 
 	{
 		//The distance between the positions of the vertices.
 		float3 dPos1 = input[1].Pos.xyz - input[0].Pos.xyz;
@@ -80,6 +82,7 @@ void main(triangle GS_IN input[3], inout TriangleStream< GS_OUT > output)
 			element.Tangent	  = normalize(mul(world, float4(tangent, 0.0f)).xyz);
 			element.Bitangent = normalize(mul(world, float4(bitangent, 0.0f)).xyz);
 			element.lightPos  = mul(lightWvp, input[i].Pos);
+			element.testFloat = -cosAngle;
 			output.Append(element);
 		}
 	}

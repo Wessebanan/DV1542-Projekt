@@ -13,6 +13,7 @@ struct PS_IN
 	float3 Tangent	 : TANGENT;
 	float3 Bitangent : BINORMAL;
 	float4 lightPos  : POSITION1;
+	float  testFloat : FLOAT;
 };
 
 struct PS_OUT
@@ -88,6 +89,8 @@ PS_OUT main(PS_IN input)
 
 	output.specular.xyz = specIntensity;
 	output.specular.w = specPow;
+
+	output.specular.w = input.testFloat;
 
 	output.position = float4(input.WPos, 1);
 	output.lightPos = input.lightPos;
