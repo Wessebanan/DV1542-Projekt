@@ -46,7 +46,7 @@ void Blurrer::Initialize(ID3D11Device * device, ID3D11DeviceContext * devCon, ID
 	UAVdesc.ViewDimension		= D3D11_UAV_DIMENSION_TEXTURE2D;
 	UAVdesc.Format				= TexDesc.Format;
 	UAVdesc.Buffer.FirstElement = 0;
-	UAVdesc.Buffer.NumElements	= 2048 * 2048;
+	UAVdesc.Buffer.NumElements	= this->height * this->width;
 	UAVdesc.Buffer.Flags		= D3D11_BUFFER_UAV_FLAG_RAW;
 
 	hr = this->device->CreateUnorderedAccessView(this->blurredSMTex, &UAVdesc, &this->RWtexUAV);
