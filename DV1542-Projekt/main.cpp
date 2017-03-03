@@ -168,10 +168,15 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 
 	for (int i = 0; i < (6 * (rows - 1) * (columns - 1)); i += 3)
 	{
-		XMVECTOR edge1 = XMVectorSet(vertices[indices[i + 1]].x - vertices[indices[i]].x, vertices[indices[i + 1]].y - vertices[indices[i]].y, vertices[indices[i + 1]].z - vertices[indices[i]].z, 0.0f);
-		XMVECTOR edge2 = XMVectorSet(vertices[indices[i + 2]].x - vertices[indices[i]].x, vertices[indices[i + 2]].y - vertices[indices[i]].y, vertices[indices[i + 2]].z - vertices[indices[i]].z, 0.0f);
+		XMVECTOR p0 = XMVectorSet(vertices[indices[i]].x, vertices[indices[i]].y, vertices[indices[i]].z, 0.0f);
+		XMVECTOR p1 = XMVectorSet(vertices[indices[i+1]].x, vertices[indices[i+1]].y, vertices[indices[i+1]].z, 0.0f);
+		XMVECTOR p2 = XMVectorSet(vertices[indices[i+2]].x, vertices[indices[i+2]].y, vertices[indices[i+2]].z, 0.0f);
+
+		XMVECTOR edge1 = p1 - p0;
+		XMVECTOR edge2 = p2 - p0;
 		XMVECTOR faceNormal = XMVector3Cross(edge1, edge2);
 		XMVector3Normalize(faceNormal);
+
 		for (int j = 0; j < 3; j++)
 		{
 			vertices[indices[i + j]].norX = XMVectorGetX(faceNormal);

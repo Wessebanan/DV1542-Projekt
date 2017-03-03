@@ -644,7 +644,7 @@ void Deferred::CreateTerrainTextures()
 	{
 		MessageBoxA(NULL, "Error creating dirt texture.", NULL, MB_OK);
 	}
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"NormalMap9.dds", NULL, &this->TerrainNormalSRV);
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"NormalMap91.dds", NULL, &this->TerrainNormalSRV);
 	if (FAILED(hr))
 	{
 		MessageBoxA(NULL, "Error creating normal map.", NULL, MB_OK);
