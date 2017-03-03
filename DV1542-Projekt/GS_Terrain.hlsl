@@ -42,17 +42,21 @@ void main(triangle GS_IN input[3], inout TriangleStream< GS_OUT > output)
 		worldPositions[i] = mul(world, input[i].Pos).xyz;
 	}
 
+	float3 edge0 = worldPositions[1] - worldPositions[0];
+	float3 edge1 = worldPositions[2] - worldPositions[0];
+	float3 nor2 = normalize(cross(edge0, edge1));
+
 	//Creating a vector from the camera to the first vertex of the
 	//triangle and calculating the cosine of the angle to determine
 	//if the triangle is backfacing.
 	float3 camToPoint = normalize(worldPositions[0] - camPos.xyz);
-	float cosAngle = dot(camToPoint, normal);
+	float cosAngle = dot(camToPoint, nor2);
 	
 
 	//Using a bias of 0.25 to ensure there are no false negatives.
 	//Needs to be 0.25 because the terrain consists of so many triangles.
-	//if (cosAngle /*- 0.3f */<= 0.0f) 
-	if(true)
+	if (cosAngle /*- 0.3f */<= 0.0f) 
+//	if(true)
 	{
 		//The distance between the positions of the vertices.
 		float3 dPos1 = input[1].Pos.xyz - input[0].Pos.xyz;
@@ -77,7 +81,7 @@ void main(triangle GS_IN input[3], inout TriangleStream< GS_OUT > output)
 		{
 			GS_OUT element;
 			element.Pos		  = mul(wvp, input[i].Pos);
-			element.Nor		  = normal;
+			element.Nor		  = nor2;
 			element.WPos	  = worldPositions[i];
 			element.TexCoord  = input[i].TexCoord;
 			element.Tangent	  = normalize(mul(world, float4(tangent, 0.0f)).xyz);

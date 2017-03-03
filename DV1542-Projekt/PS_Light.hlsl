@@ -79,7 +79,7 @@ float4 main(PS_IN input) : SV_TARGET
 	float brightness =  saturate(dot(normalize(lightVec), normal));
 
 	return saturate(color * saturate(brightness * shadowCoeff + ambient) + specularReflection);
-	//return specular.wwww;
+
 	// return float4((float)pow(saturate(dot(reflection, pointToCamera)),specular.w), 0.0f, 0.0f, 1.0f); // Used for testing purposes
 	// return saturate(specularReflection); // Used for testing purposes
 	// return float4(pointToCamera, 1.0f); // Used for testing purposes
