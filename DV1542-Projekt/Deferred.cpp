@@ -7,7 +7,7 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->window.Initialize();
 	this->direct3D.Initialize(this->window.GetWindow());
 
-	this->lightDir = XMVectorSet(1.0f, -1.0f, 0.0f, 0.0f);
+	this->lightDir = XMVectorSet(1.0f, -0.5f, 0.0f, 0.0f);
 	this->lightPos = XMVectorSet(500.0f, 200.0f, 500.0f, 0.0f);
 	this->shadowMapHeight = 2048;
 	this->shadowMapWidth  = 2048;
@@ -644,7 +644,7 @@ void Deferred::CreateTerrainTextures()
 	{
 		MessageBoxA(NULL, "Error creating dirt texture.", NULL, MB_OK);
 	}
-	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"NormalMap91.dds", NULL, &this->TerrainNormalSRV);
+	hr = CreateDDSTextureFromFile(this->direct3D.getDevice(), L"NormalMap9.dds", NULL, &this->TerrainNormalSRV);
 	if (FAILED(hr))
 	{
 		MessageBoxA(NULL, "Error creating normal map.", NULL, MB_OK);

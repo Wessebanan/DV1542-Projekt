@@ -38,8 +38,8 @@ PS_OUT main(PS_IN input)
 	float dirtSpecPower = 1.0f;
 	float dirtSpecIntensity = 0.0f;
 
-	float grassSpecPower = 1.0f;
-	float grassSpecIntensity = 0.3f;
+	float grassSpecPower = 7.0f;
+	float grassSpecIntensity = 0.1f;
 
 	float rockSpecPower = 4.0f;
 	float rockSpecIntensity = 0.5f;
@@ -105,7 +105,7 @@ PS_OUT main(PS_IN input)
 
 	//Sampling and decompressing the normal in tangent space. Texcoords divided by 102.4 to
 	//convert from [0;102.4] -> [0;1] since the normal map covers the entire terrain.
-	float3 normalTS = normalMap.Sample(samplerState, input.TexCoord / 102.4f).xyz;
+	float3 normalTS = normalMap.Sample(samplerState, input.TexCoord / (102.4f)).xyz;
 	normalTS = normalize((normalTS * 2.0f) - 1.0f);
 
 	//Transforming the normal to world space with the TBN matrix and setting to output
