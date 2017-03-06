@@ -10,7 +10,16 @@ MeshObject::MeshObject(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, 
 }
 
 MeshObject::~MeshObject(){
+	
+}
 
+void MeshObject::Release() {
+	if (this->vertexBuffer != nullptr) {
+		this->vertexBuffer->Release();
+	}
+	if (this->indexBuffer != nullptr) {
+		this->indexBuffer->Release();
+	}
 }
 
 void MeshObject::setWorldMatrix(XMMATRIX newWorld)
@@ -21,6 +30,21 @@ void MeshObject::setWorldMatrix(XMMATRIX newWorld)
 XMMATRIX MeshObject::getWorldMatrix()
 {
 	return this->world;
+}
+
+ID3D11Buffer * MeshObject::getVertexBuffer()
+{
+	return this->vertexBuffer;
+}
+
+ID3D11Buffer * MeshObject::getIndexBuffer()
+{
+	return this->indexBuffer;
+}
+
+unsigned int MeshObject::getNumIndices()
+{
+	return this->numIndices;
 }
 
 void MeshObject::RotateObject(float roll, float pitch, float yaw) {
@@ -45,4 +69,13 @@ void MeshObject::MoveObjectToPosition(XMFLOAT3 worldPosition) {
 	XMVECTOR newPosition = { worldPosition.x - this->worldPosition.x, worldPosition.y - this->worldPosition.y, worldPosition.z - this->worldPosition.z };
 	this->world = this->world * XMMatrixTranslationFromVector(newPosition);
 
+}
+
+void MeshObject::operator=(const MeshObject & other) {
+	this->vertexBuffer = other.vertexBuffer;
+	this->indexBuffer = other.indexBuffer;
+	this->numIndices = other.numIndices;
+	this->objectType = other.objectType;
+	this->world = other.world;
+	this->worldPosition = other.worldPosition;
 }

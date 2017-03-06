@@ -29,12 +29,19 @@ private:
 public:
 	MeshObject(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, unsigned int numIndices, OBJECT_TYPE objectType);
 	~MeshObject();
+	void Release();
 
 	void setWorldMatrix(XMMATRIX newWorld);
 	XMMATRIX getWorldMatrix();
+
+	ID3D11Buffer* getVertexBuffer();
+	ID3D11Buffer* getIndexBuffer();
+	unsigned int getNumIndices();
 
 	void RotateObject(float roll, float pitch, float yaw);
 	void ScaleObject(float scaleFactorX, float scaleFactorY, float scaleFactorZ);
 	void TranslateObject(float offsetX, float offsetY, float offsetZ);
 	void MoveObjectToPosition(XMFLOAT3 worldPosition);
+	void operator=(const MeshObject &other);
+
 };

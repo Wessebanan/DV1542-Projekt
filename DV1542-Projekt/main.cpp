@@ -30,6 +30,11 @@ Object Cube;
 Object Bear;
 Object Sphere;
 
+MeshObject* MTerrain = nullptr;
+MeshObject* MCube = nullptr;
+MeshObject* MBear = nullptr;
+MeshObject* MSphere = nullptr;
+
 const int numSpheres = 11;
 
 XMMATRIX SphereWorldMatrices[numSpheres];
@@ -48,12 +53,12 @@ void RenderDeferred(Deferred* def)
 
 	//-------Shadow map drawing--------
 	def->GetShadowmap()->BindShadowPass();
-	def->DrawShadow(Terrain.vertexBuffer, Terrain.indexBuffer, Terrain.numIndices, Terrain.world);
-	def->DrawShadow(Cube.vertexBuffer, Cube.indexBuffer, Cube.numIndices, Cube.world);
-	def->DrawShadow(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world);
+	def->DrawShadow(MTerrain->getVertexBuffer(), MTerrain->getIndexBuffer(), MTerrain->getNumIndices(), MTerrain->getWorldMatrix());
+	def->DrawShadow(MCube->getVertexBuffer(), MCube->getIndexBuffer(), MCube->getNumIndices(), MCube->getWorldMatrix());
+	def->DrawShadow(MBear->getVertexBuffer(), MBear->getIndexBuffer(), MBear->getNumIndices(), MBear->getWorldMatrix());
 	for (int i = 0; i < numSpheres; i++)
 	{
-		def->DrawShadow(Sphere.vertexBuffer, Sphere.indexBuffer, Sphere.numIndices, SphereWorldMatrices[i]);
+		def->DrawShadow(MSphere->getVertexBuffer(), MSphere->getIndexBuffer(), MSphere->getNumIndices(), SphereWorldMatrices[i]);
 	}
 	//-------------------------
 
@@ -63,22 +68,24 @@ void RenderDeferred(Deferred* def)
 	//Binds shared by terrain and generic object.
 	def->InitialGeometryBinds();
 	def->BindTerrain();
-	def->Draw(Terrain.vertexBuffer, Terrain.indexBuffer, Terrain.numIndices, Terrain.world, TERRAIN);
+	def->Draw(MTerrain->getVertexBuffer(), MTerrain->getIndexBuffer(), MTerrain->getNumIndices(), MTerrain->getWorldMatrix(), TERRAIN);
 	def->BindGenericObject();
-	def->Draw(Cube.vertexBuffer, Cube.indexBuffer, Cube.numIndices, Cube.world, CUBE);
-	def->Draw(Bear.vertexBuffer, Bear.indexBuffer, Bear.numIndices, Bear.world, BEAR);
+	def->Draw(MCube->getVertexBuffer(), MCube->getIndexBuffer(), MCube->getNumIndices(), MCube->getWorldMatrix(), CUBE);
+	def->Draw(MBear->getVertexBuffer(), MBear->getIndexBuffer(), MBear->getNumIndices(), MBear->getWorldMatrix(), BEAR);
 	for (int i = 0; i < numSpheres; i++)
 	{
-		def->Draw(Sphere.vertexBuffer, Sphere.indexBuffer, Sphere.numIndices, SphereWorldMatrices[i], SPHERE);
+		def->Draw(MSphere->getVertexBuffer(), MSphere->getIndexBuffer(), MSphere->getNumIndices(), SphereWorldMatrices[i], SPHERE);
 	}
 	//Lightpass contains the final draw call.
 	def->LightPass();
 }
 
-void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, OBJECT_TYPE objectType, TEX_COORD_TYPE texType = DIRECTX)
+void CreateObjectBuffers(Deferred* def, MeshObject* &object, const char* filePath, unsigned int numIndices, OBJECT_TYPE objectType, TEX_COORD_TYPE texType = DIRECTX)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
+	ID3D11Buffer* tempVertBuffer;
+	ID3D11Buffer* tempIndexBuffer;
 
 	Material* objectMaterial = nullptr;
 
@@ -94,7 +101,7 @@ void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, OB
 	D3D11_SUBRESOURCE_DATA objectData = {};
 	objectData.pSysMem = vertices.data();
 
-	if (FAILED(def->GetDevicePointer()->CreateBuffer(&vertexBufferDesc, &objectData, &object->vertexBuffer))) {
+	if (FAILED(def->GetDevicePointer()->CreateBuffer(&vertexBufferDesc, &objectData, &tempVertBuffer))) {
 		MessageBoxA(NULL, "Error creating vertex buffer for object.", NULL, MB_OK);
 		exit(-1);
 	}
@@ -109,14 +116,16 @@ void CreateObjectBuffers(Deferred* def, Object* object, const char* filePath, OB
 	D3D11_SUBRESOURCE_DATA indexData;
 	indexData.pSysMem = indices.data();
 
-	if (FAILED(def->GetDevicePointer()->CreateBuffer(&indexBufferDesc, &indexData, &object->indexBuffer)))
+	if (FAILED(def->GetDevicePointer()->CreateBuffer(&indexBufferDesc, &indexData, &tempIndexBuffer)))
 	{
 		MessageBoxA(NULL, "Error creating index buffer for object.", NULL, MB_OK);
 		exit(-1);
 	}
+
+	object = new MeshObject(tempVertBuffer, tempIndexBuffer, numIndices, objectType);
 }
 
-void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer)
+void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* &vertexBuffer, ID3D11Buffer* &indexBuffer)
 {
 	int rows = 1024;
 	int columns = 1024;
@@ -195,7 +204,7 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 	D3D11_SUBRESOURCE_DATA indexData;
 	indexData.pSysMem = indices;
 	
-	if (FAILED(def->GetDevicePointer()->CreateBuffer(&indexBufferDesc, &indexData, &Terrain.indexBuffer)))
+	if (FAILED(def->GetDevicePointer()->CreateBuffer(&indexBufferDesc, &indexData, &indexBuffer)))
 	{
 		MessageBoxA(NULL, "Error creating index buffer for terrain.", NULL, MB_OK);
 		exit(-1);
@@ -209,9 +218,9 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 	D3D11_SUBRESOURCE_DATA terrainData = {};
 	terrainData.pSysMem = vertices;
 
-	if (FAILED(def->GetDevicePointer()->CreateBuffer(&terrainBufferDesc, &terrainData, &Terrain.vertexBuffer)))
+	if (FAILED(def->GetDevicePointer()->CreateBuffer(&terrainBufferDesc, &terrainData, &vertexBuffer)))
 	{
-		MessageBoxA(NULL, "Error creating terrain buffer.", NULL, MB_OK);
+		MessageBoxA(NULL, "Error creating terrain vertex buffer.", NULL, MB_OK);
 		exit(-1);
 	}
 	delete[] vertices;
@@ -221,24 +230,33 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* vertexBuffer, ID3D11Buffe
 void CreateObjects(Deferred* def)
 {
 	//Create terrain object
-	CreateTerrainBuffers(def, Terrain.vertexBuffer, Terrain.indexBuffer);
-	Terrain.numIndices = 6 * 1023 * 1023;
-	Terrain.world = XMMatrixIdentity();
+	ID3D11Buffer* tempVertBuffer = nullptr;
+	ID3D11Buffer* tempIndexBuffer = nullptr;
+	CreateTerrainBuffers(def, tempVertBuffer, tempIndexBuffer);
+
+	MTerrain = new MeshObject(tempVertBuffer, tempIndexBuffer, 6 * 1023 * 1023, TERRAIN);
+
+	//Terrain.numIndices = 6 * 1023 * 1023;
+	//Terrain.world = XMMatrixIdentity();
 
 	//Create cube object
-	CreateObjectBuffers(def, &Cube, "cube_green_phong_12_tris_TRIANGULATED.obj", CUBE, OPENGL);
+	CreateObjectBuffers(def, MCube, "cube_green_phong_12_tris_TRIANGULATED.obj", 36, CUBE, OPENGL);
 	Cube.numIndices = 36; 
-	Cube.world = XMMatrixRotationRollPitchYaw(0.34f, 1.47f, 2.01f) * XMMatrixScaling(50.0f, 50.0f, 50.0f) * XMMatrixTranslation(500, 30, 500);
+	MCube->RotateObject(0.34f, 1.47f, 2.01f);
+	MCube->ScaleObject(50.0f, 50.0f, 50.0f);
+	MCube->TranslateObject(500, 30, 500);
+	// Cube.world = XMMatrixRotationRollPitchYaw(0.34f, 1.47f, 2.01f) * XMMatrixScaling(50.0f, 50.0f, 50.0f) * XMMatrixTranslation(500, 30, 500);
 
 	//Create bear object
-	CreateObjectBuffers(def, &Bear, "bear.obj", BEAR, OPENGL);
+	CreateObjectBuffers(def, MBear, "bear.obj", 3912, BEAR, OPENGL);
 	Bear.numIndices = 3912;
-	Bear.world = XMMatrixTranslation(160, -20, 180);
+	MBear->TranslateObject(160, -20, 180);
+	// Bear.world = XMMatrixTranslation(160, -20, 180);
 
 	//Create spheres
 	float translationX = 100;
 	float translationZ = 50;
-	CreateObjectBuffers(def, &Sphere, "sphere.obj", SPHERE);
+	CreateObjectBuffers(def, MSphere, "sphere.obj", 2280, SPHERE);
 	Sphere.numIndices = 2280;
 	for (int i = 0; i < 10; i++)
 	{
@@ -299,15 +317,32 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		DirectInput->Release();
 		DestroyWindow(def.GetWindowHandle());
 
-		Bear.indexBuffer->Release();
-		Sphere.indexBuffer->Release();
-		Cube.indexBuffer->Release();
-		Terrain.indexBuffer->Release();
+		//Bear.indexBuffer->Release();
+		//Sphere.indexBuffer->Release();
+		//Cube.indexBuffer->Release();
+		//Terrain.indexBuffer->Release();
 
-		Bear.vertexBuffer->Release();
-		Cube.vertexBuffer->Release();
-		Sphere.vertexBuffer->Release();
-		Terrain.vertexBuffer->Release();
+		//Bear.vertexBuffer->Release();
+		//Cube.vertexBuffer->Release();
+		//Sphere.vertexBuffer->Release();
+		//Terrain.vertexBuffer->Release();
+
+		if (MTerrain != nullptr) {
+			MTerrain->Release();
+			delete MTerrain;
+		}
+		if (MSphere != nullptr) {
+			MSphere->Release();
+			delete MSphere;
+		}
+		if (MBear != nullptr) {
+			MBear->Release();
+			delete MBear;
+		}
+		if (MCube != nullptr) {
+			MCube->Release();
+			delete MCube;
+		}
 	}
 	// return this part of the WM_QUIT message to Windows
 	return (int)msg.wParam;
