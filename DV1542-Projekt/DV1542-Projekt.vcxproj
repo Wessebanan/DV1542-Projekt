@@ -155,6 +155,7 @@
     <ClCompile Include="Camera.cpp" />
     <ClCompile Include="D3D.cpp" />
     <ClCompile Include="Deferred.cpp" />
+    <ClCompile Include="MeshObject.cpp" />
     <ClCompile Include="NoiseGenerator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
@@ -250,6 +251,7 @@
     <ClInclude Include="Deferred.h" />
     <ClInclude Include="InputHandler.h" />
     <ClInclude Include="NoiseGenerator.h" />
+    <ClInclude Include="MeshObject.h" />
     <ClInclude Include="OBJLoader.h" />
     <ClInclude Include="Shadowmap.h" />
     <ClInclude Include="Timer.h" />

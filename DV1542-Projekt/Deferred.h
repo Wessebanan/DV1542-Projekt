@@ -9,19 +9,14 @@
 #include "Shadowmap.h"
 #include "OBJLoader.h"
 #include "Blurrer.h"
+#include "MeshObject.h"
 
 using namespace DirectX;
 const int BUFFER_COUNT = 5;
 
 const int TEXTURE_COUNT = 3;
 
-enum OBJECT_TYPE
-{
-	TERRAIN = 0,
-	CUBE = 1,
-	BEAR = 2,
-	SPHERE = 3
-};
+
 
 
 class Deferred 
