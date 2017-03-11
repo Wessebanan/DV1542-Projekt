@@ -19,7 +19,7 @@ struct ListObject {
 
 class TreeNode {
 private:
-	float positionX, positionZ, width;
+	float positionX, positionZ, halfWidth;
 	ListObject* listHead;
 	ListObject* currentObject;
 	TreeNode* children[4];
@@ -27,12 +27,15 @@ private:
 
 
 public:
-	TreeNode(float positionX, float positionZ, float width);
+	TreeNode(float positionX, float positionZ, float halfWidth);
 	~TreeNode();
 
 	void AddObject(MeshObject* toAdd);
 
 	TreeNode* getChild(DIRECTION direction);
+	float getPositionX();
+	float getPositionZ();
+	float getHalfWidth();
 
 	MeshObject* getCurrentListObject();
 };

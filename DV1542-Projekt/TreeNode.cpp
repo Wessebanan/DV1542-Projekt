@@ -5,11 +5,11 @@
 TreeNode::TreeNode(float positionX, float positionZ, float width) {
 	this->positionX = positionX;
 	this->positionZ = positionZ;
-	this->width = width;
+	this->halfWidth = width;
 	this->listHead = nullptr;
 	this->currentObject = nullptr;
 	
-	int childWidth = this->width / 2;
+	int childWidth = this->halfWidth / 2;
 	if ((childWidth) >= 32) {
 		// NorthWest child
 		this->children[0] = new TreeNode(this->positionX - childWidth, this->positionZ + childWidth, childWidth);
@@ -61,6 +61,21 @@ TreeNode * TreeNode::getChild(DIRECTION direction)
 		return nullptr;
 		break;
 	}
+}
+
+float TreeNode::getPositionX()
+{
+	return this->positionX;
+}
+
+float TreeNode::getPositionZ()
+{
+	return this->positionZ;
+}
+
+float TreeNode::getHalfWidth()
+{
+	return this->halfWidth;
 }
 
 MeshObject * TreeNode::getCurrentListObject()
