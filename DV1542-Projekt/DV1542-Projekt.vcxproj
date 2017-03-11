@@ -160,6 +160,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
     <ClCompile Include="Shadowmap.cpp" />
+    <ClCompile Include="TreeNode.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -253,8 +254,10 @@
     <ClInclude Include="NoiseGenerator.h" />
     <ClInclude Include="MeshObject.h" />
     <ClInclude Include="OBJLoader.h" />
+    <ClInclude Include="QuadTree.h" />
     <ClInclude Include="Shadowmap.h" />
     <ClInclude Include="Timer.h" />
+    <ClInclude Include="TreeNode.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <ItemGroup>
