@@ -1,16 +1,20 @@
 #include "MeshObject.h"
 
-MeshObject::MeshObject(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, unsigned int numIndices, OBJECT_TYPE objectType, XMFLOAT4 boundingValues) {
+MeshObject::MeshObject(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, unsigned int numIndices, OBJECT_TYPE objectType, XMFLOAT3 boundingValues) {
 	this->vertexBuffer = vertexBuffer;
 	this->indexBuffer = indexBuffer;
 	this->numIndices = numIndices;
 	this->objectType = objectType;
 	this->world = XMMatrixIdentity();
 	this->worldPosition = XMFLOAT3(0.0f, 0.0f, 0.0f);
-	this->boundingLowX = boundingValues.x;
-	this->boundingHighX = boundingValues.y;
-	this->boundingLowZ = boundingValues.z;
-	this->boundingHighZ = boundingValues.w;
+	// BoundingValues
+	// x: the offset in x from mesh origin to bounding center
+	// y: the offset in z from mesh origin to bounding center
+	// z: the half-width of the bounding area
+	this->boundingLowX = boundingValues.x - boundingValues.z;
+	this->boundingHighX = boundingValues.x + boundingValues.z;
+	this->boundingLowZ = boundingValues.y - boundingValues.z;
+	this->boundingHighZ = boundingValues.y + boundingValues.z;
 }
 
 MeshObject::~MeshObject(){

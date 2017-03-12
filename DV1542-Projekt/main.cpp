@@ -237,7 +237,7 @@ void CreateObjects(Deferred* def)
 	ID3D11Buffer* tempIndexBuffer = nullptr;
 	CreateTerrainBuffers(def, tempVertBuffer, tempIndexBuffer);
 
-	MTerrain = new MeshObject(tempVertBuffer, tempIndexBuffer, 6 * 1023 * 1023, TERRAIN, XMFLOAT4(0, 0, 1024, 1024));
+	MTerrain = new MeshObject(tempVertBuffer, tempIndexBuffer, 6 * 1023 * 1023, TERRAIN, XMFLOAT3(512, 512, 512));
 
 	//Terrain.numIndices = 6 * 1023 * 1023;
 	//Terrain.world = XMMatrixIdentity();

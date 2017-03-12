@@ -28,7 +28,7 @@ private:
 
 
 public:
-	MeshObject(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, unsigned int numIndices, OBJECT_TYPE objectType, XMFLOAT4 boundingValues);
+	MeshObject(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, unsigned int numIndices, OBJECT_TYPE objectType, XMFLOAT3 boundingValues);
 	~MeshObject();
 	void Release();
 
