@@ -159,6 +159,7 @@
     <ClCompile Include="NoiseGenerator.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="OBJLoader.cpp" />
+    <ClCompile Include="QuadTree.cpp" />
     <ClCompile Include="Shadowmap.cpp" />
     <ClCompile Include="TreeNode.cpp" />
     <ClCompile Include="Window.cpp" />

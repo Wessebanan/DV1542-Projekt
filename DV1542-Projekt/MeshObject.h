@@ -39,6 +39,7 @@ public:
 	ID3D11Buffer* getVertexBuffer();
 	ID3D11Buffer* getIndexBuffer();
 	unsigned int getNumIndices();
+	XMFLOAT4 getBoundingValues();
 
 	void RotateObject(float roll, float pitch, float yaw);
 	void ScaleObject(float scaleFactorX, float scaleFactorY, float scaleFactorZ);

@@ -53,6 +53,11 @@ unsigned int MeshObject::getNumIndices()
 	return this->numIndices;
 }
 
+XMFLOAT4 MeshObject::getBoundingValues()
+{
+	return XMFLOAT4(this->boundingLowX, this->boundingHighX, this->boundingLowZ, this->boundingHighZ);
+}
+
 void MeshObject::RotateObject(float roll, float pitch, float yaw) {
 	XMMATRIX originTranslation = XMMatrixTranslation(-this->worldPosition.x, -this->worldPosition.y, -this->worldPosition.z);
 	XMMATRIX rotation = XMMatrixRotationRollPitchYaw(roll, pitch, yaw);

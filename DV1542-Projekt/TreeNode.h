@@ -23,7 +23,7 @@ private:
 	ListObject* listHead;
 	ListObject* currentObject;
 	TreeNode* children[4];
-
+	void AddObjectHere(MeshObject* toAdd);
 
 
 public:
