@@ -21,17 +21,17 @@ private:
 	OBJECT_TYPE objectType;
 	XMFLOAT3 worldPosition;
 	XMMATRIX world;
+	float boundingLowX, boundingHighX, boundingLowZ, boundingHighZ;
 
 
 
 
 
 public:
-	MeshObject(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, unsigned int numIndices, OBJECT_TYPE objectType);
+	MeshObject(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, unsigned int numIndices, OBJECT_TYPE objectType, XMFLOAT4 boundingValues);
 	~MeshObject();
 	void Release();
 
-	void setWorldMatrix(XMMATRIX newWorld);
 	XMMATRIX getWorldMatrix();
 
 	ID3D11Buffer* getVertexBuffer();

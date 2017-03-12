@@ -86,10 +86,13 @@ void CreateObjectBuffers(Deferred* def, MeshObject* &object, const char* filePat
 	std::vector<unsigned int> indices;
 	ID3D11Buffer* tempVertBuffer;
 	ID3D11Buffer* tempIndexBuffer;
+	XMFLOAT4 boundingValues = { -1, -1, -1 ,-1 };
+	XMFLOAT4* bvPointer = &boundingValues;
+	
 
 	Material* objectMaterial = nullptr;
 
-	bool result = loadOBJ(filePath, vertices, indices, objectMaterial, texType);
+	bool result = loadOBJ(filePath, vertices, indices, objectMaterial, bvPointer, texType);
 
 	def->CreateObjectTexture(objectMaterial, objectType);	
 
@@ -122,7 +125,7 @@ void CreateObjectBuffers(Deferred* def, MeshObject* &object, const char* filePat
 		exit(-1);
 	}
 
-	object = new MeshObject(tempVertBuffer, tempIndexBuffer, numIndices, objectType);
+	object = new MeshObject(tempVertBuffer, tempIndexBuffer, numIndices, objectType, boundingValues);
 }
 
 void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* &vertexBuffer, ID3D11Buffer* &indexBuffer)
@@ -234,7 +237,7 @@ void CreateObjects(Deferred* def)
 	ID3D11Buffer* tempIndexBuffer = nullptr;
 	CreateTerrainBuffers(def, tempVertBuffer, tempIndexBuffer);
 
-	MTerrain = new MeshObject(tempVertBuffer, tempIndexBuffer, 6 * 1023 * 1023, TERRAIN);
+	MTerrain = new MeshObject(tempVertBuffer, tempIndexBuffer, 6 * 1023 * 1023, TERRAIN, XMFLOAT4(0, 0, 1024, 1024));
 
 	//Terrain.numIndices = 6 * 1023 * 1023;
 	//Terrain.world = XMMatrixIdentity();

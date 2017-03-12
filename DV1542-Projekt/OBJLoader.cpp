@@ -52,7 +52,7 @@ Material* loadMTL(const char* filePath) {
 	return newMat;
 }
 
-bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <unsigned int> &indices, Material* &objectMaterial, TEX_COORD_TYPE texType) {
+bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <unsigned int> &indices, Material* &objectMaterial, XMFLOAT4* &boundingValues, TEX_COORD_TYPE texType) {
 	// This function reads obj files of format
 	// v 1 1 1
 	// vt 1 1 
@@ -65,6 +65,8 @@ bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <
 	std::vector <XMFLOAT2> tempTexCoords;
 	std::vector <XMFLOAT3> tempNormals;
 
+	float minX = FLT_MAX, minZ = FLT_MAX;
+	float maxX = -FLT_MAX, maxZ = -FLT_MAX;
 
 	FILE* file;
 	fopen_s(&file, filePath, "r"); // Open the file to be able to read from it
@@ -88,6 +90,17 @@ bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <
 			else if (strcmp(lineHeader, "v") == 0) { // Current line to read is vertex info
 				XMFLOAT3 vertex;
 				fscanf_s(file, "%f %f %f\n", &vertex.x, &vertex.y, &vertex.z);
+				// Bounding values calculated
+				if (vertex.x < minX)
+					minX = vertex.x;
+				else if (vertex.x > maxX)
+					maxX = vertex.x;
+
+				if (vertex.z < minZ)
+					minZ = vertex.z;
+				else if (vertex.z > maxZ)
+					maxZ = vertex.z;
+
 				tempVerts.push_back(vertex);
 			}
 			else if (strcmp(lineHeader, "vt") == 0) { // Current line to read is texcoord info
@@ -140,6 +153,11 @@ bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <
 		vertices.push_back(newVert);
 		indices.push_back(i);
 	}
-
+	if (minX < (FLT_MAX - 1) && boundingValues != nullptr) { // Something has been found
+		boundingValues->x = minX;
+		boundingValues->y = maxX;
+		boundingValues->z = minZ;
+		boundingValues->w = maxZ;
+	}
 	return true;
 }
