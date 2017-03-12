@@ -20,6 +20,11 @@ TreeNode::TreeNode(float positionX, float positionZ, float width) {
 		// SouthEast child
 		this->children[3] = new TreeNode(this->positionX + childWidth, this->positionZ - childWidth, childWidth);
 	}
+	else {
+		for (int i = 0; i < 4; i++) {
+			this->children[i] = nullptr;
+		}
+	}
 }
 
 TreeNode::~TreeNode() {

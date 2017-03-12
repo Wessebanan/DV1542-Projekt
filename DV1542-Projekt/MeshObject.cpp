@@ -15,6 +15,7 @@ MeshObject::MeshObject(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, 
 	this->boundingHighX = boundingValues.x + boundingValues.z;
 	this->boundingLowZ = boundingValues.y - boundingValues.z;
 	this->boundingHighZ = boundingValues.y + boundingValues.z;
+	this->boundingCenter = XMFLOAT2((boundingLowX + boundingHighX) / 2.0f, (boundingLowZ + boundingHighZ) / 2.0f);
 }
 
 MeshObject::~MeshObject(){
@@ -66,10 +67,13 @@ void MeshObject::ScaleObject(float scaleFactorX, float scaleFactorY, float scale
 	XMMATRIX completeScaling = originTranslation * scaling * XMMatrixTranspose(originTranslation);
 	this->world = this->world * completeScaling;
 
+	XMMATRIX boundingTranslation = XMMatrixTranslation(-this->boundingCenter.x, 0.0f, -this->boundingCenter.y);
+	XMMATRIX boundingScaling = boundingTranslation * scaling * XMMatrixTranspose(boundingTranslation);
+
 	XMVECTOR boundingLow =  { this->boundingLowX, 0, this->boundingLowZ, 1   };
 	XMVECTOR boundingHigh = { this->boundingHighX, 0, this->boundingHighZ, 1 };
-	XMVECTOR scaledLow =  XMVector4Transform(boundingLow, completeScaling);
-	XMVECTOR scaledHigh = XMVector4Transform(boundingHigh, completeScaling);
+	XMVECTOR scaledLow =  XMVector4Transform(boundingLow, boundingScaling);
+	XMVECTOR scaledHigh = XMVector4Transform(boundingHigh, boundingScaling);
 	this->boundingLowX =  XMVectorGetX(scaledLow);
 	this->boundingHighX = XMVectorGetX(scaledHigh);
 	this->boundingLowZ =  XMVectorGetZ(scaledLow);

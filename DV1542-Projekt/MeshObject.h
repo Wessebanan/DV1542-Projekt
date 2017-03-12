@@ -21,6 +21,8 @@ private:
 	OBJECT_TYPE objectType;
 	XMFLOAT3 worldPosition;
 	XMMATRIX world;
+
+	XMFLOAT2 boundingCenter;
 	float boundingLowX, boundingHighX, boundingLowZ, boundingHighZ;
 
 

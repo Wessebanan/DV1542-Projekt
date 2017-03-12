@@ -159,7 +159,7 @@ bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <
 
 		float xWidth = maxX - minX;
 		float zWidth = maxZ - minZ;
-		float halfWidth = (xWidth > zWidth) ? (xWidth / 2) : (zWidth / 2); // Choose the largest width
+		float halfWidth = (xWidth > zWidth) ? (xWidth / 2.0f) : (zWidth / 2.0f); // Choose the largest width
 		boundingValues->x = offsetX;
 		boundingValues->y = offsetZ;
 		boundingValues->z = halfWidth;
