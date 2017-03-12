@@ -52,7 +52,7 @@ Material* loadMTL(const char* filePath) {
 	return newMat;
 }
 
-bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <unsigned int> &indices, Material* &objectMaterial, XMFLOAT4* &boundingValues, TEX_COORD_TYPE texType) {
+bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <unsigned int> &indices, Material* &objectMaterial, XMFLOAT3* &boundingValues, TEX_COORD_TYPE texType) {
 	// This function reads obj files of format
 	// v 1 1 1
 	// vt 1 1 
@@ -154,10 +154,16 @@ bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <
 		indices.push_back(i);
 	}
 	if (minX < (FLT_MAX - 1) && boundingValues != nullptr) { // Something has been found
-		boundingValues->x = minX;
-		boundingValues->y = maxX;
-		boundingValues->z = minZ;
-		boundingValues->w = maxZ;
+		float offsetX = (maxX + minX) / 2; // The offset of the bounding area from the origin of the mesh
+		float offsetZ = (maxZ + minZ) / 2;
+
+		float xWidth = maxX - minX;
+		float zWidth = maxZ - minZ;
+		float halfWidth = (xWidth > zWidth) ? (xWidth / 2) : (zWidth / 2); // Choose the largest width
+		boundingValues->x = offsetX;
+		boundingValues->y = offsetZ;
+		boundingValues->z = halfWidth;
+
 	}
 	return true;
 }

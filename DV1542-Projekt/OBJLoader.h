@@ -31,6 +31,6 @@ using namespace DirectX;
 
 Material* loadMTL(const char* filePath);
 
-bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <unsigned int> &indices, Material* &objectMaterial, XMFLOAT4* &boundingValues, TEX_COORD_TYPE texType = DIRECTX);
+bool loadOBJ(const char* filePath, std::vector <Vertex> &vertices, std::vector <unsigned int> &indices, Material* &objectMaterial, XMFLOAT3* &boundingValues, TEX_COORD_TYPE texType = DIRECTX);
 
 #endif

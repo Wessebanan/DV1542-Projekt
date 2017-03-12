@@ -86,8 +86,8 @@ void CreateObjectBuffers(Deferred* def, MeshObject* &object, const char* filePat
 	std::vector<unsigned int> indices;
 	ID3D11Buffer* tempVertBuffer;
 	ID3D11Buffer* tempIndexBuffer;
-	XMFLOAT4 boundingValues = { -1, -1, -1 ,-1 };
-	XMFLOAT4* bvPointer = &boundingValues;
+	XMFLOAT3 boundingValues = { -1, -1, -1 }; // xy: the X and Z offset of the bounding area from the origin in the mesh
+	XMFLOAT3* bvPointer = &boundingValues;    // z:  the half-width of the AABA
 	
 
 	Material* objectMaterial = nullptr;
