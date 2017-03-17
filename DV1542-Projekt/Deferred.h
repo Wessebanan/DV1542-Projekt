@@ -10,6 +10,7 @@
 #include "OBJLoader.h"
 #include "Blurrer.h"
 #include "MeshObject.h"
+#include "Frustum.h"
 
 using namespace DirectX;
 const int BUFFER_COUNT = 5;
@@ -88,6 +89,7 @@ private:
 	matrixData WVP;
 
 	Camera playerCamera;
+	Frustum playerFrustum;
 
 	ID3D11Buffer* camPosBuffer	 = nullptr;
 	ID3D11Buffer* lightDirBuffer = nullptr;
@@ -143,4 +145,6 @@ public:
 	ID3D11Device* GetDevicePointer();
 
 	Shadowmap* GetShadowmap();
+
+	void UpdateFrustum();
 };

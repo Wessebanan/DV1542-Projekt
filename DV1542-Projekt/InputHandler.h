@@ -132,6 +132,7 @@ void DetectInput(float time, Deferred* deferred) {
 		camPitch = -1.57f;
 	}
 	deferred->GetCameraPointer()->UpdateCamera(moveLeftRight, moveBackForward, moveUpDown, camPitch, camYaw, &isJumping, &totalHeightOfJump);
+	deferred->UpdateFrustum();
 	moveLeftRight = 0.0f;
 	moveBackForward = 0.0f;
 	moveUpDown = 0.0f;

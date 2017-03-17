@@ -12,6 +12,7 @@
 #include <fstream>
 #include <crtdbg.h>
 #include <DDSTextureLoader.h>
+#include "QuadTree.h"
 
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
@@ -78,6 +79,13 @@ void RenderDeferred(Deferred* def)
 	}
 	//Lightpass contains the final draw call.
 	def->LightPass();
+
+	std::vector<MeshObject*> allObjects;
+	allObjects.push_back(MTerrain);
+
+	QuadTree ObjectsTree(&allObjects, 512.0f, 512.0f, 512.0f);
+
+
 }
 
 void CreateObjectBuffers(Deferred* def, MeshObject* &object, const char* filePath, unsigned int numIndices, OBJECT_TYPE objectType, TEX_COORD_TYPE texType = DIRECTX)

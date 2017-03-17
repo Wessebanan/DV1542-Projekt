@@ -25,6 +25,8 @@ Deferred::Deferred(HINSTANCE hInstance) :
 	this->WVP.lightView = this->shadowmap.getLightView();
 	this->WVP.lightProj = this->shadowmap.getLightProj();
 
+	this->playerFrustum = Frustum(this->WVP.view, this->WVP.proj);
+
 	this->direct3D.getDevCon()->IASetInputLayout(this->vertexLayout);
 	this->direct3D.getDevCon()->RSSetViewports(1, &this->viewPort);
 }
@@ -748,6 +750,10 @@ ID3D11Device * Deferred::GetDevicePointer()
 Shadowmap * Deferred::GetShadowmap()
 {
 	return &this->shadowmap;
+}
+
+void Deferred::UpdateFrustum() {
+	this->playerFrustum.UpdateFrustum(this->WVP.view, this->WVP.proj);
 }
 
 
