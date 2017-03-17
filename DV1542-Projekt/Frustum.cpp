@@ -25,7 +25,7 @@ Frustum::~Frustum() {
 
 void Frustum::UpdateFrustum(const XMMATRIX & view, const XMMATRIX & projection) {
 	XMFLOAT4X4 M;
-	XMStoreFloat4x4(&M, (projection * view));
+	XMStoreFloat4x4(&M, (view * projection));
 	// Left plane
 	this->Planes[0].Normal.x = -(M._14 + M._11);
 	this->Planes[0].Normal.y = -(M._24 + M._21);
@@ -90,7 +90,7 @@ bool Frustum::CheckAABA(const float & lowX, const float & highX, const float & l
 		bool dotNegative = false;
 
 		for (int j = 0; j < 2; j++) {
-			float newDot = XMVectorGetX(XMVector3Dot(planeNormal, diagonals[j]));
+			float newDot = XMVectorGetX(XMVector3Dot(XMVector3Normalize(planeNormal), XMVector3Normalize(diagonals[j])));
 			float absDot = fabs(newDot);
 			if (absDot > bestDot) {
 				bestDot = absDot;

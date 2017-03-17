@@ -49,6 +49,7 @@ void RenderDeferred(Deferred* def)
 	SphereWorldMatrices[10] = XMMatrixScaling(30, 30, 30) * XMMatrixRotationY(-rotationAngle * 10) * XMMatrixTranslation(100, 0, 0) * XMMatrixRotationY(rotationAngle) * XMMatrixTranslation(500, 100, 500);
 	MSpheres[10]->RotateObject(0, -rotationAngle * 10, 0);
 	MCube->RotateObject(0, -rotationAngle * 10, 0);
+	MCube->MoveObjectToPosition(XMFLOAT3(256, 0, 256));
 	XMFLOAT3 toMove = { 512.0f, 100.0f, 512.0f };
 	MSpheres[10]->MoveObjectToPosition(toMove);
 	rotationAngle += 0.0000001f;
@@ -93,10 +94,10 @@ void RenderDeferred(Deferred* def)
 		allObjects.push_back(MSpheres[i]);
 	}
 
-	QuadTree ObjectsTree(&allObjects, 512.0f, 512.0f, 512.0f);
+	QuadTree ObjectsTree(&allObjects, 512.0f, 512.0f, 510.0f);
 	std::vector<MeshObject*> toRender = ObjectsTree.getVisibleObjects(def->getFrustumPointer());
 	while(toRender.size() > 0) {
-		MeshObject* currentRender = toRender.front();
+		MeshObject* currentRender = toRender.back();
 		def->Draw(currentRender->getVertexBuffer(), currentRender->getIndexBuffer(), currentRender->getNumIndices(), currentRender->getWorldMatrix(), currentRender->getObjectType());
 		toRender.pop_back();
 	}

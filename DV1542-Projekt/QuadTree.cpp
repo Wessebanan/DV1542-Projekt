@@ -9,13 +9,10 @@ void QuadTree::FrustumCheck(std::vector<MeshObject*>* destinationList, Frustum *
 				destinationList->push_back(toAdd);
 				toAdd = currentNode->getCurrentListObject();
 			}
-			for (int i = 0; i < 4; i++) {
-				FrustumCheck(destinationList, frustum, currentNode->getChild(NW));
-				FrustumCheck(destinationList, frustum, currentNode->getChild(NE));
-				FrustumCheck(destinationList, frustum, currentNode->getChild(SW));
-				FrustumCheck(destinationList, frustum, currentNode->getChild(SE));
-
-			}
+			FrustumCheck(destinationList, frustum, currentNode->getChild(NW));
+			FrustumCheck(destinationList, frustum, currentNode->getChild(NE));
+			FrustumCheck(destinationList, frustum, currentNode->getChild(SW));
+			FrustumCheck(destinationList, frustum, currentNode->getChild(SE));
 		}
 	}
 }
