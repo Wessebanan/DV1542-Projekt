@@ -2,13 +2,17 @@
 
 float Frustum::distancePointToPlane(const Plane & plane, const XMVECTOR & point)
 {
-	float c = -plane.Distance / plane.Normal.z;
-	XMVECTOR pointInPlane = { 0.0f, 0.0f, c };
+	//float c = -plane.Distance / plane.Normal.z;
+	//XMVECTOR pointInPlane = { 0.0f, 0.0f, c };
 
 
 	XMVECTOR Normal = { plane.Normal.x, plane.Normal.y, plane.Normal.z };
-	XMVECTOR dotVec = XMVector3Dot(Normal, point - pointInPlane);
-	return XMVectorGetX(dotVec);
+	//XMVECTOR dotVec = XMVector3Dot(Normal, point - pointInPlane);
+	//return XMVectorGetX(dotVec);
+
+	XMVECTOR d1Vec = XMVector3Dot(Normal, point);
+	return XMVectorGetX(d1Vec) + plane.Distance;
+
 }
 
 Frustum::Frustum(const XMMATRIX & view, const XMMATRIX & projection) {

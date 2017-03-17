@@ -147,4 +147,6 @@ public:
 	Shadowmap* GetShadowmap();
 
 	void UpdateFrustum();
+	
+	Frustum* getFrustumPointer();
 };

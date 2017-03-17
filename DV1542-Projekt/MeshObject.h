@@ -31,6 +31,7 @@ private:
 
 public:
 	MeshObject(ID3D11Buffer* vertexBuffer, ID3D11Buffer* indexBuffer, unsigned int numIndices, OBJECT_TYPE objectType, XMFLOAT3 boundingValues);
+	MeshObject(const MeshObject &other);
 	~MeshObject();
 	void Release();
 
@@ -40,6 +41,7 @@ public:
 	ID3D11Buffer* getIndexBuffer();
 	unsigned int getNumIndices();
 	XMFLOAT4 getBoundingValues();
+	OBJECT_TYPE getObjectType();
 
 	void RotateObject(float roll, float pitch, float yaw);
 	void ScaleObject(float scaleFactorX, float scaleFactorY, float scaleFactorZ);

@@ -31,12 +31,14 @@ Object Cube;
 Object Bear;
 Object Sphere;
 
+const int numSpheres = 11;
+
 MeshObject* MTerrain = nullptr;
 MeshObject* MCube = nullptr;
 MeshObject* MBear = nullptr;
-MeshObject* MSphere = nullptr;
+MeshObject* MSpheres[numSpheres];
 
-const int numSpheres = 11;
+
 
 XMMATRIX SphereWorldMatrices[numSpheres];
 
@@ -44,8 +46,12 @@ float rotationAngle = 0.0f;
 
 void RenderDeferred(Deferred* def) 
 {
-	SphereWorldMatrices[10] = XMMatrixScaling(30, 30, 30)* XMMatrixRotationY(-rotationAngle * 10) * XMMatrixTranslation(100, 0, 0) * XMMatrixRotationY(rotationAngle) * XMMatrixTranslation(500, 100, 500);
-	rotationAngle += 0.01f;
+	SphereWorldMatrices[10] = XMMatrixScaling(30, 30, 30) * XMMatrixRotationY(-rotationAngle * 10) * XMMatrixTranslation(100, 0, 0) * XMMatrixRotationY(rotationAngle) * XMMatrixTranslation(500, 100, 500);
+	MSpheres[10]->RotateObject(0, -rotationAngle * 10, 0);
+	MCube->RotateObject(0, -rotationAngle * 10, 0);
+	XMFLOAT3 toMove = { 512.0f, 100.0f, 512.0f };
+	MSpheres[10]->MoveObjectToPosition(toMove);
+	rotationAngle += 0.0000001f;
 
 	if (rotationAngle > 2 * XM_PI)
 	{
@@ -59,7 +65,7 @@ void RenderDeferred(Deferred* def)
 	def->DrawShadow(MBear->getVertexBuffer(), MBear->getIndexBuffer(), MBear->getNumIndices(), MBear->getWorldMatrix());
 	for (int i = 0; i < numSpheres; i++)
 	{
-		def->DrawShadow(MSphere->getVertexBuffer(), MSphere->getIndexBuffer(), MSphere->getNumIndices(), SphereWorldMatrices[i]);
+		def->DrawShadow(MSpheres[i]->getVertexBuffer(), MSpheres[i]->getIndexBuffer(), MSpheres[i]->getNumIndices(), MSpheres[i]->getWorldMatrix());
 	}
 	//-------------------------
 
@@ -71,20 +77,30 @@ void RenderDeferred(Deferred* def)
 	def->BindTerrain();
 	def->Draw(MTerrain->getVertexBuffer(), MTerrain->getIndexBuffer(), MTerrain->getNumIndices(), MTerrain->getWorldMatrix(), TERRAIN);
 	def->BindGenericObject();
-	def->Draw(MCube->getVertexBuffer(), MCube->getIndexBuffer(), MCube->getNumIndices(), MCube->getWorldMatrix(), CUBE);
-	def->Draw(MBear->getVertexBuffer(), MBear->getIndexBuffer(), MBear->getNumIndices(), MBear->getWorldMatrix(), BEAR);
-	for (int i = 0; i < numSpheres; i++)
-	{
-		def->Draw(MSphere->getVertexBuffer(), MSphere->getIndexBuffer(), MSphere->getNumIndices(), SphereWorldMatrices[i], SPHERE);
-	}
+	//def->Draw(MCube->getVertexBuffer(), MCube->getIndexBuffer(), MCube->getNumIndices(), MCube->getWorldMatrix(), CUBE);
+	//def->Draw(MBear->getVertexBuffer(), MBear->getIndexBuffer(), MBear->getNumIndices(), MBear->getWorldMatrix(), BEAR);
+	//for (int i = 0; i < numSpheres; i++)
+	//{
+	//	def->Draw(MSpheres[i]->getVertexBuffer(), MSpheres[i]->getIndexBuffer(), MSpheres[i]->getNumIndices(), MSpheres[i]->getWorldMatrix(), SPHERE);
+	//}
 	//Lightpass contains the final draw call.
-	def->LightPass();
+
 
 	std::vector<MeshObject*> allObjects;
-	allObjects.push_back(MTerrain);
+	allObjects.push_back(MBear);
+	allObjects.push_back(MCube);
+	for (int i = 0; i < numSpheres; i++) {
+		allObjects.push_back(MSpheres[i]);
+	}
 
 	QuadTree ObjectsTree(&allObjects, 512.0f, 512.0f, 512.0f);
-
+	std::vector<MeshObject*> toRender = ObjectsTree.getVisibleObjects(def->getFrustumPointer());
+	while(toRender.size() > 0) {
+		MeshObject* currentRender = toRender.front();
+		def->Draw(currentRender->getVertexBuffer(), currentRender->getIndexBuffer(), currentRender->getNumIndices(), currentRender->getWorldMatrix(), currentRender->getObjectType());
+		toRender.pop_back();
+	}
+	def->LightPass();
 
 }
 
@@ -267,11 +283,15 @@ void CreateObjects(Deferred* def)
 	//Create spheres
 	float translationX = 100;
 	float translationZ = 50;
-	CreateObjectBuffers(def, MSphere, "sphere.obj", 2280, SPHERE);
+	CreateObjectBuffers(def, MSpheres[0], "sphere.obj", 2280, SPHERE);
+	for (int i = 1; i < numSpheres; i++) {
+		MSpheres[i] = new MeshObject(*MSpheres[0]);
+	}
 	Sphere.numIndices = 2280;
-	for (int i = 0; i < 10; i++)
+	for (int i = 0; i < numSpheres; i++)
 	{
-		SphereWorldMatrices[i] = XMMatrixScaling(30, 30, 30) * XMMatrixTranslation(translationX, 120, 500 + translationZ * (i+1));
+		MSpheres[i]->ScaleObject(30, 30, 30);
+		MSpheres[i]->TranslateObject(translationX, 120, 500 + translationZ * (i + 1));
 		translationZ *= -1;
 		translationX += 100;
 	}
@@ -339,19 +359,27 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		//Terrain.vertexBuffer->Release();
 
 		if (MTerrain != nullptr) {
-			MTerrain->Release();
+			MTerrain->getIndexBuffer()->Release();
+			MTerrain->getVertexBuffer()->Release();
 			delete MTerrain;
 		}
-		if (MSphere != nullptr) {
-			MSphere->Release();
-			delete MSphere;
+
+		MSpheres[0]->getIndexBuffer()->Release();
+		MSpheres[0]->getVertexBuffer()->Release();
+		for (int i = 0; i < numSpheres; i++) {
+			if (MSpheres[i] != nullptr) {
+				delete MSpheres[i];
+			}
 		}
+
 		if (MBear != nullptr) {
-			MBear->Release();
+			MBear->getIndexBuffer()->Release();
+			MBear->getVertexBuffer()->Release();
 			delete MBear;
 		}
 		if (MCube != nullptr) {
-			MCube->Release();
+			MCube->getIndexBuffer()->Release();
+			MCube->getVertexBuffer()->Release();
 			delete MCube;
 		}
 	}

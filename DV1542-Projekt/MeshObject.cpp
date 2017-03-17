@@ -18,17 +18,31 @@ MeshObject::MeshObject(ID3D11Buffer * vertexBuffer, ID3D11Buffer * indexBuffer, 
 	this->boundingCenter = XMFLOAT2((boundingLowX + boundingHighX) / 2.0f, (boundingLowZ + boundingHighZ) / 2.0f);
 }
 
+MeshObject::MeshObject(const MeshObject & other) {
+	this->vertexBuffer = other.vertexBuffer;
+	this->indexBuffer = other.indexBuffer;
+	this->numIndices = other.numIndices;
+	this->objectType = other.objectType;
+	this->world = other.world;
+	this->worldPosition = other.worldPosition;
+	this->boundingLowX = other.boundingLowX;
+	this->boundingHighX = other.boundingHighX;
+	this->boundingLowZ = other.boundingLowZ;
+	this->boundingHighZ = other.boundingHighZ;
+	this->boundingCenter = other.boundingCenter;
+}
+
 MeshObject::~MeshObject(){
 	
 }
 
 void MeshObject::Release() {
-	if (this->vertexBuffer != nullptr) {
-		this->vertexBuffer->Release();
-	}
-	if (this->indexBuffer != nullptr) {
-		this->indexBuffer->Release();
-	}
+	//if (this->vertexBuffer != nullptr) {
+	//	this->vertexBuffer->Release();
+	//}
+	//if (this->indexBuffer != nullptr) {
+	//	this->indexBuffer->Release();
+	//}
 }
 
 
@@ -58,10 +72,15 @@ XMFLOAT4 MeshObject::getBoundingValues()
 	return XMFLOAT4(this->boundingLowX, this->boundingHighX, this->boundingLowZ, this->boundingHighZ);
 }
 
+OBJECT_TYPE MeshObject::getObjectType()
+{
+	return this->objectType;
+}
+
 void MeshObject::RotateObject(float roll, float pitch, float yaw) {
 	XMMATRIX originTranslation = XMMatrixTranslation(-this->worldPosition.x, -this->worldPosition.y, -this->worldPosition.z);
 	XMMATRIX rotation = XMMatrixRotationRollPitchYaw(roll, pitch, yaw);
-	XMMATRIX completeRotation = originTranslation * rotation * XMMatrixTranspose(originTranslation);
+	XMMATRIX completeRotation = originTranslation * rotation * XMMatrixTranslation(this->worldPosition.x, this->worldPosition.y, this->worldPosition.z);
 	this->world = this->world * completeRotation;
 
 }
@@ -69,11 +88,11 @@ void MeshObject::RotateObject(float roll, float pitch, float yaw) {
 void MeshObject::ScaleObject(float scaleFactorX, float scaleFactorY, float scaleFactorZ) {
 	XMMATRIX originTranslation = XMMatrixTranslation(-this->worldPosition.x, -this->worldPosition.y, -this->worldPosition.z);
 	XMMATRIX scaling = XMMatrixScaling(scaleFactorX, scaleFactorY, scaleFactorZ);
-	XMMATRIX completeScaling = originTranslation * scaling * XMMatrixTranspose(originTranslation);
+	XMMATRIX completeScaling = originTranslation * scaling * XMMatrixTranslation(this->worldPosition.x, this->worldPosition.y, this->worldPosition.z);
 	this->world = this->world * completeScaling;
 
 	XMMATRIX boundingTranslation = XMMatrixTranslation(-this->boundingCenter.x, 0.0f, -this->boundingCenter.y);
-	XMMATRIX boundingScaling = boundingTranslation * scaling * XMMatrixTranspose(boundingTranslation);
+	XMMATRIX boundingScaling = boundingTranslation * scaling * XMMatrixTranslation(this->boundingCenter.x, 0.0f, this->boundingCenter.y);
 
 	XMVECTOR boundingLow =  { this->boundingLowX, 0, this->boundingLowZ, 1   };
 	XMVECTOR boundingHigh = { this->boundingHighX, 0, this->boundingHighZ, 1 };
@@ -88,6 +107,9 @@ void MeshObject::ScaleObject(float scaleFactorX, float scaleFactorY, float scale
 
 void MeshObject::TranslateObject(float offsetX, float offsetY, float offsetZ) {
 	this->world = this->world * XMMatrixTranslation(offsetX, offsetY, offsetZ);
+	this->worldPosition.x = this->worldPosition.x + offsetX;
+	this->worldPosition.y = this->worldPosition.y + offsetY;
+	this->worldPosition.z = this->worldPosition.z = offsetZ;
 	this->boundingHighX += offsetX;
 	this->boundingLowX += offsetX;
 	this->boundingHighZ += offsetZ;
@@ -97,6 +119,7 @@ void MeshObject::TranslateObject(float offsetX, float offsetY, float offsetZ) {
 void MeshObject::MoveObjectToPosition(XMFLOAT3 worldPosition) {
 	XMVECTOR translation = { worldPosition.x - this->worldPosition.x, worldPosition.y - this->worldPosition.y, worldPosition.z - this->worldPosition.z };
 	this->world = this->world * XMMatrixTranslationFromVector(translation);
+	this->worldPosition = worldPosition;
 	this->boundingLowX += XMVectorGetX(translation);
 	this->boundingHighX += XMVectorGetX(translation);
 	this->boundingLowZ += XMVectorGetZ(translation);
@@ -111,4 +134,10 @@ void MeshObject::operator=(const MeshObject & other) {
 	this->objectType = other.objectType;
 	this->world = other.world;
 	this->worldPosition = other.worldPosition;
+	this->boundingLowX = other.boundingLowX;
+	this->boundingHighX = other.boundingHighX;
+	this->boundingLowZ = other.boundingLowZ;
+	this->boundingHighZ = other.boundingHighZ;
+	this->boundingCenter = other.boundingCenter;
+	
 }

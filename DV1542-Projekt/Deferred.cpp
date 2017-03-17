@@ -756,5 +756,10 @@ void Deferred::UpdateFrustum() {
 	this->playerFrustum.UpdateFrustum(this->WVP.view, this->WVP.proj);
 }
 
+Frustum * Deferred::getFrustumPointer()
+{
+	return &this->playerFrustum;
+}
+
 
 
