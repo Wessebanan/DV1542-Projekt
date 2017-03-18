@@ -174,7 +174,7 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* &vertexBuffer, ID3D11Buff
 		{
 			vertices[vertexIncrementer] = 
 			{ 
-				(float)j,-20.0f + 100.0f * heightmapData[i*rows + j], (float)i, 
+				(float)j, -20.0f + 100.0f * heightmapData[i*rows + j], (float)i, 
 				0.0f, 0.0f, 0.0f, 
 				u, v 
 			};
@@ -211,8 +211,7 @@ void CreateTerrainBuffers(Deferred* def, ID3D11Buffer* &vertexBuffer, ID3D11Buff
 
 		XMVECTOR edge1 = p1 - p0;
 		XMVECTOR edge2 = p2 - p0;
-		XMVECTOR faceNormal = XMVector3Cross(edge1, edge2);
-		XMVector3Normalize(faceNormal);
+		XMVECTOR faceNormal = XMVector3Normalize(XMVector3Cross(edge1, edge2));		
 
 		for (int j = 0; j < 3; j++)
 		{

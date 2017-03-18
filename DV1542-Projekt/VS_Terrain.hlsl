@@ -5,8 +5,6 @@ struct VS_IN
 	float2 TexCoord : TEXCOORD;
 };
 
-
-
 struct VS_OUT
 {
 	float4 Pos : POSITION;

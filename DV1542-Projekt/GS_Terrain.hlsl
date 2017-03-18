@@ -30,12 +30,9 @@ struct GS_OUT
 [maxvertexcount(3)]
 void main(triangle GS_IN input[3], inout TriangleStream< GS_OUT > output)
 {
-	//The face normal is shared between the three veritces of the triangle.
+	//The face normal is shared between the three vertices of the triangle.
 	float3 normal = normalize(mul(world, float4(input[0].Normal, 0.0f)).xyz);
 
-	//Creating the world positions here as they are needed for the backface culling.
-	//The world matrix is however an identity matrix for the terrain, so this is
-	//not needed, although should we change that, this would still look fine.
 	float3 worldPositions[3];
 	for (int i = 0; i < 3; i++)
 	{
@@ -50,13 +47,11 @@ void main(triangle GS_IN input[3], inout TriangleStream< GS_OUT > output)
 	//triangle and calculating the cosine of the angle to determine
 	//if the triangle is backfacing.
 	float3 camToPoint = normalize(worldPositions[0] - camPos.xyz);
-	float cosAngle = dot(camToPoint, nor2);
+	float3 pointToCam = normalize(camPos.xyz - worldPositions[0]);
+	float cosAngle = dot(pointToCam, nor2);
 	
-
-	//Using a bias of 0.25 to ensure there are no false negatives.
-	//Needs to be 0.25 because the terrain consists of so many triangles.
-	if (cosAngle /*- 0.3f */<= 0.0f) 
-//	if(true)
+	if (cosAngle /*- 0.3f */ >= 0.0f) 
+	//if(true)
 	{
 		//The distance between the positions of the vertices.
 		float3 dPos1 = input[1].Pos.xyz - input[0].Pos.xyz;
