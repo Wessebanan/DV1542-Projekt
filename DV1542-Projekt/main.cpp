@@ -71,6 +71,7 @@ void RenderDeferred(Deferred* def)
 	//-------------------------
 
 	def->GetShadowmap()->UnbindDSV();
+	//Blurs the shadow map using a gaussian filter in a compute shader.
 	def->BlurShadowMap();
 
 	//Binds shared by terrain and generic object.
