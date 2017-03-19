@@ -46,12 +46,13 @@ float rotationAngle = 0.0f;
 
 void RenderDeferred(Deferred* def) 
 {
-	SphereWorldMatrices[10] = XMMatrixScaling(30, 30, 30) * XMMatrixRotationY(-rotationAngle * 10) * XMMatrixTranslation(100, 0, 0) * XMMatrixRotationY(rotationAngle) * XMMatrixTranslation(500, 100, 500);
+	//SphereWorldMatrices[10] = XMMatrixScaling(30, 30, 30) * XMMatrixRotationY(-rotationAngle * 10) * XMMatrixTranslation(100, 0, 0) * XMMatrixRotationY(rotationAngle) * XMMatrixTranslation(500, 100, 500);
 	MSpheres[10]->RotateObject(0, -rotationAngle * 10, 0);
 	MCube->RotateObject(0, -rotationAngle * 10, 0);
-	MCube->MoveObjectToPosition(XMFLOAT3(256, 0, 256));
-	XMFLOAT3 toMove = { 512.0f, 100.0f, 512.0f };
+	MCube->MoveObjectToPosition(XMFLOAT3(512, 0, 512));
+	XMFLOAT3 toMove = { 400.0f, 200.0f, 300.0f };
 	MSpheres[10]->MoveObjectToPosition(toMove);
+	MSpheres[9]->MoveObjectToPosition(XMFLOAT3(512, 50, 512));
 	rotationAngle += 0.0000001f;
 
 	if (rotationAngle > 2 * XM_PI)
@@ -89,17 +90,21 @@ void RenderDeferred(Deferred* def)
 
 
 	std::vector<MeshObject*> allObjects;
+
 	allObjects.push_back(MBear);
 	allObjects.push_back(MCube);
 	for (int i = 0; i < numSpheres; i++) {
 		allObjects.push_back(MSpheres[i]);
 	}
 
-	QuadTree ObjectsTree(&allObjects, 512.0f, 512.0f, 510.0f);
+	QuadTree ObjectsTree(&allObjects, 512.0f, 512.0f, 512.0f);
 	std::vector<MeshObject*> toRender = ObjectsTree.getVisibleObjects(def->getFrustumPointer());
 	while(toRender.size() > 0) {
 		MeshObject* currentRender = toRender.back();
-		def->Draw(currentRender->getVertexBuffer(), currentRender->getIndexBuffer(), currentRender->getNumIndices(), currentRender->getWorldMatrix(), currentRender->getObjectType());
+		XMFLOAT4 boundingValues = currentRender->getBoundingValues();
+		//if (def->getFrustumPointer()->CheckAABA(boundingValues.x, boundingValues.y, boundingValues.z, boundingValues.w)) {
+			def->Draw(currentRender->getVertexBuffer(), currentRender->getIndexBuffer(), currentRender->getNumIndices(), currentRender->getWorldMatrix(), currentRender->getObjectType());
+		//}
 		toRender.pop_back();
 	}
 	def->LightPass();

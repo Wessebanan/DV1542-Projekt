@@ -6,7 +6,10 @@ void QuadTree::FrustumCheck(std::vector<MeshObject*>* destinationList, Frustum *
 		if (doesIntersect) {
 			MeshObject* toAdd = currentNode->getCurrentListObject();
 			while (toAdd != nullptr) { // Add all objects in current node to list
-				destinationList->push_back(toAdd);
+				XMFLOAT4 objectBVs = toAdd->getBoundingValues();
+				if (frustum->CheckAABA(objectBVs.x, objectBVs.y, objectBVs.z, objectBVs.w)) { // If the object is contained in the frustum
+					destinationList->push_back(toAdd);
+				}
 				toAdd = currentNode->getCurrentListObject();
 			}
 			FrustumCheck(destinationList, frustum, currentNode->getChild(NW));

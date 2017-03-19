@@ -5,9 +5,7 @@
 void TreeNode::AddObjectHere(MeshObject * toAdd) {
 	ListObject* newItem = new ListObject(toAdd, this->listHead);
 	this->listHead = newItem;
-	if (this->currentObject == nullptr) {
-		this->currentObject = listHead;
-	}
+	this->currentObject = listHead;
 }
 
 TreeNode::TreeNode(float positionX, float positionZ, float halfWidth) {
