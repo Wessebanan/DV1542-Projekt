@@ -24,7 +24,6 @@ struct GS_OUT
 	float3 Tangent	 : TANGENT;
 	float3 Bitangent : BINORMAL;
 	float4 lightPos  : POSITION1;
-	float testFloat  : FLOAT;
 };
 
 [maxvertexcount(3)]
@@ -39,19 +38,19 @@ void main(triangle GS_IN input[3], inout TriangleStream< GS_OUT > output)
 		worldPositions[i] = mul(world, input[i].Pos).xyz;
 	}
 
+	//Currently have to calculate normals every frame for bf culling,
+	//can't figure out the problem with the precomputed ones.
 	float3 edge0 = worldPositions[1] - worldPositions[0];
 	float3 edge1 = worldPositions[2] - worldPositions[0];
 	float3 nor2 = normalize(cross(edge0, edge1));
 
-	//Creating a vector from the camera to the first vertex of the
-	//triangle and calculating the cosine of the angle to determine
+	//Creating a vector from the first vertex of the triangle
+	//to the camera and calculating the cosine of the angle to determine
 	//if the triangle is backfacing.
-	float3 camToPoint = normalize(worldPositions[0] - camPos.xyz);
 	float3 pointToCam = normalize(camPos.xyz - worldPositions[0]);
 	float cosAngle = dot(pointToCam, nor2);
 	
-	if (cosAngle /*- 0.3f */ >= 0.0f) 
-	//if(true)
+	if (cosAngle >= 0.0f) 	
 	{
 		//The distance between the positions of the vertices.
 		float3 dPos1 = input[1].Pos.xyz - input[0].Pos.xyz;
@@ -82,7 +81,6 @@ void main(triangle GS_IN input[3], inout TriangleStream< GS_OUT > output)
 			element.Tangent	  = normalize(mul(world, float4(tangent, 0.0f)).xyz);
 			element.Bitangent = normalize(mul(world, float4(bitangent, 0.0f)).xyz);
 			element.lightPos  = mul(lightWvp, input[i].Pos);
-			element.testFloat = -cosAngle;
 			output.Append(element);
 		}
 	}
