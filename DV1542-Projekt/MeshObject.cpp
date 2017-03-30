@@ -114,6 +114,8 @@ void MeshObject::TranslateObject(float offsetX, float offsetY, float offsetZ) {
 	this->boundingLowX += offsetX;
 	this->boundingHighZ += offsetZ;
 	this->boundingLowZ += offsetZ;
+	this->boundingCenter.x += offsetX;
+	this->boundingCenter.y += offsetZ;
 }
 
 void MeshObject::MoveObjectToPosition(XMFLOAT3 worldPosition) {
@@ -124,6 +126,8 @@ void MeshObject::MoveObjectToPosition(XMFLOAT3 worldPosition) {
 	this->boundingHighX += XMVectorGetX(translation);
 	this->boundingLowZ += XMVectorGetZ(translation);
 	this->boundingHighZ += XMVectorGetZ(translation);
+	this->boundingCenter.x += XMVectorGetX(translation);
+	this->boundingCenter.y = XMVectorGetZ(translation);
 
 }
 
