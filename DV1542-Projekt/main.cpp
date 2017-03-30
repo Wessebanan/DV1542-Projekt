@@ -46,13 +46,12 @@ float rotationAngle = 0.0f;
 
 void RenderDeferred(Deferred* def) 
 {
-	//SphereWorldMatrices[10] = XMMatrixScaling(30, 30, 30) * XMMatrixRotationY(-rotationAngle * 10) * XMMatrixTranslation(100, 0, 0) * XMMatrixRotationY(rotationAngle) * XMMatrixTranslation(500, 100, 500);
 	MSpheres[10]->RotateObject(0, -rotationAngle * 10, 0);
 	MCube->RotateObject(0, -rotationAngle * 10, 0);
-	MCube->MoveObjectToPosition(XMFLOAT3(512, 0, 512));
+	MCube->MoveObjectToPosition(XMFLOAT3(512, 30, 512));
 	XMFLOAT3 toMove = { 400.0f, 200.0f, 300.0f };
 	MSpheres[10]->MoveObjectToPosition(toMove);
-	MSpheres[9]->MoveObjectToPosition(XMFLOAT3(512, 50, 512));
+	MSpheres[9]->MoveObjectToPosition(XMFLOAT3(512, 100, 512));
 	rotationAngle += 0.0000001f;
 
 	if (rotationAngle > 2 * XM_PI)

@@ -51,15 +51,11 @@ float4 main(PS_IN input) : SV_TARGET
 	float s1 = (shadowMap.Sample(samplerState, smTex + float2(dx, 0.0f)	).x + epsilon < depth) ? 0.0f : 1.0f;
 	float s2 = (shadowMap.Sample(samplerState, smTex + float2(0.0f, dy)	).x	+ epsilon < depth) ? 0.0f : 1.0f;
 	float s3 = (shadowMap.Sample(samplerState, smTex + float2(dx, dy)	).x	+ epsilon < depth) ? 0.0f : 1.0f;
-	float s4 = (shadowMap.Sample(samplerState, smTex + float2(-dx, -dy)	).x	+ epsilon < depth) ? 0.0f : 1.0f;
-	float s5 = (shadowMap.Sample(samplerState, smTex + float2(dx, -dy)	).x	+ epsilon < depth) ? 0.0f : 1.0f;
-	float s6 = (shadowMap.Sample(samplerState, smTex + float2(-dx, dy)	).x	+ epsilon < depth) ? 0.0f : 1.0f;
-	float s7 = (shadowMap.Sample(samplerState, smTex + float2(-dx, 0.0f)).x + epsilon < depth) ? 0.0f : 1.0f;
-	float s8 = (shadowMap.Sample(samplerState, smTex + float2(0.0f, -dy)).x + epsilon < depth) ? 0.0f : 1.0f;
 
 	//Averaging the results to blur the edges of the shadow.
-	float shadowCoeff = (s0 + s1 + s2 + s3 + s4 + s5 + s6 + s7 + s8) / 9.0f;
+	float shadowCoeff = (s0 + s1 + s2 + s3) / 4.0f;
 	
+	//To determine if the pixel should have specularity.
 	bool inShadow = (shadowCoeff < epsilon) ? true : false;
 	//----------------------------------
 
@@ -79,8 +75,4 @@ float4 main(PS_IN input) : SV_TARGET
 	float brightness =  saturate(dot(normalize(lightVec), normal));
 
 	return saturate(color * saturate(brightness * shadowCoeff + ambient) + specularReflection);
-
-	// return float4((float)pow(saturate(dot(reflection, pointToCamera)),specular.w), 0.0f, 0.0f, 1.0f); // Used for testing purposes
-	// return saturate(specularReflection); // Used for testing purposes
-	// return float4(pointToCamera, 1.0f); // Used for testing purposes
 }
