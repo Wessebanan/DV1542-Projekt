@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2050
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DV2578 Machine Learning Assign. 1", "DV2578 Machine Learning Assign. 1\DV2578 Machine Learning Assign. 1.vcxproj", "{37DE7BC8-080D-4A66-ABF0-820B69095335}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{37DE7BC8-080D-4A66-ABF0-820B69095335}.Debug|x64.ActiveCfg = Debug|x64
+		{37DE7BC8-080D-4A66-ABF0-820B69095335}.Debug|x64.Build.0 = Debug|x64
+		{37DE7BC8-080D-4A66-ABF0-820B69095335}.Debug|x86.ActiveCfg = Debug|Win32
+		{37DE7BC8-080D-4A66-ABF0-820B69095335}.Debug|x86.Build.0 = Debug|Win32
+		{37DE7BC8-080D-4A66-ABF0-820B69095335}.Release|x64.ActiveCfg = Release|x64
+		{37DE7BC8-080D-4A66-ABF0-820B69095335}.Release|x64.Build.0 = Release|x64
+		{37DE7BC8-080D-4A66-ABF0-820B69095335}.Release|x86.ActiveCfg = Release|Win32
+		{37DE7BC8-080D-4A66-ABF0-820B69095335}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1E91E104-093A-4B98-87E0-8840A07794A9}
+	EndGlobalSection
+EndGlobal
