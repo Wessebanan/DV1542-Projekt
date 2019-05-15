@@ -135,3 +135,8 @@ XMVECTOR Camera::GetCamPosition()
 	return this->camPosition;
 }
 
+XMVECTOR Camera::GetForward()
+{
+	return this->camForward;
+}
+

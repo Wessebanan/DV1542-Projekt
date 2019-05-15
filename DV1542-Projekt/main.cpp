@@ -14,6 +14,8 @@
 #include <DDSTextureLoader.h>
 #include "QuadTree.h"
 
+#include "Sounds.h"
+
 #pragma comment (lib, "d3d11.lib")
 #pragma comment (lib, "d3dcompiler.lib")
 using namespace DirectX;
@@ -46,8 +48,8 @@ float rotationAngle = 0.0f;
 
 void RenderDeferred(Deferred* def) 
 {
-	MSpheres[10]->RotateObject(0, -rotationAngle * 10, 0);
-	MCube->RotateObject(0, -rotationAngle * 10, 0);
+	MSpheres[9]->RotateObject(0, -rotationAngle * 100, 0);
+	//MCube->RotateObject(0, -rotationAngle * 10, 0);
 	MCube->MoveObjectToPosition(XMFLOAT3(512, 30, 512));
 	XMFLOAT3 toMove = { 400.0f, 200.0f, 300.0f };
 	MSpheres[10]->MoveObjectToPosition(toMove);
@@ -282,9 +284,10 @@ void CreateObjects(Deferred* def)
 	//Create bear object
 	CreateObjectBuffers(def, MBear, "bear.obj", 3912, BEAR, OPENGL);
 	Bear.numIndices = 3912;
+	
 	MBear->TranslateObject(160, -20, 180);
 	// Bear.world = XMMatrixTranslation(160, -20, 180);
-
+	
 	//Create spheres
 	float translationX = 100;
 	float translationZ = 50;
@@ -317,6 +320,9 @@ int WINAPI WinMain(HINSTANCE hInstance,
 		MessageBox(0, L"Failed to initialize Direct Input.", L"Error", MB_OK);
 	}
 
+	CoInitializeEx(nullptr, COINIT_MULTITHREADED);
+
+	Sounds sound_engine(def.GetCameraPointer());
 
 	if (def.GetWindowHandle()) {
 
@@ -346,6 +352,7 @@ int WINAPI WinMain(HINSTANCE hInstance,
 			else {
 				DetectInput((float)GetFrameTime(), &def);				
 				RenderDeferred(&def);
+				sound_engine.Update(isJumping);
 			}
 		}
 		DIKeyboard->Unacquire();

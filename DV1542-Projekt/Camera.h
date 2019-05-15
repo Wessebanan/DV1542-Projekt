@@ -35,4 +35,5 @@ public:
 
 	XMMATRIX GetViewMatrix();
 	XMVECTOR GetCamPosition();
+	XMVECTOR GetForward();
 };

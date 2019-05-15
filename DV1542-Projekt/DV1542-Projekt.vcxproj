@@ -1,6 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="packages\directxtk_desktop_2015.2016.12.5.1\build\native\directxtk_desktop_2015.props" Condition="Exists('packages\directxtk_desktop_2015.2016.12.5.1\build\native\directxtk_desktop_2015.props')" />
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -23,32 +22,32 @@
     <ProjectGuid>{09965A13-5A4C-410B-815F-88B5A4347BE5}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>DV1542Projekt</RootNamespace>
-    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v140</PlatformToolset>
+    <PlatformToolset>v141</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -106,12 +105,15 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SFML_STATIC;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\Wesse\Source\Repos\DV1542-Projekt2\DV1542-Projekt\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>C:\Users\Wesse\Source\Repos\audio_test\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-audio-s.lib;sfml-graphics-s.lib;sfml-system-s.lib;sfml-window-s.lib;sfml-network-s.lib;opengl32.lib;freetype.lib;winmm.lib;gdi32.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -140,14 +142,17 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
+      <PreprocessorDefinitions>SFML_STATIC;NDEBUG;_WINDOWS;%(PreprocessorDefinitions)_CRT_SECURE_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>C:\Users\Wesse\Source\Repos\DV1542-Projekt2\DV1542-Projekt\SFML-2.5.1\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>C:\Users\Wesse\Source\Repos\audio_test\SFML-2.5.1\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>sfml-audio-s.lib;sfml-graphics-s.lib;sfml-system-s.lib;sfml-window-s.lib;sfml-network-s.lib;opengl32.lib;freetype.lib;winmm.lib;gdi32.lib;openal32.lib;flac.lib;vorbisenc.lib;vorbisfile.lib;vorbis.lib;ogg.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -162,6 +167,7 @@
     <ClCompile Include="OBJLoader.cpp" />
     <ClCompile Include="QuadTree.cpp" />
     <ClCompile Include="Shadowmap.cpp" />
+    <ClCompile Include="Sounds.cpp" />
     <ClCompile Include="TreeNode.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
@@ -260,6 +266,7 @@
     <ClInclude Include="OBJLoader.h" />
     <ClInclude Include="QuadTree.h" />
     <ClInclude Include="Shadowmap.h" />
+    <ClInclude Include="Sounds.h" />
     <ClInclude Include="Timer.h" />
     <ClInclude Include="TreeNode.h" />
     <ClInclude Include="Window.h" />
@@ -269,13 +276,12 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="packages\directxtk_desktop_2015.2016.12.5.1\build\native\directxtk_desktop_2015.targets" Condition="Exists('packages\directxtk_desktop_2015.2016.12.5.1\build\native\directxtk_desktop_2015.targets')" />
+    <Import Project="packages\directxtk_desktop_2015.2019.4.26.1\build\native\directxtk_desktop_2015.targets" Condition="Exists('packages\directxtk_desktop_2015.2019.4.26.1\build\native\directxtk_desktop_2015.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
     </PropertyGroup>
-    <Error Condition="!Exists('packages\directxtk_desktop_2015.2016.12.5.1\build\native\directxtk_desktop_2015.props')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtk_desktop_2015.2016.12.5.1\build\native\directxtk_desktop_2015.props'))" />
-    <Error Condition="!Exists('packages\directxtk_desktop_2015.2016.12.5.1\build\native\directxtk_desktop_2015.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtk_desktop_2015.2016.12.5.1\build\native\directxtk_desktop_2015.targets'))" />
+    <Error Condition="!Exists('packages\directxtk_desktop_2015.2019.4.26.1\build\native\directxtk_desktop_2015.targets')" Text="$([System.String]::Format('$(ErrorText)', 'packages\directxtk_desktop_2015.2019.4.26.1\build\native\directxtk_desktop_2015.targets'))" />
   </Target>
 </Project>
